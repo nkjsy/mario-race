@@ -136,6 +136,17 @@ body.touch .itemName{display:none}
 .bigBtn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
 .bigBtn.alt{background:linear-gradient(180deg,#fff,#d8dcff);color:var(--ink)}
 .keys{margin:0;font-size:14px;color:var(--muted);text-align:center;line-height:1.9}
+.duoKeys{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.duoKeys .dk{border:3px solid var(--ink);border-radius:16px;padding:10px 14px;background:rgba(255,255,255,.06);text-align:center}
+.duoKeys .dk b{display:block;font-family:var(--cn);font-weight:400;font-size:20px;margin-bottom:4px}
+.duoKeys .p1 b{color:#ff7a6e}.duoKeys .p2 b{color:#6fb2ff}
+.duoKeys p{margin:0;font-size:14px;line-height:2.1;color:#fff}
+.duoKeys .dkNote{grid-column:1/-1;color:var(--muted);font-size:13px}
+.duoKeys kbd,.pKeys kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px}
+.pKeys{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);transform:translateX(-50%);background:rgba(11,10,36,.82);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;color:#fff;font-size:14px;line-height:2;text-align:center;white-space:nowrap;transition:opacity .5s}
+.pKeys b{font-family:var(--display);margin-right:8px}
+#hud0 .pKeys b{color:#ff7a6e}#hud1 .pKeys b{color:#6fb2ff}
+.pKeys.fade{opacity:0}
 .panel{position:relative}
 .helpBtn{position:absolute;top:14px;right:14px;z-index:2;font-family:var(--cn);font-size:17px;padding:7px 14px;border-radius:14px;border:3px solid var(--ink);background:linear-gradient(180deg,#fff9b8,#ffd23f);color:var(--ink);box-shadow:0 4px 0 var(--ink);cursor:pointer}
 .helpBtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
@@ -196,6 +207,7 @@ body.touch .itemName{display:none}
   <canvas id="minimap" width="380" height="380"></canvas>
 </div>
 <template id="hudTpl">
+  <div class="pKeys" hidden></div>
   <div class="speedLines"></div>
   <div class="ink"></div>
   <div class="flash"></div>
@@ -257,8 +269,8 @@ body.touch .itemName{display:none}
       </div>
     </div>
     <button class="bigBtn" id="startBtn" type="button">开始比赛</button>
-    <p class="keys" id="keysDuo" hidden>双人：<b>1P</b> <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 驾驶　<kbd>空格</kbd> 漂移　<kbd>E</kbd> 道具　·　<b>2P</b> <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 驾驶　<kbd>右 Shift</kbd><kbd>/</kbd> 漂移　<kbd>Enter</kbd><kbd>.</kbd> 道具</p>
-    <p class="keys"><kbd>↑</kbd><kbd>W</kbd> 油门　<kbd>↓</kbd><kbd>S</kbd> 刹车/倒车　<kbd>←</kbd><kbd>→</kbd> 转向　<kbd>空格</kbd><kbd>Shift</kbd> 跳跃漂移（按住转弯蓄力，松开加速）<br><kbd>E</kbd><kbd>X</kbd> 使用道具（香蕉和弹壳可按住挂在车尾挡攻击，松开发射，同时按 <kbd>↓</kbd> 往后丢）<br><kbd>C</kbd> 后视　跳台上腾空时按漂移键可做特技　紧跟在别人车后能吸尾流加速　金币最多 10 枚，越多极速越高<br><kbd>Esc</kbd> 暂停　<kbd>M</kbd> 静音　·　倒数到“2”时按住油门可火箭起步　·　支持手柄（按马里奥赛车布局）</p>
+    <div class="duoKeys" id="keysDuo" hidden><div class="dk p1"><b>1P · 键盘左边</b><p><kbd>W</kbd> 油门 <kbd>S</kbd> 刹车 <kbd>A</kbd><kbd>D</kbd> 转向<br><kbd>左 Shift</kbd> 或 <kbd>F</kbd> 漂移<br><kbd>E</kbd> 或 <kbd>Q</kbd> 道具 <kbd>R</kbd> 后视</p></div><div class="dk p2"><b>2P · 键盘右边</b><p><kbd>↑</kbd> 油门 <kbd>↓</kbd> 刹车 <kbd>←</kbd><kbd>→</kbd> 转向<br><kbd>右 Shift</kbd> 或 <kbd>小键盘 0</kbd> 漂移<br><kbd>Enter</kbd> 道具 <kbd>右 Ctrl</kbd> 后视</p></div><p class="dkNote">第一个手柄给 1P，第二个给 2P；两人都可以改用手柄。</p></div>
+    <p class="keys" id="keysSolo"><kbd>↑</kbd><kbd>W</kbd> 油门　<kbd>↓</kbd><kbd>S</kbd> 刹车/倒车　<kbd>←</kbd><kbd>→</kbd> 转向　<kbd>空格</kbd><kbd>Shift</kbd> 跳跃漂移（按住转弯蓄力，松开加速）<br><kbd>E</kbd><kbd>X</kbd> 使用道具（香蕉和弹壳可按住挂在车尾挡攻击，松开发射，同时按 <kbd>↓</kbd> 往后丢）<br><kbd>C</kbd> 后视　跳台上腾空时按漂移键可做特技　紧跟在别人车后能吸尾流加速　金币最多 10 枚，越多极速越高<br><kbd>Esc</kbd> 暂停　<kbd>M</kbd> 静音　·　倒数到“2”时按住油门可火箭起步　·　支持手柄（按马里奥赛车布局）</p>
   </div>
 </div>
 
@@ -284,10 +296,10 @@ body.touch .itemName{display:none}
       <tr><td><kbd>Esc</kbd> 或 <kbd>P</kbd></td><td>暂停</td></tr>
       <tr><td><kbd>M</kbd></td><td>静音</td></tr>
     </table>
-    <h3>双人对战（同一台电脑，左右分屏）</h3>
+    <h3>双人对战（同一台电脑，上下分屏，两人各用键盘一边）</h3>
     <table>
-      <tr><td>1P（左屏）</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 驾驶，<kbd>空格</kbd> 漂移，<kbd>E</kbd> 道具</td></tr>
-      <tr><td>2P（右屏）</td><td><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 驾驶，<kbd>右 Shift</kbd> 或 <kbd>/</kbd> 漂移，<kbd>Enter</kbd> 或 <kbd>.</kbd> 道具</td></tr>
+      <tr><td>1P（上半屏）<br>键盘左边</td><td><kbd>W</kbd> 油门，<kbd>S</kbd> 刹车，<kbd>A</kbd><kbd>D</kbd> 转向，<kbd>左 Shift</kbd> 或 <kbd>F</kbd> 漂移，<kbd>E</kbd> 或 <kbd>Q</kbd> 道具，<kbd>R</kbd> 后视</td></tr>
+      <tr><td>2P（下半屏）<br>键盘右边</td><td><kbd>↑</kbd> 油门，<kbd>↓</kbd> 刹车，<kbd>←</kbd><kbd>→</kbd> 转向，<kbd>右 Shift</kbd> 或 <kbd>小键盘 0</kbd> 漂移，<kbd>Enter</kbd> 或 <kbd>小键盘 .</kbd> 道具，<kbd>右 Ctrl</kbd> 或 <kbd>小键盘 1</kbd> 后视</td></tr>
     </table>
     <h3>手柄（按马里奥赛车 8 的布局）</h3>
     <table>
@@ -323,7 +335,7 @@ body.touch .itemName{display:none}
     <table>
       <tr><td>单场比赛</td><td>选一条赛道，和 7 名电脑对手跑 3 圈</td></tr>
       <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）或月亮杯（雪山小镇、熔岩火山、糖果乐园）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
-      <tr><td>双人对战</td><td>两人分屏，和 6 名电脑对手一起跑</td></tr>
+      <tr><td>双人对战</td><td>两人上下分屏，和 6 名电脑对手一起跑</td></tr>
       <tr><td>气球大战</td><td>霓虹竞技场里每人 3 个气球，被打中少一个，掉光出局。限时 2 分 30 秒，剩下气球最多的赢</td></tr>
       <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑</td></tr>
       <tr><td>引擎</td><td>50cc 最慢最简单，200cc 最快；勾选「镜像模式」赛道左右翻转</td></tr>
@@ -361,14 +373,14 @@ const LAPS = 3, BASE_MAX = 58, GRAV = 34;
 
 /* ---------------- content ---------------- */
 const CHARS = [
-  { name: '阿烈', en: 'BLAZE', color: '#e8322f', color2: '#2f5bd3', skin: '#f6c9a0', hair: '#5a3217', hat: 'cap', stats: { speed: 1.0, accel: 1.0, handle: 1.0, weight: 1.0 } },
-  { name: '蓝波', en: 'BOLT', color: '#2f7cf6', color2: '#ffd23f', skin: '#f1c29a', hair: '#1c1c1c', hat: 'helmet', stats: { speed: 1.05, accel: 0.94, handle: 0.97, weight: 1.1 } },
-  { name: '小翠', en: 'MINT', color: '#23c267', color2: '#ffffff', skin: '#f7d3b0', hair: '#2d7a3a', hat: 'beanie', stats: { speed: 0.96, accel: 1.1, handle: 1.04, weight: 0.85 } },
-  { name: '莓莓', en: 'BERRY', color: '#ff5fa8', color2: '#ffe3f0', skin: '#ffd9bf', hair: '#ff9f2e', hat: 'ears', stats: { speed: 0.97, accel: 1.06, handle: 1.08, weight: 0.8 } },
-  { name: '石头', en: 'ROCKY', color: '#f5b700', color2: '#6b3f1e', skin: '#d99b6c', hair: '#2a1a0f', hat: 'helmet', stats: { speed: 1.09, accel: 0.88, handle: 0.92, weight: 1.35 } },
-  { name: '小紫', en: 'NOVA', color: '#8d4bd6', color2: '#2dd4c6', skin: '#f3c7a5', hair: '#ececec', hat: 'cap', stats: { speed: 1.02, accel: 0.99, handle: 1.0, weight: 1.0 } },
-  { name: '橙橙', en: 'TANGO', color: '#ff8a1f', color2: '#1f2a44', skin: '#eab48c', hair: '#8a2e0f', hat: 'beanie', stats: { speed: 0.99, accel: 1.08, handle: 0.99, weight: 0.95 } },
-  { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.0, accel: 1.0, handle: 1.1, weight: 0.9 } },
+  { name: '阿烈', en: 'BLAZE', color: '#e8322f', color2: '#2f5bd3', skin: '#f6c9a0', hair: '#5a3217', hat: 'cap', stats: { speed: 1, accel: 1, handle: 1, weight: 1 } },
+  { name: '蓝波', en: 'BOLT', color: '#2f7cf6', color2: '#ffd23f', skin: '#f1c29a', hair: '#1c1c1c', hat: 'helmet', stats: { speed: 1.02, accel: 0.93, handle: 0.95, weight: 1.2 } },
+  { name: '小翠', en: 'MINT', color: '#23c267', color2: '#ffffff', skin: '#f7d3b0', hair: '#2d7a3a', hat: 'beanie', stats: { speed: 0.975, accel: 1.14, handle: 1.06, weight: 0.8 } },
+  { name: '莓莓', en: 'BERRY', color: '#ff5fa8', color2: '#ffe3f0', skin: '#ffd9bf', hair: '#ff9f2e', hat: 'ears', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
+  { name: '石头', en: 'ROCKY', color: '#f5b700', color2: '#6b3f1e', skin: '#d99b6c', hair: '#2a1a0f', hat: 'helmet', stats: { speed: 1.03, accel: 0.9, handle: 0.9, weight: 1.35 } },
+  { name: '小紫', en: 'NOVA', color: '#8d4bd6', color2: '#2dd4c6', skin: '#f3c7a5', hair: '#ececec', hat: 'cap', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '橙橙', en: 'TANGO', color: '#ff8a1f', color2: '#1f2a44', skin: '#eab48c', hair: '#8a2e0f', hat: 'beanie', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
+  { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
 ];
 const COURSES = [
   { name: '阳光草原', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7,
@@ -1502,7 +1514,7 @@ class Kart {
   }
   get maxSpeed() {
     const st = this.ch.stats; let m = BASE_MAX * st.speed * game.cc.speed * this.aiMul;
-    if (this.offroad && this.boost <= 0 && this.star <= 0) m *= 0.48;
+    if (this.offroad && this.boost <= 0 && this.star <= 0) m *= 0.48 + 0.14 * (1 - st.weight); // light karts cope better off-road
     if (this.star > 0) m *= 1.16;
     if (this.shrink > 0) m *= 0.74;
     return m * (1 + this.coins * 0.009);
@@ -1552,7 +1564,7 @@ class Kart {
     if (this.spin > 0) { this.spin -= dt; this.speed *= Math.pow(0.2, dt); this.spinAng += dt * 13; }
     else if (this.boost > 0 && canCtl) { const bm = BASE_MAX * 1.42 * game.cc.speed * this.aiMul; this.speed = Math.min(bm, this.speed + 110 * dt); }
     else if (canCtl && inp.accel && this.grounded) {
-      if (this.speed < maxS) this.speed = Math.min(maxS, this.speed + 34 * st.accel * (this.speed < maxS * 0.55 ? 1.25 : 0.62) * dt);
+      if (this.speed < maxS) this.speed = Math.min(maxS, this.speed + 34 * st.accel * st.accel * st.accel * (this.speed < maxS * 0.55 ? 1.25 : 0.62) * dt);
       else this.speed = Math.max(maxS, this.speed - 42 * dt);
     } else if (canCtl && inp.brake && this.grounded) {
       this.speed = this.speed > 0 ? Math.max(0, this.speed - 70 * dt) : Math.max(-16, this.speed - 22 * dt);
@@ -1584,7 +1596,7 @@ class Kart {
       const s = steer * this.drift;
       const k = (1.05 + 0.75 * s) * st.handle;
       this.yaw -= this.drift * k * dt * clamp(this.speed / 30, 0.5, 1);
-      this.charge += dt * (0.9 + 0.8 * Math.max(0, s)) * (this.grounded ? 1 : 0);
+      this.charge += dt * (0.9 + 0.8 * Math.max(0, s)) * (this.grounded ? 1 : 0) * st.handle * st.handle; // nimble karts charge mini-turbos faster
     } else {
       const hi = 1 - 0.2 * clamp(this.speed / (BASE_MAX * 1.2), 0, 1);
       this.yaw -= steer * 2.1 * st.handle * hi * spF * dt;
@@ -1778,7 +1790,7 @@ function aiThink(k, dt) {
   inp.accel = true; inp.brake = false;
   // corner speed control: look for the tightest curvature ahead
   let cmax = 0; for (let s = 4; s < 30; s += 3) cmax = Math.max(cmax, Math.abs(T.curv[(k.q.i + dir * s + N) % N]));
-  const need = k.speed * cmax, can = k.drift !== 0 ? 1.8 : 1.6;
+  const need = k.speed * cmax, can = (k.drift !== 0 ? 1.8 : 1.6) * k.ch.stats.handle;
   if (need > can * 1.1) inp.brake = true, inp.accel = false; else if (need > can) inp.accel = false;
   if (Math.abs(k.q.lat) > HW + 1 && Math.abs(diff) > 0.5) inp.accel = k.speed < 20;
   // corner ahead → drift
@@ -2204,7 +2216,7 @@ const Skid = {
 function makeHud(el) {
   el.innerHTML = ''; el.append($('hudTpl').content.cloneNode(true));
   const q = c => el.querySelector('.' + c);
-  return { el, tag: q('pTag'), pos: q('posNum'), suf: q('posSuf'), posBox: q('posBox'), lap: q('lapNum'), time: q('timeNum'), laps: q('lapTimes'), best: q('bestLap'), icon: q('itemIcon'), cnt: q('itemCount'), iname: q('itemName'), itemBox: q('itemBox'), coinNum: q('coinNum'), lapLbl: el.querySelector('.lapRow .lbl'), coinRow: q('coinRow'), lines: q('speedLines'), ink: q('ink'), flash: q('flash'), warn: q('warn'), dir: q('driftDir'), center: q('center'), wrong: q('wrong'), centerT: 0, last: {} };
+  return { el, pKeys: q('pKeys'), tag: q('pTag'), pos: q('posNum'), suf: q('posSuf'), posBox: q('posBox'), lap: q('lapNum'), time: q('timeNum'), laps: q('lapTimes'), best: q('bestLap'), icon: q('itemIcon'), cnt: q('itemCount'), iname: q('itemName'), itemBox: q('itemBox'), coinNum: q('coinNum'), lapLbl: el.querySelector('.lapRow .lbl'), coinRow: q('coinRow'), lines: q('speedLines'), ink: q('ink'), flash: q('flash'), warn: q('warn'), dir: q('driftDir'), center: q('center'), wrong: q('wrong'), centerT: 0, last: {} };
 }
 const huds = [makeHud($('hud0')), makeHud($('hud1'))];
 huds[1].tag.textContent = '2P';
@@ -2221,6 +2233,9 @@ function setupHud() {
   const duo = game.humans === 2;
   $('hud').classList.toggle('duo', duo);
   $('hud1').hidden = !duo;
+  const PK = ['<b>1P</b><kbd>W</kbd><kbd>S</kbd> 油门/刹车 <kbd>A</kbd><kbd>D</kbd> 转向 <kbd>左 Shift</kbd>/<kbd>F</kbd> 漂移 <kbd>E</kbd>/<kbd>Q</kbd> 道具 <kbd>R</kbd> 后视',
+    '<b>2P</b><kbd>↑</kbd><kbd>↓</kbd> 油门/刹车 <kbd>←</kbd><kbd>→</kbd> 转向 <kbd>右 Shift</kbd>/<kbd>小键盘0</kbd> 漂移 <kbd>Enter</kbd> 道具 <kbd>右 Ctrl</kbd> 后视'];
+  huds.forEach((h, n) => { h.pKeys.innerHTML = PK[n]; h.pKeys.hidden = !duo; h.pKeys.classList.remove('fade'); });
   huds.forEach(h => { h.last = {}; h.center.textContent = ''; h.centerT = 0; h.tag.hidden = !duo; h.lapLbl.textContent = game.mode === 'battle' ? '🎈' : 'LAP'; h.coinRow.hidden = game.mode === 'battle'; h.posBox.hidden = game.mode === 'tt' || game.mode === 'battle'; h.best.textContent = ''; h.laps.innerHTML = ''; });
   if (game.mode === 'tt') huds[0].best.textContent = game.ghost && game.ghost.best ? '最快圈 ' + fmt(game.ghost.best.t) : '还没有纪录';
 }
@@ -2251,6 +2266,7 @@ function updateHud(dt) {
     const fl = p.flashT > 0 ? p.flashT / 0.5 * 0.85 : 0; if (Math.abs((L.fl || 0) - fl) > 0.02) { h.flash.style.opacity = fl; L.fl = fl; }
     h.warn.hidden = !(p.warnT > 0);
     h.wrong.hidden = !(p.wrongT > 1 && game.state === 'race' && !p.finished);
+    if (!h.pKeys.hidden) h.pKeys.classList.toggle('fade', game.state !== 'countdown' && game.raceT > 5);
   });
   for (const h of huds) if (h.centerT > 0) { h.centerT -= dt; if (h.centerT <= 0) h.center.textContent = ''; }
   drawMinimap();
@@ -2582,7 +2598,7 @@ const keys = {};
 const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 if (isTouch) document.body.classList.add('touch');
 const touch = { left: false, right: false, drift: false, item: false, brake: false };
-const GAME_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Slash', 'Period', 'Enter', 'ShiftRight'];
+const GAME_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'ShiftRight', 'ShiftLeft', 'ControlRight', 'Numpad0', 'NumpadEnter', 'NumpadDecimal', 'Numpad1', 'Tab'];
 const KEYCODE_TO_CODE = { 69: 'KeyE', 88: 'KeyX', 81: 'KeyQ', 87: 'KeyW', 65: 'KeyA', 83: 'KeyS', 68: 'KeyD', 67: 'KeyC', 80: 'KeyP', 77: 'KeyM', 32: 'Space', 13: 'Enter', 27: 'Escape', 37: 'ArrowLeft', 38: 'ArrowUp', 39: 'ArrowRight', 40: 'ArrowDown', 16: 'ShiftLeft', 17: 'ControlLeft' };
 function fixCode(e) { if (!e.code || e.code === 'Unidentified') { const c = KEYCODE_TO_CODE[e.keyCode || e.which]; if (c) Object.defineProperty(e, 'code', { value: c }); } }
 addEventListener('keydown', e => {
@@ -2613,7 +2629,7 @@ function pollPads() {
   for (let n = 0; n < 2; n++) {
     const g = list[n], o = pads[n], prevPause = o.pause;
     if (!g) { pads[n] = {}; continue; }
-    if (o.id !== g.id) { o.id = g.id; o.rest = {}; o.axRest = {}; }
+    if (!o.rest || o.id !== g.id) { o.id = g.id; o.rest = {}; o.axRest = {}; }
     const raw = i => !!(g.buttons[i] && (g.buttons[i].pressed || g.buttons[i].value > 0.5));
     const b = i => { const d = raw(i); if (!d) o.rest[i] = true; return d && !!o.rest[i]; };
     const axis = i => { const v = g.axes[i] || 0; if (Math.abs(v) < 0.2) o.axRest[i] = true; return o.axRest[i] ? v : 0; };
@@ -2640,10 +2656,10 @@ function playerInput(p) {
   let gas, brake, steer, drift, item, look, back;
   if (game.humans === 2 && p.pIdx === 0) {
     gas = !!k.KeyW; brake = !!k.KeyS; steer = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
-    drift = !!(k.Space || k.ShiftLeft); item = !!(k.KeyE || k.KeyQ); look = !!k.KeyC;
+    drift = !!(k.ShiftLeft || k.KeyF); item = !!(k.KeyE || k.KeyQ); look = !!k.KeyR;
   } else if (game.humans === 2) {
     gas = !!k.ArrowUp; brake = !!k.ArrowDown; steer = (k.ArrowRight ? 1 : 0) - (k.ArrowLeft ? 1 : 0);
-    drift = !!(k.ShiftRight || k.Slash || k.Numpad0); item = !!(k.Enter || k.Period || k.NumpadEnter); look = !!k.Comma;
+    drift = !!(k.ShiftRight || k.Numpad0); item = !!(k.Enter || k.NumpadEnter || k.NumpadDecimal); look = !!(k.ControlRight || k.Numpad1);
   } else {
     gas = !!(k.ArrowUp || k.KeyW); brake = !!(k.ArrowDown || k.KeyS) || touch.brake;
     steer = ((k.ArrowRight || k.KeyD || touch.right) ? 1 : 0) - ((k.ArrowLeft || k.KeyA || touch.left) ? 1 : 0);
@@ -2693,7 +2709,7 @@ function refreshMode() {
   if (game.mode === 'gp') { const cup = CUPS[Math.max(0, cupOf(game.courseIdx))]; hint += '　（点一条赛道选杯赛。' + cup.name + '：' + cup.courses.map(c => COURSES[c].name).join(' → ') + '）'; }
   $('modeHint').textContent = hint;
   $('startBtn').textContent = m.btn;
-  $('pickBar').hidden = game.mode !== 'duo'; $('keysDuo').hidden = game.mode !== 'duo';
+  $('pickBar').hidden = game.mode !== 'duo'; $('keysDuo').hidden = game.mode !== 'duo'; $('keysSolo').hidden = game.mode === 'duo';
   if (game.mode !== 'duo') pickSlot = 0;
   $('pick1').setAttribute('aria-pressed', pickSlot === 0); $('pick2').setAttribute('aria-pressed', pickSlot === 1);
   [...$('courses').children].forEach(b => b.disabled = game.mode === 'battle');
@@ -2753,7 +2769,7 @@ function saveNames() { try { const o = {}; CHARS.forEach(ch => { if (ch.name !==
 function setName(i, v) {
   const ch = CHARS[i]; ch.name = (v || '').trim().slice(0, 8) || ch.def;
   const card = $('char' + i); if (card) card.querySelector('.nm').textContent = ch.name;
-  $('charTitle').innerHTML = ''; $('charTitle').append(ch.name + ' 的性能 '); const sm = document.createElement('small'); sm.textContent = 'STATS'; $('charTitle').append(sm);
+  $('charTitle').innerHTML = ''; $('charTitle').append(ch.name + ' 的性能 · ' + (ch.stats.weight < 0.85 ? '轻量级' : ch.stats.weight > 1.15 ? '重量级' : '中量级') + ' '); const sm = document.createElement('small'); sm.textContent = 'STATS'; $('charTitle').append(sm);
   saveNames();
 }
 $('nameInput').addEventListener('input', e => setName(pickedIdx(), e.target.value));
@@ -2765,7 +2781,7 @@ function showStats() {
   const s = CHARS[i].stats;
   setName(i, CHARS[i].name);
   const bar = (label, v, lo, hi) => `<span>${label}</span><div class="bar"><i style="width:${Math.round(clamp((v - lo) / (hi - lo), 0.08, 1) * 100)}%"></i></div>`;
-  $('stats').innerHTML = bar('极速', s.speed, 0.85, 1.1) + bar('加速', s.accel, 0.8, 1.12) + bar('操控', s.handle, 0.85, 1.12) + bar('重量', s.weight, 0.6, 1.4);
+  $('stats').innerHTML = bar('极速', s.speed, 0.95, 1.04) + bar('加速', s.accel, 0.84, 1.16) + bar('操控', s.handle, 0.86, 1.14) + bar('重量', s.weight, 0.7, 1.4);
 }
 function renderThumbs() {
   const out = [];
