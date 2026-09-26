@@ -258,7 +258,7 @@ body.touch .itemName{display:none}
     </div>
     <button class="bigBtn" id="startBtn" type="button">开始比赛</button>
     <p class="keys" id="keysDuo" hidden>双人：<b>1P</b> <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 驾驶　<kbd>空格</kbd> 漂移　<kbd>E</kbd> 道具　·　<b>2P</b> <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 驾驶　<kbd>右 Shift</kbd><kbd>/</kbd> 漂移　<kbd>Enter</kbd><kbd>.</kbd> 道具</p>
-    <p class="keys"><kbd>↑</kbd><kbd>W</kbd> 油门　<kbd>↓</kbd><kbd>S</kbd> 刹车/倒车　<kbd>←</kbd><kbd>→</kbd> 转向　<kbd>空格</kbd><kbd>Shift</kbd> 跳跃漂移（按住转弯蓄力，松开加速）<br><kbd>E</kbd><kbd>X</kbd> 使用道具（香蕉和弹壳可按住挂在车尾挡攻击，松开发射，同时按 <kbd>↓</kbd> 往后丢）<br><kbd>C</kbd> 后视　跳台上腾空时按漂移键可做特技　紧跟在别人车后能吸尾流加速　金币最多 10 枚，越多极速越高<br><kbd>Esc</kbd> 暂停　<kbd>M</kbd> 静音　·　倒数“1”时按住油门可火箭起步</p>
+    <p class="keys"><kbd>↑</kbd><kbd>W</kbd> 油门　<kbd>↓</kbd><kbd>S</kbd> 刹车/倒车　<kbd>←</kbd><kbd>→</kbd> 转向　<kbd>空格</kbd><kbd>Shift</kbd> 跳跃漂移（按住转弯蓄力，松开加速）<br><kbd>E</kbd><kbd>X</kbd> 使用道具（香蕉和弹壳可按住挂在车尾挡攻击，松开发射，同时按 <kbd>↓</kbd> 往后丢）<br><kbd>C</kbd> 后视　跳台上腾空时按漂移键可做特技　紧跟在别人车后能吸尾流加速　金币最多 10 枚，越多极速越高<br><kbd>Esc</kbd> 暂停　<kbd>M</kbd> 静音　·　倒数到“2”时按住油门可火箭起步　·　支持手柄（按马里奥赛车布局）</p>
   </div>
 </div>
 
@@ -275,7 +275,7 @@ body.touch .itemName{display:none}
     <h2 class="resTitle" id="helpTitle">操作说明</h2>
     <h3>键盘（单人）</h3>
     <table>
-      <tr><td><kbd>↑</kbd> 或 <kbd>W</kbd></td><td>油门</td></tr>
+      <tr><td><kbd>↑</kbd> 或 <kbd>W</kbd></td><td>油门。菜单里「自动加速」默认打开，不按也会一直往前开（和马里奥赛车的自动加速辅助一样）；关掉后就要按住</td></tr>
       <tr><td><kbd>↓</kbd> 或 <kbd>S</kbd></td><td>刹车，停下后继续按是倒车</td></tr>
       <tr><td><kbd>←</kbd><kbd>→</kbd> 或 <kbd>A</kbd><kbd>D</kbd></td><td>转向</td></tr>
       <tr><td><kbd>空格</kbd> 或 <kbd>Shift</kbd></td><td>跳跃漂移：转弯时按住，车尾冒出蓝→橙→紫火花后松开，就能加速</td></tr>
@@ -289,11 +289,22 @@ body.touch .itemName{display:none}
       <tr><td>1P（左屏）</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 驾驶，<kbd>空格</kbd> 漂移，<kbd>E</kbd> 道具</td></tr>
       <tr><td>2P（右屏）</td><td><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 驾驶，<kbd>右 Shift</kbd> 或 <kbd>/</kbd> 漂移，<kbd>Enter</kbd> 或 <kbd>.</kbd> 道具</td></tr>
     </table>
+    <h3>手柄（按马里奥赛车 8 的布局）</h3>
+    <table>
+      <tr><td>A（右边的键）</td><td>油门</td></tr>
+      <tr><td>B（下边的键）</td><td>刹车，停下后继续按是倒车</td></tr>
+      <tr><td>左摇杆 / 十字键</td><td>转向；拿着香蕉或弹壳时往后推再松开道具键，就往后丢</td></tr>
+      <tr><td>R 或 ZR</td><td>跳跃漂移</td></tr>
+      <tr><td>L 或 ZL</td><td>使用道具（按住挂在车尾）</td></tr>
+      <tr><td>X（上边的键）</td><td>看后方</td></tr>
+      <tr><td>+ / Start</td><td>暂停；在菜单里按它开始比赛</td></tr>
+    </table>
+    <ul><li>双人对战时，第一个手柄给 1P，第二个给 2P，键盘也能同时用。Xbox 手柄按位置对应：右边的 B 键是油门，下边的 A 键是刹车。</li></ul>
     <h3>手机和平板</h3>
     <ul><li>油门自动踩住。屏幕下方 ◀ ▶ 转向，「漂移」按住蓄力，「刹车」刹车/倒车，「道具」使用道具。</li><li>双人对战需要键盘，手机上不能选。</li></ul>
     <h3>小技巧</h3>
     <ul>
-      <li>火箭起步：倒数到「1」时按住油门。</li>
+      <li>火箭起步：倒数的「2」出现后马上按住油门（手柄 A），到 GO 时冲出去。按得太早（「3」还在时就按）会起步失败。开着自动加速也要自己按。</li>
       <li>加速带：压过地上的箭头会加速；跳台上腾空时按漂移键做特技，落地加速。</li>
       <li>吸尾流：紧跟在别人车后一会儿，会有风线并自动加速。</li>
       <li>金币：最多 10 枚，越多极速越高，被打中会掉 3 枚。</li>
@@ -1529,7 +1540,7 @@ class Kart {
     // items: tap to use; bananas and shells are held behind while the button is down and let go on release
     if (canCtl && this.item && this.roulette <= 0) {
       if (inp.item && !this.itemHeld && !this.trail) { if (TRAILABLE[this.item]) startTrail(this); else useItem(this); }
-      else if (!inp.item && this.trail) { this.trail = null; removeTrailMesh(this); useItem(this, inp.brake); }
+      else if (!inp.item && this.trail) { this.trail = null; removeTrailMesh(this); useItem(this, inp.back !== undefined ? inp.back : inp.brake); }
     }
     this.itemHeld = inp.item;
 
@@ -2588,25 +2599,52 @@ function bindTouch(id, key) {
   el.addEventListener('pointerdown', on); el.addEventListener('pointerup', off); el.addEventListener('pointercancel', off); el.addEventListener('pointerleave', off);
 }
 bindTouch('tLeft', 'left'); bindTouch('tRight', 'right'); bindTouch('tDrift', 'drift'); bindTouch('tItem', 'item'); bindTouch('tBrake', 'brake');
+// Gamepads use the Mario Kart 8 layout (by button position, standard mapping):
+// right face = A accelerate, bottom = B brake/reverse, top = X look back, R/ZR drift, L/ZL item, + pause
+const pads = [{}, {}];
+function pollPads() {
+  const list = (navigator.getGamepads ? [...navigator.getGamepads()] : []).filter(g => g && g.connected);
+  for (let n = 0; n < 2; n++) {
+    const g = list[n], o = pads[n], prevPause = o.pause;
+    if (!g) { pads[n] = {}; continue; }
+    const b = i => !!(g.buttons[i] && (g.buttons[i].pressed || g.buttons[i].value > 0.5));
+    const ax = g.axes[0] || 0, ay = g.axes[1] || 0;
+    o.on = true; o.gas = b(1); o.brake = b(0); o.look = b(3);
+    o.drift = b(5) || b(7); o.item = b(4) || b(6);
+    o.steer = Math.abs(ax) > 0.18 ? clamp((Math.abs(ax) - 0.18) / 0.72, 0, 1) * Math.sign(ax) : 0;
+    if (b(14)) o.steer = -1; if (b(15)) o.steer = 1;
+    o.back = ay > 0.5 || b(13);
+    o.pause = b(9);
+    if (o.pause && !prevPause) {
+      if (!$('help').hidden) closeHelp();
+      else if (game.state === 'race' || game.state === 'countdown' || game.state === 'finish') togglePause();
+      else if (!$('menu').hidden) $('startBtn').click();
+    }
+  }
+}
+let autoAccel = true;
+try { autoAccel = localStorage.getItem('starkart.autoAccel') !== '0'; } catch (e) { }
 function playerInput(p) {
   if (p.finished || game.state === 'finish' || game.state === 'results') return false; // AI drives after the line
   const inp = p.input, k = keys, v = views[p.pIdx];
-  if (game.humans === 2) {
-    if (p.pIdx === 0) {
-      inp.accel = !!k.KeyW; inp.brake = !!k.KeyS; inp.steer = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
-      inp.drift = !!(k.Space || k.ShiftLeft); inp.item = !!(k.KeyE || k.KeyQ); v.lookBack = !!k.KeyC;
-    } else {
-      inp.accel = !!k.ArrowUp; inp.brake = !!k.ArrowDown; inp.steer = (k.ArrowRight ? 1 : 0) - (k.ArrowLeft ? 1 : 0);
-      inp.drift = !!(k.ShiftRight || k.Slash || k.Numpad0); inp.item = !!(k.Enter || k.Period || k.NumpadEnter); v.lookBack = !!k.Comma;
-    }
-    return true;
+  const g = pads[game.humans === 2 ? p.pIdx : 0] || {};
+  let gas, brake, steer, drift, item, look, back;
+  if (game.humans === 2 && p.pIdx === 0) {
+    gas = !!k.KeyW; brake = !!k.KeyS; steer = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
+    drift = !!(k.Space || k.ShiftLeft); item = !!(k.KeyE || k.KeyQ); look = !!k.KeyC;
+  } else if (game.humans === 2) {
+    gas = !!k.ArrowUp; brake = !!k.ArrowDown; steer = (k.ArrowRight ? 1 : 0) - (k.ArrowLeft ? 1 : 0);
+    drift = !!(k.ShiftRight || k.Slash || k.Numpad0); item = !!(k.Enter || k.Period || k.NumpadEnter); look = !!k.Comma;
+  } else {
+    gas = !!(k.ArrowUp || k.KeyW); brake = !!(k.ArrowDown || k.KeyS) || touch.brake;
+    steer = ((k.ArrowRight || k.KeyD || touch.right) ? 1 : 0) - ((k.ArrowLeft || k.KeyA || touch.left) ? 1 : 0);
+    drift = !!(k.Space || k.ShiftLeft || k.ShiftRight) || touch.drift; item = !!(k.KeyE || k.KeyX || k.ControlLeft) || touch.item; look = !!k.KeyC;
   }
-  inp.accel = !!(k.ArrowUp || k.KeyW) || (isTouch && !touch.brake);
-  inp.brake = !!(k.ArrowDown || k.KeyS) || touch.brake;
-  inp.steer = ((k.ArrowRight || k.KeyD || touch.right) ? 1 : 0) - ((k.ArrowLeft || k.KeyA || touch.left) ? 1 : 0);
-  inp.drift = !!(k.Space || k.ShiftLeft || k.ShiftRight) || touch.drift;
-  inp.item = !!(k.KeyE || k.KeyX || k.ControlLeft) || touch.item;
-  v.lookBack = !!k.KeyC;
+  if (g.on) { gas = gas || g.gas; brake = brake || g.brake; if (g.steer) steer = g.steer; drift = drift || g.drift; item = item || g.item; look = look || g.look; back = g.back; }
+  inp.gas = gas; // a real press: rocket starts need it even with auto-accelerate
+  inp.accel = gas || ((autoAccel || (isTouch && game.humans === 1)) && !brake);
+  inp.brake = brake; inp.steer = clamp(steer, -1, 1); inp.drift = drift; inp.item = item; inp.back = brake || !!back;
+  v.lookBack = look;
   return true;
 }
 function togglePause(force) {
@@ -2693,7 +2731,10 @@ function buildMenu(thumbs) {
   const mb = document.createElement('button'); mb.type = 'button'; mb.className = 'opt'; mb.id = 'mirrorBtn'; mb.setAttribute('aria-pressed', !!game.mirror);
   mb.innerHTML = '镜像模式<small>MIRROR · 赛道左右翻转</small>';
   mb.onclick = () => { game.mirror = !game.mirror; mb.setAttribute('aria-pressed', game.mirror); buildCourse(game.courseIdx); startDemo(); refreshMode(); };
-  xw.appendChild(mb); clw.insertAdjacentElement('afterend', xw);
+  const ab = document.createElement('button'); ab.type = 'button'; ab.className = 'opt'; ab.id = 'autoBtn'; ab.setAttribute('aria-pressed', autoAccel);
+  ab.innerHTML = '自动加速<small>AUTO-ACCELERATE · 不用按油门</small>';
+  ab.onclick = () => { autoAccel = !autoAccel; ab.setAttribute('aria-pressed', autoAccel); try { localStorage.setItem('starkart.autoAccel', autoAccel ? '1' : '0'); } catch (e) { } };
+  xw.appendChild(mb); xw.appendChild(ab); clw.insertAdjacentElement('afterend', xw);
   refreshMode();
 }
 // custom driver names, remembered in this browser
@@ -2751,13 +2792,13 @@ function step(dt) {
     }
     game.humansK.forEach((p, n) => {
       playerInput(p); const r = game.rocket[n];
-      if (p.input.accel && r.first < 0) r.first = game.countT;
-      if (!p.input.accel && game.countT < 3.4) r.first = -1;
+      if (p.input.gas && r.first < 0) r.first = game.countT;
+      if (!p.input.gas) r.first = -1;
     });
     if (game.countT >= 4) {
       game.state = 'race'; game.raceT = 0; showCenter('all', 'GO!', 1); Snd.sfx('go'); Snd.startMusic();
       for (const l of anim.lamps) { l.material.emissive.setHex(0x22ff55); l.material.emissiveIntensity = 2; }
-      game.humansK.forEach((p, n) => { const r = game.rocket[n]; if (r.first >= 2.9 && r.first <= 3.75 && p.input.accel) { p.startBoost(1.2); showCenter(n, '火箭起步！', 1.2, true); } });
+      game.humansK.forEach((p, n) => { const r = game.rocket[n]; if (r.first >= 2.05 && r.first <= 2.75 && p.input.gas) { p.startBoost(1.2); showCenter(n, '火箭起步！', 1.2, true); } else if (r.first >= 0 && r.first < 2.05 && p.input.gas) { p.speed = 0; p.boost = 0; showCenter(n, '起步太早！', 1.2); } });
       for (const k of game.karts) if (!k.isPlayer && Math.random() < 0.45) k.startBoost(0.8);
       for (const k of game.karts) k.lapStart = 0;
     }
@@ -2786,6 +2827,7 @@ let lastT = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
   const real = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  pollPads();
   if (!T) return;
   if (!game.paused) {
     let dt = real;
