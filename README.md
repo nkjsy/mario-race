@@ -4,7 +4,9 @@
 
 ## 怎么玩
 
-双击 `star-kart.html` 用浏览器打开即可（需要联网加载 3D 引擎和字体）。
+在线玩：https://nkjsy.github.io/mario-race/
+
+本地玩：双击 `star-kart.html` 用浏览器打开即可（需要联网加载 3D 引擎和字体）。
 
 ## 操作说明
 
