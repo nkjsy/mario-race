@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>星速卡丁车</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -132,6 +131,21 @@ body.touch .itemName{display:none}
 .bigBtn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
 .bigBtn.alt{background:linear-gradient(180deg,#fff,#d8dcff);color:var(--ink)}
 .keys{margin:0;font-size:14px;color:var(--muted);text-align:center;line-height:1.9}
+.panel{position:relative}
+.helpBtn{position:absolute;top:14px;right:14px;z-index:2;font-family:var(--cn);font-size:17px;padding:7px 14px;border-radius:14px;border:3px solid var(--ink);background:linear-gradient(180deg,#fff9b8,#ffd23f);color:var(--ink);box-shadow:0 4px 0 var(--ink);cursor:pointer}
+.helpBtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.helpBtn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+#help .panel{max-width:760px;gap:12px;text-align:left}
+#help h2.resTitle{margin:0;text-align:center}
+#help h3{margin:6px 0 2px;font-family:var(--cn);font-weight:400;font-size:20px;color:#ffd23f}
+#help table{width:100%;border-collapse:collapse;font-size:15px}
+#help td{padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top}
+#help td:first-child{white-space:nowrap;width:1%;padding-right:14px}
+#help kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px;display:inline-block;line-height:1.5}
+#help ul{margin:0;padding-left:20px;font-size:15px;line-height:1.75}
+#help .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 14px;font-size:14.5px}
+#help .btnRow{justify-content:center}
+@media (max-width:560px){#menu .panel{padding-top:54px}#help td:first-child{white-space:normal;width:34%}.helpBtn{top:10px;right:10px;font-size:15px;padding:5px 10px}}
 .keys kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px}
 .btnRow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 #results .panel{max-width:720px}
@@ -205,6 +219,7 @@ body.touch .itemName{display:none}
 
 <div id="menu" class="overlay" hidden>
   <div class="panel">
+    <button class="helpBtn" id="helpBtn" type="button">❓ 操作说明</button>
     <h1 class="logo"><b>星速卡丁车</b><i>STAR KART GRAND PRIX</i></h1>
     <div class="sec">
       <h2>模式 <small>MODE</small></h2>
@@ -246,6 +261,57 @@ body.touch .itemName{display:none}
   <div class="panel" style="max-width:420px">
     <h2 class="resTitle">暂停</h2>
     <div class="btnRow"><button class="bigBtn" id="resumeBtn" type="button">继续</button><button class="bigBtn alt" id="quitBtn" type="button">退出</button></div>
+    <button class="bigBtn alt" id="pauseHelp" type="button" style="font-size:22px;padding:8px 24px;align-self:center">操作说明</button>
+  </div>
+</div>
+
+<div id="help" class="overlay" hidden>
+  <div class="panel" role="dialog" aria-labelledby="helpTitle">
+    <h2 class="resTitle" id="helpTitle">操作说明</h2>
+    <h3>键盘（单人）</h3>
+    <table>
+      <tr><td><kbd>↑</kbd> 或 <kbd>W</kbd></td><td>油门</td></tr>
+      <tr><td><kbd>↓</kbd> 或 <kbd>S</kbd></td><td>刹车，停下后继续按是倒车</td></tr>
+      <tr><td><kbd>←</kbd><kbd>→</kbd> 或 <kbd>A</kbd><kbd>D</kbd></td><td>转向</td></tr>
+      <tr><td><kbd>空格</kbd> 或 <kbd>Shift</kbd></td><td>跳跃漂移：转弯时按住，车尾冒出蓝→橙→紫火花后松开，就能加速</td></tr>
+      <tr><td><kbd>E</kbd> 或 <kbd>X</kbd></td><td>使用道具。香蕉和弹壳可以按住挂在车尾挡攻击，松开发射；同时按住 <kbd>↓</kbd> 就往后丢</td></tr>
+      <tr><td><kbd>C</kbd></td><td>按住看后方</td></tr>
+      <tr><td><kbd>Esc</kbd> 或 <kbd>P</kbd></td><td>暂停</td></tr>
+      <tr><td><kbd>M</kbd></td><td>静音</td></tr>
+    </table>
+    <h3>双人对战（同一台电脑，左右分屏）</h3>
+    <table>
+      <tr><td>1P（左屏）</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 驾驶，<kbd>空格</kbd> 漂移，<kbd>E</kbd> 道具</td></tr>
+      <tr><td>2P（右屏）</td><td><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 驾驶，<kbd>右 Shift</kbd> 或 <kbd>/</kbd> 漂移，<kbd>Enter</kbd> 或 <kbd>.</kbd> 道具</td></tr>
+    </table>
+    <h3>手机和平板</h3>
+    <ul><li>油门自动踩住。屏幕下方 ◀ ▶ 转向，「漂移」按住蓄力，「刹车」刹车/倒车，「道具」使用道具。</li><li>双人对战需要键盘，手机上不能选。</li></ul>
+    <h3>小技巧</h3>
+    <ul>
+      <li>火箭起步：倒数到「1」时按住油门。</li>
+      <li>加速带：压过地上的箭头会加速；跳台上腾空时按漂移键做特技，落地加速。</li>
+      <li>吸尾流：紧跟在别人车后一会儿，会有风线并自动加速。</li>
+      <li>金币：最多 10 枚，越多极速越高，被打中会掉 3 枚。</li>
+      <li>开出路面到草地或沙地会变慢，赛道外有护栏；开反方向屏幕上会提示「逆行！」。</li>
+    </ul>
+    <h3>道具</h3>
+    <div class="items">
+      <div>🍌 香蕉皮：丢在路上让人打滑</div><div>🟢 绿色弹壳：直线发射，会反弹</div>
+      <div>🔴 追踪红弹：自动追前面的车</div><div>🚀 加速火箭 / 三连火箭：瞬间加速</div>
+      <div>⭐ 无敌星：无敌又加速，撞飞别人</div><div>🪙 金币：直接加 2 枚金币</div>
+      <div>🦑 墨鱼喷墨：糊住前面车手的屏幕</div><div>⚡ 缩小闪电：除你以外全体变小减速</div>
+      <div>🎯 追冠导弹：从天而降打第一名</div>
+    </div>
+    <h3>模式</h3>
+    <table>
+      <tr><td>单场比赛</td><td>选一条赛道，和 7 名电脑对手跑 3 圈</td></tr>
+      <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）或月亮杯（雪山小镇、熔岩火山、糖果乐园）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
+      <tr><td>双人对战</td><td>两人分屏，和 6 名电脑对手一起跑</td></tr>
+      <tr><td>气球大战</td><td>霓虹竞技场里每人 3 个气球，被打中少一个，掉光出局。限时 2 分 30 秒，剩下气球最多的赢</td></tr>
+      <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑</td></tr>
+      <tr><td>引擎</td><td>50cc 最慢最简单，200cc 最快；勾选「镜像模式」赛道左右翻转</td></tr>
+    </table>
+    <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">知道了</button></div>
   </div>
 </div>
 
@@ -2504,6 +2570,7 @@ addEventListener('keydown', e => {
   if (e.repeat && keys[e.code]) return;
   keys[e.code] = true;
   if (GAME_KEYS.includes(e.code) && game.state !== 'title' && game.state !== 'results' && game.state !== 'podium') e.preventDefault();
+  if (!$('help').hidden) { if (e.code === 'Escape' || e.code === 'Enter') { e.preventDefault(); closeHelp(); } return; }
   if ((e.code === 'Escape' || e.code === 'KeyP') && (game.state === 'race' || game.state === 'countdown' || game.state === 'finish')) togglePause();
   if (e.code === 'KeyM') toggleMute();
   if (e.code === 'Enter' && game.state === 'title' && !$('menu').hidden && document.activeElement.tagName !== 'BUTTON') startRace();
@@ -2546,6 +2613,10 @@ function togglePause(force) {
 function toggleMute() { Snd.setMuted(!Snd.muted); $('muteBtn').textContent = Snd.muted ? '×' : '♪'; }
 $('muteBtn').onclick = toggleMute; $('pauseBtn').onclick = () => togglePause();
 $('resumeBtn').onclick = () => togglePause();
+function openHelp() { const h = $('help'); h.hidden = false; h.scrollTop = 0; $('helpClose').focus({ preventScroll: true }); }
+function closeHelp() { $('help').hidden = true; }
+$('helpBtn').onclick = openHelp; $('pauseHelp').onclick = openHelp; $('helpClose').onclick = closeHelp;
+$('help').addEventListener('click', e => { if (e.target === $('help')) closeHelp(); });
 $('quitBtn').onclick = () => { game.paused = false; if (Snd.ctx) Snd.ctx.resume(); game.gp = null; startDemo(); };
 $('startBtn').onclick = () => { game.gp = null; startRace(); };
 
@@ -2746,5 +2817,3 @@ function boot() {
 (document.fonts && document.fonts.ready ? Promise.race([Promise.all([document.fonts.load('40px "ZCOOL KuaiLe"'), document.fonts.load('40px "Lilita One"')]).catch(() => { }), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).then(() => setTimeout(boot, 30));
 window.__game = game;
 </script>
-
-</body></html>
