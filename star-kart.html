@@ -338,6 +338,7 @@ body.touch .itemName{display:none}
       <tr><td>双人对战</td><td>两人上下分屏，和 6 名电脑对手一起跑</td></tr>
       <tr><td>气球大战</td><td>霓虹竞技场里每人 3 个气球，被打中少一个，掉光出局。限时 2 分 30 秒，剩下气球最多的赢</td></tr>
       <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑</td></tr>
+      <tr><td>公平规则</td><td>电脑和玩家完全同一套规则：没有偷偷追赶加速，起步、道具转盘时间都一样；拿到什么道具只看当前名次，谁落后都一样；发车位置随机，大奖赛第 2 场起积分最高的排最后。难度只影响电脑开得好不好</td></tr>
       <tr><td>引擎</td><td>50cc 最慢最简单，200cc 最快；勾选「镜像模式」赛道左右翻转</td></tr>
     </table>
     <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">知道了</button></div>
@@ -1790,7 +1791,7 @@ function aiThink(k, dt) {
   inp.accel = true; inp.brake = false;
   // corner speed control: look for the tightest curvature ahead
   let cmax = 0; for (let s = 4; s < 30; s += 3) cmax = Math.max(cmax, Math.abs(T.curv[(k.q.i + dir * s + N) % N]));
-  const need = k.speed * cmax, can = (k.drift !== 0 ? 1.8 : 1.6) * k.ch.stats.handle;
+  const need = k.speed * cmax, can = (k.drift !== 0 ? 1.8 : 1.6) * k.ch.stats.handle * (game.demo ? 1 : ai.skill * game.cc.ai); // weaker drivers brake earlier in corners
   if (need > can * 1.1) inp.brake = true, inp.accel = false; else if (need > can) inp.accel = false;
   if (Math.abs(k.q.lat) > HW + 1 && Math.abs(diff) > 0.5) inp.accel = k.speed < 20;
   // corner ahead → drift
@@ -1822,12 +1823,8 @@ function aiThink(k, dt) {
   }
   if (k.trail) { ai.holdT = (ai.holdT || 0) - dt; if (ai.holdT > 0) inp.item = true; }
   if (k.inkT > 0) inp.steer = clamp(inp.steer + Math.sin(game.t * 5 + k.ci) * 0.45, -1, 1);
-  // rubber band
-  const skill = ai.skill * game.cc.ai;
-  if (!game.demo && game.player && game.mode !== 'battle') {
-    const d = (k.progress - Math.max(...game.humansK.map(h => h.progress))) / N;
-    k.aiMul = skill * clamp(1 - d * 0.55, 0.9, 1.1);
-  } else k.aiMul = skill;
+  // fair play: computer drivers get no speed bonus or rubber-banding; difficulty only changes how well they drive
+  k.aiMul = 1;
 }
 
 /* ---------------- items & projectiles ---------------- */
@@ -2119,7 +2116,7 @@ function updateBoxes(dt) {
         for (let n = 0; n < 16; n++) { const c = new THREE.Color().setHSL(Math.random(), 1, 0.65); FX.emit(b.x, b.m.position.y, b.z, (Math.random() - 0.5) * 14, Math.random() * 10, (Math.random() - 0.5) * 14, c.r, c.g, c.b, 0.9, 0.45, 0.6, 16); }
         if (!k.item && k.roulette <= 0) {
           k.item = rollItem(k.rank, game.karts.length); k.itemCount = k.item === 'triple' ? 3 : 1;
-          k.roulette = k.isPlayer ? 1.1 : 0.8; k.ai.itemT = 0.8 + Math.random() * 3;
+          k.roulette = 1.1; k.ai.itemT = 0.8 + Math.random() * 3;
           if (k.isPlayer) Snd.sfx('item');
         }
         break;
@@ -2334,8 +2331,11 @@ function spawnKarts(humanChars) {
   const others = [...Array(CHARS.length).keys()].filter(i => !humanChars.includes(i)).sort(() => Math.random() - 0.5);
   let slots;
   if (game.mode === 'tt' && humanChars.length && !game.demo) slots = [humanChars[0]];
-  else if (humanChars.length === 2) slots = [...others.slice(0, 6), humanChars[0], humanChars[1]];
-  else if (humanChars.length === 1) slots = [...others.slice(0, 7), humanChars[0]];
+  else if (humanChars.length) {
+    slots = [...others.slice(0, CHARS.length - humanChars.length), ...humanChars].sort(() => Math.random() - 0.5);
+    const gpPts = game.gp && game.gp.pts;
+    if (gpPts && Object.keys(gpPts).length) slots.sort((a, b) => (gpPts[a] || 0) - (gpPts[b] || 0));
+  }
   else slots = others;
   const battle = game.mode === 'battle' && !game.demo;
   game.battle = battle ? { t: BATTLE_TIME, out: [], rows: null } : null;
@@ -2824,7 +2824,7 @@ function step(dt) {
       game.state = 'race'; game.raceT = 0; showCenter('all', 'GO!', 1); Snd.sfx('go'); Snd.startMusic();
       for (const l of anim.lamps) { l.material.emissive.setHex(0x22ff55); l.material.emissiveIntensity = 2; }
       game.humansK.forEach((p, n) => { const r = game.rocket[n]; if (r.first >= 2.05 && r.first <= 2.75 && p.input.gas) { p.startBoost(1.2); showCenter(n, '火箭起步！', 1.2, true); } else if (r.first >= 0 && r.first < 2.05 && p.input.gas) { p.speed = 0; p.boost = 0; showCenter(n, '起步太早！', 1.2); } });
-      for (const k of game.karts) if (!k.isPlayer && Math.random() < 0.45) k.startBoost(0.8);
+      for (const k of game.karts) if (!k.isPlayer) { const t = 1.5 + Math.random() * 1.6; if (t >= 2.05 && t <= 2.75) k.startBoost(1.2); else if (t < 2.05) { k.speed = 0; k.boost = 0; } }
       for (const k of game.karts) k.lapStart = 0;
     }
     for (const k of game.karts) { k.syncMesh(dt); if (k.isPlayer && k.input.accel) SMOKE.emit(k.pos.x - Math.sin(k.yaw) * 2, k.pos.y + 0.9, k.pos.z - Math.cos(k.yaw) * 2, 0, 1.5, 0, 0.7, 0.7, 0.72, 0.35, 0.5, 0.6, 0, 1.4); }
