@@ -1745,7 +1745,7 @@ class Kart {
     if (this.shrink > 0) this.shrink -= dt; if (this.inkT > 0) this.inkT -= dt; if (this.flashT > 0) this.flashT -= dt; if (this.warnT > 0) this.warnT -= dt;
     // item roulette
     if (this.roulette > 0) {
-      if (this.isPlayer && inp.item && !this.itemHeld && this.roulette > 0.3) this.roulette = 0.3;
+      if (inp.item && !this.itemHeld && this.roulette > 0.3) this.roulette = 0.3; // anyone can tap to stop the roulette early
       this.roulette -= dt;
       if (this.isPlayer) { this.rollT -= dt; if (this.rollT <= 0) { this.rollT = 0.07; Snd.sfx('roll'); } }
       if (this.roulette <= 0 && this.isPlayer) Snd.sfx('got');
@@ -2064,15 +2064,22 @@ function aiThink(k, dt) {
 function aiItems(k, dt) {
   const inp = k.input, ai = k.ai, N = T.N, dir = ai.dir || 1;
   const j2 = (k.q.i + dir * 22 + N) % N; const turn = wrapA(T.yaw[j2] - T.yaw[k.q.i]);
-  inp.item = false;
+  inp.item = false; inp.back = false;
+  const ahead = (r) => game.karts.some(o => o !== k && !o.out && o.progress > k.progress && o.progress - k.progress < r);
+  // throw backwards at someone right behind, the same move players make with brake or stick-back
+  const behind = (r) => game.karts.some(o => o !== k && !o.out && foe(o, k) && o.progress < k.progress && k.progress - o.progress < r);
+  const throwBack = game.mode !== 'battle' && !ahead(30) && behind(14);
+  // tap to stop the roulette, like a person would, about half a second after it starts
+  if (k.roulette > 0.3 && !k.itemHeld && Math.random() < dt * 2) inp.item = true;
   if (k.item && k.roulette <= 0) {
     ai.itemT -= dt;
     if (ai.itemT <= 0) {
       let ok = true;
       if ((k.item === 'boost' || k.item === 'triple') && Math.abs(turn) > 0.3) ok = false;
-      const ahead = (r) => game.karts.some(o => o !== k && !o.out && o.progress > k.progress && o.progress - k.progress < r);
+      const backOK = k.item === 'green' || k.item === 'boomer' || k.item === 'bomb' || k.item === 'fire';
       if (k.item === 'green' || k.item === 'boomer') { ok = ahead(30) || ai.itemT < -5; }
       if (k.item === 'bomb') ok = ahead(25) || ai.itemT < -4;
+      if (backOK && throwBack) { ok = true; inp.back = true; }
       if (k.item === 'fire') ok = k.fireT <= 0 || ahead(40) || ai.itemT < -1.5;
       if (k.item === 'plant') ok = k.plantT <= 0 || Math.abs(turn) < 0.25;
       if (k.item === 'horn') ok = game.projectiles.some(p => p.owner !== k && Math.hypot(p.x - k.pos.x, p.z - k.pos.z) < (p.kind === 'missile' ? (p.target === k ? 17 : 0) : 14)) || game.karts.filter(o => o !== k && !o.out && Math.hypot(o.pos.x - k.pos.x, o.pos.z - k.pos.z) < 12).length >= 2 || ai.itemT < -12;
@@ -2084,7 +2091,7 @@ function aiItems(k, dt) {
       if (ok) { inp.item = true; ai.itemT = { fire: 0.35, plant: 0.8, eight: 0.6, boomer: 1.5 }[k.item] || 0.6 + Math.random() * 3; if (TRAILABLE[k.item]) ai.holdT = k.item === 'banana' ? 2 + Math.random() * 6 : Math.random() < 0.4 ? 1 + Math.random() * 4 : 0; }
     }
   }
-  if (k.trail) { ai.holdT = (ai.holdT || 0) - dt; if (ai.holdT > 0) inp.item = true; }
+  if (k.trail) { ai.holdT = (ai.holdT || 0) - dt; if (ai.holdT > 0) inp.item = true; else if (k.item !== 'banana') inp.back = throwBack; }
 }
 
 /* ---------------- items & projectiles ---------------- */
@@ -3394,7 +3401,8 @@ function kartStats(ch, parts) {
   for (const kind in PARTS) { const pt = PARTS[kind].find(x => x.id === parts[kind]); if (pt) { o.speed += pt.d[0]; o.accel += pt.d[1]; o.handle += pt.d[2]; o.weight += pt.d[3]; } }
   return o;
 }
-const randomParts = () => { const o = {}; for (const kind in PARTS) o[kind] = PARTS[kind][(Math.random() * PARTS[kind].length) | 0].id; return o; };
+// computer drivers only pick from parts the human players have unlocked too
+const randomParts = () => { const o = {}; for (const kind in PARTS) { const pool = PARTS[kind].filter(pt => save.coins >= pt.need); o[kind] = pool[(Math.random() * pool.length) | 0].id; } return o; };
 const save = { coins: 0, parts: [{ ...STD_PARTS }, { ...STD_PARTS }] };
 game.rules = { ...DEF_RULES }; game.battleType = 'balloon';
 try {
