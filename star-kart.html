@@ -47,6 +47,7 @@ html,body{height:100%;margin:0;background:#0b0a24;color:var(--paper);overflow:hi
 .itemBox.held{box-shadow:0 0 0 4px var(--ink),0 6px 0 4px var(--ink),0 0 26px 8px rgba(255,210,63,.75),inset 0 0 18px rgba(255,210,63,.6)}
 .itemIcon{font-size:52px;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
 .itemCount{position:absolute;right:-8px;bottom:-8px;background:var(--flame);color:#fff;font-family:var(--display);font-size:20px;border:3px solid var(--ink);border-radius:999px;min-width:30px;height:30px;display:grid;place-items:center}
+.item2{position:absolute;left:84px;top:-6px;width:46px;height:46px;border-radius:50%;background:rgba(14,16,58,.75);border:3px solid #fff;box-shadow:0 0 0 3px var(--ink);display:grid;place-items:center;font-size:26px;line-height:1}
 .itemName{position:absolute;top:102px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:15px;color:#fff;-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:0 2px 0 var(--ink)}
 .timeBox{position:absolute;right:18px;top:calc(env(safe-area-inset-top,0px) + 12px);text-align:right;font-family:var(--display);transform:scale(var(--s));transform-origin:top right}
 .timeNum{font-size:clamp(24px,3.2vw,32px);font-variant-numeric:tabular-nums;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:0 4px 0 var(--ink);font-style:italic}
@@ -212,7 +213,7 @@ body.touch .itemName{display:none}
   <div class="ink"></div>
   <div class="flash"></div>
   <div class="pTag" hidden>1P</div>
-  <div class="itemBox"><div class="itemIcon"></div><div class="itemCount" hidden>3</div><div class="itemName"></div></div>
+  <div class="itemBox"><div class="itemIcon"></div><div class="itemCount" hidden>3</div><div class="item2" hidden></div><div class="itemName"></div></div>
   <div class="timeBox"><div class="timeNum">0:00.000</div><div class="lapTimes"></div><div class="bestLap"></div></div>
   <div class="coinLap"><div class="coinRow"><span class="coinIco"></span><span class="coinNum">×0</span></div><div class="lapRow"><span class="lapNum">1/3</span><span class="lbl">LAP</span></div></div>
   <div class="posBox"><span class="posNum">8</span><span class="posSuf">th</span></div>
@@ -329,8 +330,12 @@ body.touch .itemName{display:none}
       <div>🔴 追踪红弹：自动追前面的车</div><div>🚀 加速火箭 / 三连火箭：瞬间加速</div>
       <div>⭐ 无敌星：无敌又加速，撞飞别人</div><div>🪙 金币：直接加 2 枚金币</div>
       <div>🦑 墨鱼喷墨：糊住前面车手的屏幕</div><div>⚡ 缩小闪电：除你以外全体变小减速</div>
-      <div>🎯 追冠导弹：从天而降打第一名</div>
+      <div>🎯 追冠导弹：从天而降打第一名</div><div>📯 超级喇叭：震飞身边的车和道具，能炸掉追冠导弹</div>
+      <div>🚅 子弹冲锋：变成炮弹自动驾驶猛冲，撞飞路上的车（越靠后冲得越久）</div><div>🪃 回旋镖：扔出去会飞回来，来回都能打人，可扔 3 次</div>
+      <div>🔥 火焰花：几秒内连按发射弹跳火球</div><div>🌱 食人花：车头的花自动咬前面的车和道具，咬到会加速；按道具键向前冲</div>
+      <div>🎱 幸运 8：一次拿到 8 个道具，按一下用一个</div>
     </div>
+    <p>道具箱可以存两个道具：右上小圈是第二个，第一个用完自动补上。</p>
     <h3>模式</h3>
     <table>
       <tr><td>单场比赛</td><td>选一条赛道，和 7 名电脑对手跑 3 圈</td></tr>
@@ -436,16 +441,19 @@ const ITEMS = {
   boost: { icon: '🚀', name: '加速火箭' }, triple: { icon: '🚀', name: '三连火箭' }, banana: { icon: '🍌', name: '香蕉皮' },
   green: { icon: '🟢', name: '绿色弹壳' }, red: { icon: '🔴', name: '追踪红弹' }, star: { icon: '⭐', name: '无敌星' },
   coin: { icon: '🪙', name: '金币' }, ink: { icon: '🦑', name: '墨鱼喷墨' }, bolt: { icon: '⚡', name: '缩小闪电' }, missile: { icon: '🎯', name: '追冠导弹' },
+  bullet: { icon: '🚅', name: '子弹冲锋' }, boomer: { icon: '🪃', name: '回旋镖' }, horn: { icon: '📯', name: '超级喇叭' },
+  fire: { icon: '🔥', name: '火焰花' }, plant: { icon: '🌱', name: '食人花' }, eight: { icon: '🎱', name: '幸运 8' },
 };
+const ITEM_CNT = { triple: 3, boomer: 3, eight: 8 };
 const TRAILABLE = { banana: 1, green: 1, red: 1 };
 const ITEM_KEYS = Object.keys(ITEMS);
 function rollItem(rank, n) {
-  if (game.mode === 'battle' && !game.demo) { const b = { green: 24, red: 18, banana: 20, triple: 8, star: 8, bolt: 3, ink: 7, boost: 12 }; let t = 0; for (const k in b) t += b[k]; let r = Math.random() * t; for (const k in b) { r -= b[k]; if (r <= 0) return k; } return 'green'; }
+  if (game.mode === 'battle' && !game.demo) { const b = { green: 20, red: 15, banana: 16, triple: 7, star: 7, bolt: 3, ink: 5, boost: 9, boomer: 8, fire: 8, plant: 6, horn: 6 }; let t = 0; for (const k in b) t += b[k]; let r = Math.random() * t; for (const k in b) { r -= b[k]; if (r <= 0) return k; } return 'green'; }
   const f = n > 1 ? rank / (n - 1) : 0;
-  const w = f < 0.15 ? { banana: 38, green: 30, coin: 22, boost: 8, red: 2 }
-    : f < 0.45 ? { banana: 20, green: 24, red: 22, boost: 14, coin: 10, ink: 6, triple: 4 }
-    : f < 0.75 ? { red: 26, boost: 18, triple: 14, green: 8, star: 12, ink: 8, missile: 8, banana: 4, bolt: 2 }
-    : { triple: 26, star: 22, red: 18, boost: 14, bolt: 8, missile: 12 };
+  const w = f < 0.15 ? { banana: 32, green: 26, coin: 18, boost: 7, red: 2, horn: 6, boomer: 5, fire: 4 }
+    : f < 0.45 ? { banana: 16, green: 18, red: 20, boost: 12, coin: 8, ink: 6, triple: 4, boomer: 6, fire: 6, plant: 6, horn: 3 }
+    : f < 0.75 ? { red: 20, boost: 14, triple: 12, green: 6, star: 10, ink: 6, missile: 7, banana: 3, bolt: 2, bullet: 6, plant: 6, eight: 3, horn: 3, fire: 3 }
+    : { triple: 20, star: 17, red: 12, boost: 10, bolt: 7, missile: 10, bullet: 15, eight: 6, plant: 3 };
   let tot = 0; for (const k in w) tot += w[k];
   let r = Math.random() * tot;
   for (const k in w) { r -= w[k]; if (r <= 0) return k; }
@@ -1439,6 +1447,9 @@ const Snd = {
       case 'ink': this.noise(0.4, 700, 120, 0.25); this.tone(180, 0.3, 'triangle', 0.1, -80); break;
       case 'missile': this.tone(300, 0.6, 'sawtooth', 0.06, 900); break;
       case 'boom': this.noise(1.1, 2500, 60, 0.45); this.tone(90, 0.8, 'sine', 0.25, -60); break;
+      case 'horn': this.tone(392, 0.5, 'sawtooth', 0.12); this.tone(494, 0.5, 'sawtooth', 0.1); this.tone(587, 0.5, 'square', 0.07); this.noise(0.6, 3000, 200, 0.2); break;
+      case 'chomp': this.noise(0.08, 2500, 400, 0.3); this.tone(160, 0.1, 'square', 0.1, -60); break;
+      case 'fire': this.noise(0.25, 3000, 500, 0.15); this.tone(520, 0.12, 'triangle', 0.06, -200); break;
       case 'count': this.tone(440, 0.25, 'square', 0.14); break;
       case 'go': this.tone(880, 0.6, 'square', 0.14); this.tone(1320, 0.6, 'triangle', 0.08); break;
       case 'item': this.tone(900, 0.08, 'square', 0.08); this.tone(1350, 0.12, 'square', 0.08, 0, 0.06); break;
@@ -1497,6 +1508,7 @@ class Kart {
     this.q = { i: 0, t: 0, lat: 0 }; this.prevI = 0; this.lap = 0; this.half = true; this.lapStart = 0; this.lapTimes = [];
     this.drift = 0; this.charge = 0; this.driftHeld = false; this.hopPending = false; this.itemHeld = false;
     this.boost = 0; this.spin = 0; this.star = 0; this.item = null; this.itemCount = 0; this.roulette = 0; this.rollT = 0;
+    this.item2 = null; this.itemCount2 = 0; this.roulette2 = 0; this.bullet = 0; this.fireT = 0; this.fireSide = 1; this.plantT = 0; this.plantCd = 0; this.bite = 0; this.eightQ = null;
     this.finished = false; this.finishTime = 0; this.finishRank = 0; this.progress = 0; this.rank = 0;
     this.normal = new V3(0, 1, 0); this.visYaw = 0; this.wheelRot = 0; this.steerVis = 0; this.offroad = false; this.bumpCd = 0; this.aiMul = 1;
     this.wrongT = 0; this.air = 0; this.spinAng = 0; this.hitCd = 0;
@@ -1520,9 +1532,10 @@ class Kart {
     if (this.shrink > 0) m *= 0.74;
     return m * (1 + this.coins * 0.009);
   }
+  get inv() { return this.star > 0 || this.bullet > 0; }
   startBoost(t) { this.boost = Math.max(this.boost, t); if (this.isPlayer) Snd.sfx(t > 0.9 ? 'boost' : 'mini'); }
   hit() {
-    if (this.star > 0 || this.hitCd > 0) return false;
+    if (this.inv || this.hitCd > 0) return false;
     this.spin = 1.25; this.speed *= 0.25; this.drift = 0; this.charge = 0; this.boost = 0; this.hitCd = 1.6;
     this.wobble = 0; this.draft = 0;
     if (this.trail) dropTrail(this);
@@ -1552,17 +1565,25 @@ class Kart {
       if (this.isPlayer) { this.rollT -= dt; if (this.rollT <= 0) { this.rollT = 0.07; Snd.sfx('roll'); } }
       if (this.roulette <= 0 && this.isPlayer) Snd.sfx('got');
     }
+    if (this.roulette2 > 0) { this.roulette2 -= dt; if (this.roulette2 <= 0 && this.isPlayer) Snd.sfx('got'); }
+    // double item slot: the second item moves up once the first one is used up
+    if (!this.item && this.roulette <= 0 && this.item2 && !this.trail) { this.item = this.item2; this.itemCount = this.itemCount2; this.roulette = Math.max(0, this.roulette2); this.item2 = null; this.itemCount2 = 0; this.roulette2 = 0; }
+    if (this.fireT > 0) { this.fireT -= dt; if (this.fireT <= 0 && this.item === 'fire') this.item = null; }
+    if (this.plantT > 0) updatePlant(this, dt);
+    if (this.bullet > 0) { inp.drift = false; this.bullet -= dt; if (this.bullet <= 0) endBullet(this); }
     // items: tap to use; bananas and shells are held behind while the button is down and let go on release
-    if (canCtl && this.item && this.roulette <= 0) {
-      if (inp.item && !this.itemHeld && !this.trail) { if (TRAILABLE[this.item]) startTrail(this); else useItem(this); }
+    if (canCtl && this.item && this.roulette <= 0 && this.bullet <= 0) {
+      if (inp.item && !this.itemHeld && !this.trail) { if (TRAILABLE[this.item]) startTrail(this); else useItem(this, !!(inp.back !== undefined ? inp.back : inp.brake && this.isPlayer)); }
       else if (!inp.item && this.trail) { this.trail = null; removeTrailMesh(this); useItem(this, inp.back !== undefined ? inp.back : inp.brake); }
     }
     this.itemHeld = inp.item;
 
-    const steer = canCtl ? inp.steer : 0;
+    let steer = canCtl ? inp.steer : 0;
+    if (this.bullet > 0) { steer = 0; this.yaw += clamp(autoAim(this, 0), -5 * dt, 5 * dt); this.drift = 0; }
     const maxS = this.maxSpeed;
     // longitudinal
     if (this.spin > 0) { this.spin -= dt; this.speed *= Math.pow(0.2, dt); this.spinAng += dt * 13; }
+    else if (this.bullet > 0) { const bm = BASE_MAX * 1.5 * game.cc.speed; this.speed = Math.min(bm, this.speed + 120 * dt); }
     else if (this.boost > 0 && canCtl) { const bm = BASE_MAX * 1.42 * game.cc.speed * this.aiMul; this.speed = Math.min(bm, this.speed + 110 * dt); }
     else if (canCtl && inp.accel && this.grounded) {
       if (this.speed < maxS) this.speed = Math.min(maxS, this.speed + 34 * st.accel * st.accel * st.accel * (this.speed < maxS * 0.55 ? 1.25 : 0.62) * dt);
@@ -1573,7 +1594,7 @@ class Kart {
       const dec = 16 * dt; this.speed = Math.abs(this.speed) < dec ? 0 : this.speed - Math.sign(this.speed) * dec;
       if (this.speed > maxS) this.speed = Math.max(maxS, this.speed - 40 * dt);
     }
-    if (this.speed > maxS && this.boost <= 0) this.speed = Math.max(maxS, this.speed - 30 * dt);
+    if (this.speed > maxS && this.boost <= 0 && this.bullet <= 0) this.speed = Math.max(maxS, this.speed - 30 * dt);
 
     // hop & drift
     if (canCtl && inp.drift && !this.driftHeld && this.grounded && Math.abs(this.speed) > 8) {
@@ -1813,12 +1834,17 @@ function aiThink(k, dt) {
     if (ai.itemT <= 0) {
       let ok = true;
       if ((k.item === 'boost' || k.item === 'triple') && Math.abs(turn) > 0.3) ok = false;
-      if (k.item === 'green') { ok = game.karts.some(o => o !== k && o.progress > k.progress && o.progress - k.progress < 30) || ai.itemT < -5; }
-      if (game.mode === 'battle' && (k.item === 'green' || k.item === 'red')) {
+      const ahead = (r) => game.karts.some(o => o !== k && !o.out && o.progress > k.progress && o.progress - k.progress < r);
+      if (k.item === 'green' || k.item === 'boomer') { ok = ahead(30) || ai.itemT < -5; }
+      if (k.item === 'fire') ok = k.fireT <= 0 || ahead(40) || ai.itemT < -1.5;
+      if (k.item === 'plant') ok = k.plantT <= 0 || Math.abs(turn) < 0.25;
+      if (k.item === 'horn') ok = game.projectiles.some(p => p.owner !== k && Math.hypot(p.x - k.pos.x, p.z - k.pos.z) < (p.kind === 'missile' ? (p.target === k ? 17 : 0) : 14)) || game.karts.filter(o => o !== k && !o.out && Math.hypot(o.pos.x - k.pos.x, o.pos.z - k.pos.z) < 12).length >= 2 || ai.itemT < -12;
+      if (game.mode === 'battle' && (k.item === 'green' || k.item === 'red' || k.item === 'boomer' || (k.item === 'fire' && k.fireT > 0))) {
         const fx = Math.sin(k.yaw), fz = Math.cos(k.yaw);
-        ok = game.karts.some(o => { if (o === k || o.out) return false; const dx = o.pos.x - k.pos.x, dz = o.pos.z - k.pos.z, d = Math.hypot(dx, dz); return d < (k.item === 'red' ? 120 : 45) && (dx * fx + dz * fz) / d > 0.85; }) || ai.itemT < -8;
+        ok = game.karts.some(o => { if (o === k || o.out) return false; const dx = o.pos.x - k.pos.x, dz = o.pos.z - k.pos.z, d = Math.hypot(dx, dz); return d < (k.item === 'red' ? 120 : k.item === 'fire' ? 35 : 45) && (dx * fx + dz * fz) / d > 0.85; }) || ai.itemT < -8;
       }
-      if (ok) { inp.item = true; ai.itemT = 0.6 + Math.random() * 3; if (TRAILABLE[k.item]) ai.holdT = k.item === 'banana' ? 2 + Math.random() * 6 : Math.random() < 0.4 ? 1 + Math.random() * 4 : 0; }
+      if (ok && k.itemHeld) ok = false; // let go first so the next press counts
+      if (ok) { inp.item = true; ai.itemT = { fire: 0.35, plant: 0.8, eight: 0.6, boomer: 1.5 }[k.item] || 0.6 + Math.random() * 3; if (TRAILABLE[k.item]) ai.holdT = k.item === 'banana' ? 2 + Math.random() * 6 : Math.random() < 0.4 ? 1 + Math.random() * 4 : 0; }
     }
   }
   if (k.trail) { ai.holdT = (ai.holdT || 0) - dt; if (ai.holdT > 0) inp.item = true; }
@@ -1874,14 +1900,130 @@ function makeMissile() {
   ]);
   const m = new THREE.Mesh(missileGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.3, metalness: 0.3 })); m.castShadow = true; return m;
 }
+// steering angle toward a lane a little way up the track (used by the bullet autopilot)
+function autoAim(k, lane) {
+  const N = T.N, dir = k.ai.dir || 1, la = Math.round(7 + Math.max(0, k.speed) * 0.16);
+  const j = (k.q.i + dir * la + N) % N, l = clamp(lane, -HW + 2, HW - 2);
+  return wrapA(Math.atan2(T.px[j] + T.rx[j] * l - k.pos.x, T.pz[j] + T.rz[j] * l - k.pos.z) - k.yaw);
+}
+function bulletMesh(k) {
+  if (k.bulletM) return k.bulletM;
+  const g = merge([
+    { geo: G.sph(1.35, 20, 14), m: M(0, 1.05, 0.6, 0, 0, 0, 1, 0.95, 1.75), c: '#2a2a33' },
+    { geo: G.cyl(1.25, 1.35, 0.5, 20), m: M(0, 1.05, -1.6, Math.PI / 2), c: '#c9ced8' },
+    { geo: G.box(0.16, 1.0, 0.9), m: M(0, 2.25, -1.3), c: '#2a2a33' },
+    { geo: G.box(2.5, 0.16, 0.9), m: M(0, 1.05, -1.3), c: '#2a2a33' },
+    { geo: G.sph(0.32, 12, 10), m: M(0.48, 1.5, 2.75, 0, 0, 0, 1, 1.3, 0.5), c: '#ffffff' },
+    { geo: G.sph(0.32, 12, 10), m: M(-0.48, 1.5, 2.75, 0, 0, 0, 1, 1.3, 0.5), c: '#ffffff' },
+    { geo: G.sph(0.15, 10, 8), m: M(0.48, 1.45, 2.92), c: '#111111' },
+    { geo: G.sph(0.15, 10, 8), m: M(-0.48, 1.45, 2.92), c: '#111111' },
+  ]);
+  k.bulletM = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.4 })); k.bulletM.castShadow = true;
+  k.m.tilt.add(k.bulletM); return k.bulletM;
+}
+function endBullet(k) { k.bullet = 0; if (k.bulletM) k.bulletM.visible = false; k.startBoost(0.8); for (let n = 0; n < 20; n++) SMOKE.emit(k.pos.x, k.pos.y + 1.5, k.pos.z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.85, 0.85, 0.9, 0.8, 1.2, 0.8, 0, 3); }
+function plantMesh(k) {
+  if (k.plantM) return k.plantM;
+  const g = new THREE.Group();
+  const pot = merge([
+    { geo: G.cyl(0.42, 0.32, 0.45, 12), m: M(0, 0.95, 1.55), c: '#3a9a3a' },
+    { geo: G.cyl(0.1, 0.12, 0.9, 6), m: M(0, 1.5, 1.6), c: '#2f8f3a' },
+    { geo: G.sph(0.32, 8, 6), m: M(0.35, 1.3, 1.6, 0, 0, 0, 1.4, 0.4, 0.8), c: '#46c25a' },
+    { geo: G.sph(0.32, 8, 6), m: M(-0.35, 1.3, 1.6, 0, 0, 0, 1.4, 0.4, 0.8), c: '#46c25a' },
+  ]);
+  g.add(new THREE.Mesh(pot, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6 })));
+  const head = new THREE.Group(); head.position.set(0, 2.05, 1.7); g.add(head);
+  const hm = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4 });
+  const jaw = (up) => merge([
+    { geo: G.sph(0.62, 14, 10, 0, TAU, up ? 0 : Math.PI / 2, Math.PI / 2), m: M(0, 0, 0), c: '#e8322f' },
+    ...[0, 1, 2].map(n => ({ geo: G.sph(0.13, 6, 5), m: M(Math.cos(n * 2 + 0.5) * 0.4, up ? 0.38 : -0.38, Math.sin(n * 2 + 0.5) * 0.4 - 0.1), c: '#ffffff' })),
+    ...[-0.3, 0, 0.3].map(x => ({ geo: G.cone(0.08, 0.2, 5), m: M(x, up ? -0.06 : 0.06, 0.5, up ? Math.PI : 0), c: '#ffffff' })),
+  ]);
+  const top = new THREE.Mesh(jaw(true), hm), bot = new THREE.Mesh(jaw(false), hm);
+  head.add(top); head.add(bot); g.userData = { head, top, bot };
+  k.m.tilt.add(g); k.plantM = g; return g;
+}
+function updatePlant(k, dt) {
+  k.plantT -= dt; k.plantCd -= dt; if (k.bite > 0) k.bite -= dt;
+  const g = plantMesh(k); g.visible = k.plantT > 0;
+  const o = Math.max(0, Math.sin(Math.max(0, k.bite) / 0.35 * Math.PI)) * 0.9 + 0.15 + Math.sin(game.t * 6) * 0.05;
+  g.userData.top.rotation.x = -o; g.userData.bot.rotation.x = o * 0.6; g.userData.head.position.z = 1.7 + (k.bite > 0 ? Math.sin(k.bite / 0.35 * Math.PI) * 1.4 : 0);
+  if (k.plantT <= 0) { if (k.item === 'plant') k.item = null; g.visible = false; return; }
+  if (k.plantCd > 0 || k.spin > 0) return;
+  const fx = Math.sin(k.yaw), fz = Math.cos(k.yaw), ax = k.pos.x + fx * 4, az = k.pos.z + fz * 4;
+  const near = (x, z, r) => Math.hypot(x - ax, z - az) < r;
+  let done = false;
+  for (const o of game.karts) if (o !== k && !o.out && !o.inv && near(o.pos.x, o.pos.z, 5.5) && Math.abs(o.pos.y - k.pos.y) < 2.5) { o.hit(); done = true; break; }
+  if (!done) for (let b = game.bananas.length - 1; b >= 0; b--) if (near(game.bananas[b].x, game.bananas[b].z, 5)) { removeBanana(b); done = true; break; }
+  if (!done) for (const p of game.projectiles) if (p.owner !== k && p.kind !== 'missile' && near(p.x, p.z, 5.5)) { p.life = 0; p.eaten = true; done = true; break; }
+  if (done) { k.bite = 0.35; k.plantCd = 1.0; k.startBoost(0.35); if (k.isPlayer) Snd.sfx('chomp'); }
+}
+let fireGeo = null;
+function makeFireball() {
+  if (!fireGeo) fireGeo = G.sph(0.85, 12, 10);
+  const m = new THREE.Mesh(fireGeo, new THREE.MeshStandardMaterial({ color: 0xff7a1a, emissive: 0xff5a00, emissiveIntensity: 1.3, roughness: 0.4 })); return m;
+}
+let boomerGeo = null;
+function makeBoomer() {
+  if (!boomerGeo) boomerGeo = merge([
+    { geo: G.box(0.5, 0.2, 2.0), m: M(0.55, 0, 0.55, 0, 0.8), c: '#ffb12a' },
+    { geo: G.box(0.5, 0.2, 2.0), m: M(-0.55, 0, 0.55, 0, -0.8), c: '#ff7a1a' },
+    { geo: G.box(0.52, 0.22, 0.25), m: M(0.95, 0, 0.95, 0, 0.8), c: '#ffffff' },
+    { geo: G.box(0.52, 0.22, 0.25), m: M(-0.95, 0, 0.95, 0, -0.8), c: '#ffffff' },
+  ]);
+  const m = new THREE.Mesh(boomerGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4 })); m.castShadow = true; return m;
+}
+function horn(k) {
+  Snd.sfx('horn');
+  for (let n = 0; n < 48; n++) { const a = n / 48 * TAU; FX.emit(k.pos.x, k.pos.y + 1.2, k.pos.z, Math.cos(a) * 34, 1 + Math.random() * 2, Math.sin(a) * 34, 0.6, 0.85, 1, 1, 0.5, 0.9, 0); }
+  for (let n = 0; n < 24; n++) { const a = n / 24 * TAU; FX.emit(k.pos.x, k.pos.y + 2.4, k.pos.z, Math.cos(a) * 22, 3, Math.sin(a) * 22, 1, 1, 1, 1, 0.45, 0.7, 0); }
+  for (const o of game.karts) if (o !== k && !o.out && Math.hypot(o.pos.x - k.pos.x, o.pos.z - k.pos.z) < 15 && Math.abs(o.pos.y - k.pos.y) < 4) o.hit();
+  for (const p of game.projectiles) if (p.owner !== k && Math.hypot(p.x - k.pos.x, p.z - k.pos.z) < (p.kind === 'missile' ? 20 : 16)) { p.life = 0; p.eaten = true; if (p.kind === 'missile') { p.dive = 0; for (let n = 0; n < 30; n++) FX.emit(p.x, p.y, p.z, (Math.random() - 0.5) * 20, Math.random() * 10, (Math.random() - 0.5) * 20, 0.6, 0.4, 1, 1, 0.8, 0.6, 10); } }
+  for (let b = game.bananas.length - 1; b >= 0; b--) if (Math.hypot(game.bananas[b].x - k.pos.x, game.bananas[b].z - k.pos.z) < 15) removeBanana(b);
+  for (const h of game.humansK) if (h !== k && Math.hypot(h.pos.x - k.pos.x, h.pos.z - k.pos.z) < 40) h.shake = Math.max(h.shake, 0.2);
+}
+const EIGHT = ['star', 'coin', 'ink', 'boost', 'red', 'green', 'banana', 'boost'];
 function useItem(k, backward) {
   const it = k.item; if (!it) return;
   const fx = Math.sin(k.yaw), fz = Math.cos(k.yaw);
   const byRank = () => game.karts.slice().sort((a, b) => (a.finished ? a.finishRank - 100 : a.rank) - (b.finished ? b.finishRank - 100 : b.rank));
+  if (it === 'eight') {
+    if (!k.eightQ || !k.eightQ.length) { k.eightQ = EIGHT.slice().sort(() => Math.random() - 0.5); }
+    k.item = k.eightQ.shift(); k.itemCount = 1; useItem(k, backward);
+    if (k.eightQ.length) { k.item = 'eight'; k.itemCount = k.eightQ.length; } else { k.eightQ = null; if (k.item === null) k.itemCount = 0; }
+    return;
+  }
+  if (it === 'bullet') {
+    k.item = null; k.bullet = 5 + (k.rank / Math.max(1, game.karts.length - 1)) * 3; k.star = 0; k.drift = 0; k.charge = 0; bulletMesh(k).visible = true;
+    if (k.trail) { removeTrailMesh(k); k.trail = null; }
+    Snd.sfx('missile'); if (k.isPlayer) Snd.sfx('boost'); return;
+  }
+  if (it === 'horn') { k.item = null; horn(k); return; }
+  if (it === 'plant') {
+    if (k.plantT <= 0) { k.plantT = 7; k.plantCd = 0.3; plantMesh(k).visible = true; if (k.isPlayer) Snd.sfx('chomp'); }
+    else if (k.bite <= 0) { k.bite = 0.35; k.startBoost(0.45); if (k.isPlayer) Snd.sfx('chomp'); }
+    return;
+  }
+  if (it === 'fire') {
+    if (k.fireT <= 0) k.fireT = 6;
+    k.fireSide = -k.fireSide; const a = (backward ? k.yaw + Math.PI : k.yaw) + k.fireSide * 0.08;
+    const m = makeFireball(); scene.add(m);
+    game.projectiles.push({ kind: 'fire', m, x: k.pos.x + Math.sin(a) * 3, z: k.pos.z + Math.cos(a) * 3, y: k.pos.y + 1, dir: a, speed: Math.max(k.speed + 30, 80), owner: k, life: 2.6, bounces: 0, q: { i: k.q.i, t: 0, lat: 0 }, target: null, age: 0 });
+    if (k.isPlayer) Snd.sfx('fire');
+    return;
+  }
+  if (it === 'boomer') {
+    if (game.projectiles.some(p => p.kind === 'boomer' && p.owner === k)) return; // wait for it to come back
+    k.itemCount--; if (k.itemCount <= 0) k.item = null;
+    const m = makeBoomer(); scene.add(m); const a = backward ? k.yaw + Math.PI : k.yaw;
+    game.projectiles.push({ kind: 'boomer', m, x: k.pos.x + Math.sin(a) * 3, z: k.pos.z + Math.cos(a) * 3, y: k.pos.y + 1.4, dir: a, speed: 95, owner: k, life: 4.5, bounces: 0, q: { i: k.q.i, t: 0, lat: 0 }, target: null, age: 0, hitSet: [], side: Math.random() < 0.5 ? -1 : 1 });
+    if (k.isPlayer) Snd.sfx('shoot');
+    return;
+  }
   if (it === 'coin') { k.item = null; k.coins = Math.min(10, k.coins + 2); k.speed += 4; if (k.isPlayer) { Snd.sfx('coin'); Snd.sfx('coin', 0.09); } return; }
   if (it === 'ink') {
     k.item = null; if (k.isPlayer) Snd.sfx('ink');
-    for (const o of game.karts) if (o !== k && !o.finished && o.progress > k.progress && o.star <= 0) {
+    for (const o of game.karts) if (o !== k && !o.finished && o.progress > k.progress && !o.inv) {
       o.inkT = 4.5; for (let n = 0; n < 12; n++) SMOKE.emit(o.pos.x, o.pos.y + 2, o.pos.z, (Math.random() - 0.5) * 8, Math.random() * 5, (Math.random() - 0.5) * 8, 0.05, 0.04, 0.08, 0.9, 1, 0.8, 4, 2);
       if (o.isPlayer) Snd.sfx('ink');
     }
@@ -1892,7 +2034,7 @@ function useItem(k, backward) {
     for (const o of game.karts) {
       if (o === k || o.finished) continue;
       o.flashT = 0.5;
-      if (o.star > 0) continue;
+      if (o.inv) continue;
       o.hitCd = 0; o.hit(); o.shrink = 2.5 + (game.karts.length - 1 - o.rank) / game.karts.length * 3.5;
     }
     return;
@@ -1935,6 +2077,7 @@ function updateProjectiles(dt) {
     const p = game.projectiles[n];
     p.life -= dt; p.age += dt;
     if (p.kind === 'missile') { updateMissile(p, dt); if (p.life <= 0) { scene.remove(p.m); p.m.material.dispose(); game.projectiles.splice(n, 1); } continue; }
+    if (p.kind === 'boomer') { updateBoomer(p, dt); if (p.life <= 0) { scene.remove(p.m); p.m.material.dispose(); game.projectiles.splice(n, 1); } continue; }
     if (p.kind === 'red' && p.target && !p.target.finished) {
       const tg = p.target; const dx = tg.pos.x - p.x, dz = tg.pos.z - p.z; const d = Math.hypot(dx, dz);
       let aim;
@@ -1953,15 +2096,16 @@ function updateProjectiles(dt) {
       const dot = vx * nx + vz * nz; if (dot < 0) p.dir = Math.atan2(vx - 2 * dot * nx, vz - 2 * dot * nz);
       p.bounces++; if (p.bounces > 7) p.life = 0;
     }
-    p.y = groundAt(p.x, p.z, p.q) + 0.35;
+    p.y = groundAt(p.x, p.z, p.q) + (p.kind === 'fire' ? 0.6 + Math.abs(Math.sin(p.age * 9)) * 1.6 : 0.35);
     p.m.position.set(p.x, p.y, p.z); p.m.rotation.y += dt * 14;
-    const col = p.kind === 'red' ? [1, 0.3, 0.2] : [0.3, 1, 0.4];
+    const col = p.kind === 'red' ? [1, 0.3, 0.2] : p.kind === 'fire' ? [1, 0.55, 0.1] : [0.3, 1, 0.4];
+    if (p.kind === 'fire') FX.emit(p.x, p.y, p.z, (Math.random() - 0.5) * 2, 2, (Math.random() - 0.5) * 2, 1, 0.8, 0.2, 0.9, 0.35, 0.6, 0);
     FX.emit(p.x, p.y + 0.5, p.z, 0, 1, 0, col[0], col[1], col[2], 0.5, 0.4, 0.3, 0);
     // hits
     for (const k of game.karts) {
-      if (k === p.owner && p.age < 0.5) continue;
+      if (k === p.owner && (p.age < 0.5 || p.kind === 'fire')) continue;
       if (k.trailM && k.trailM.position.distanceToSquared(p.m.position) < 3.2 * 3.2) { dropTrail(k); p.life = 0; if (k.isPlayer) Snd.sfx('bump'); break; }
-      if (Math.hypot(k.pos.x - p.x, k.pos.z - p.z) < 2.3 * (k.shrink > 0 ? 0.7 : 1) && Math.abs(k.pos.y - p.y) < 3) { k.hit(); p.life = 0; break; }
+      if (Math.hypot(k.pos.x - p.x, k.pos.z - p.z) < 2.3 * (k.shrink > 0 ? 0.7 : 1) && Math.abs(k.pos.y - p.y) < 3.5) { k.hit(); p.life = 0; break; }
     }
     for (let b = game.bananas.length - 1; b >= 0 && p.life > 0; b--) {
       const bn = game.bananas[b]; if (Math.hypot(bn.x - p.x, bn.z - p.z) < 1.8) { removeBanana(b); p.life = 0; }
@@ -1979,8 +2123,28 @@ function updateProjectiles(dt) {
     }
   }
 }
+// boomerang: flies out, curves round and comes back to its thrower, hitting everyone on the way
+function updateBoomer(p, dt) {
+  const k = p.owner, back = p.age > 0.85;
+  if (back) { const aim = Math.atan2(k.pos.x - p.x, k.pos.z - p.z); const tr = p.age > 1.8 ? 30 : 9; p.dir += clamp(wrapA(aim - p.dir), -tr * dt, tr * dt); p.speed = Math.max(k.speed + 35, 105); }
+  else p.dir += p.side * 0.5 * dt;
+  p.x += Math.sin(p.dir) * p.speed * dt; p.z += Math.cos(p.dir) * p.speed * dt;
+  refine(p.x, p.z, p.q.i, 10, p.q);
+  const wl = wallAt(p.q.i, p.q.lat) - 1; if (Math.abs(p.q.lat) > wl) { const sg = Math.sign(p.q.lat), ex = Math.abs(p.q.lat) - wl; p.x -= T.rx[p.q.i] * ex * sg; p.z -= T.rz[p.q.i] * ex * sg; }
+  p.y = lerp(p.y, groundAt(p.x, p.z, p.q) + 1.4, 1 - Math.exp(-dt * 8));
+  p.m.position.set(p.x, p.y, p.z); p.m.rotation.y += dt * 22;
+  FX.emit(p.x, p.y, p.z, 0, 1, 0, 1, 0.7, 0.2, 0.5, 0.3, 0.3, 0);
+  for (const o of game.karts) {
+    if (o === k || o.out || p.hitSet.includes(o)) continue;
+    if (o.trailM && o.trailM.position.distanceToSquared(p.m.position) < 9) { dropTrail(o); p.hitSet.push(o); continue; }
+    if (Math.hypot(o.pos.x - p.x, o.pos.z - p.z) < 2.6 && Math.abs(o.pos.y - p.y) < 3.5) { o.hit(); p.hitSet.push(o); }
+  }
+  for (let b = game.bananas.length - 1; b >= 0; b--) if (Math.hypot(game.bananas[b].x - p.x, game.bananas[b].z - p.z) < 2) removeBanana(b);
+  if (back && Math.hypot(k.pos.x - p.x, k.pos.z - p.z) < 3.5) { p.life = 0; if (k.isPlayer) Snd.sfx('drop'); }
+}
 function updateMissile(p, dt) {
   const N = T.N, tg = p.target;
+  if (p.eaten) { p.life = 0; return; }
   if (!tg || tg.finished) { p.life = Math.min(p.life, 0.01); }
   const d = tg ? Math.hypot(tg.pos.x - p.x, tg.pos.z - p.z) : 1e9;
   if (tg && tg.isPlayer && d < 160) tg.warnT = 0.3;
@@ -2115,9 +2279,12 @@ function updateBoxes(dt) {
         b.active = false; b.m.visible = false; b.t = game.mode === 'battle' ? 1.2 : 0.5; // Mario Kart boxes come back almost at once, so the back of the pack still gets items
         for (let n = 0; n < 16; n++) { const c = new THREE.Color().setHSL(Math.random(), 1, 0.65); FX.emit(b.x, b.m.position.y, b.z, (Math.random() - 0.5) * 14, Math.random() * 10, (Math.random() - 0.5) * 14, c.r, c.g, c.b, 0.9, 0.45, 0.6, 16); }
         if (!k.item && k.roulette <= 0) {
-          k.item = rollItem(k.rank, game.karts.length); k.itemCount = k.item === 'triple' ? 3 : 1;
+          k.item = rollItem(k.rank, game.karts.length); k.itemCount = ITEM_CNT[k.item] || 1;
           k.roulette = 1.1; k.ai.itemT = 0.8 + Math.random() * 3;
           if (k.isPlayer) Snd.sfx('item');
+        } else if (!k.item2 && k.roulette2 <= 0) { // double item slot
+          k.item2 = rollItem(k.rank, game.karts.length); k.itemCount2 = ITEM_CNT[k.item2] || 1;
+          k.roulette2 = 1.1; if (k.isPlayer) Snd.sfx('item');
         }
         break;
       }
@@ -2132,7 +2299,7 @@ function kartCollisions() {
       const d = Math.sqrt(d2) || 0.01, nx = dx / d, nz = dz / d, ov = 2.5 - d;
       const wa = A.ch.stats.weight, wb = B.ch.stats.weight, sa = wb / (wa + wb), sb = wa / (wa + wb);
       A.pos.x -= nx * ov * sa; A.pos.z -= nz * ov * sa; B.pos.x += nx * ov * sb; B.pos.z += nz * ov * sb;
-      if (A.star > 0 && B.star <= 0) B.hit(); else if (B.star > 0 && A.star <= 0) A.hit();
+      if (A.inv && !B.inv) B.hit(); else if (B.inv && !A.inv) A.hit();
       else {
         // relative closing speed along the contact normal
         const vax = Math.sin(A.yaw) * A.speed + A.pvx, vaz = Math.cos(A.yaw) * A.speed + A.pvz, vbx = Math.sin(B.yaw) * B.speed + B.pvx, vbz = Math.cos(B.yaw) * B.speed + B.pvz;
@@ -2213,7 +2380,7 @@ const Skid = {
 function makeHud(el) {
   el.innerHTML = ''; el.append($('hudTpl').content.cloneNode(true));
   const q = c => el.querySelector('.' + c);
-  return { el, pKeys: q('pKeys'), tag: q('pTag'), pos: q('posNum'), suf: q('posSuf'), posBox: q('posBox'), lap: q('lapNum'), time: q('timeNum'), laps: q('lapTimes'), best: q('bestLap'), icon: q('itemIcon'), cnt: q('itemCount'), iname: q('itemName'), itemBox: q('itemBox'), coinNum: q('coinNum'), lapLbl: el.querySelector('.lapRow .lbl'), coinRow: q('coinRow'), lines: q('speedLines'), ink: q('ink'), flash: q('flash'), warn: q('warn'), dir: q('driftDir'), center: q('center'), wrong: q('wrong'), centerT: 0, last: {} };
+  return { el, pKeys: q('pKeys'), tag: q('pTag'), pos: q('posNum'), suf: q('posSuf'), posBox: q('posBox'), lap: q('lapNum'), time: q('timeNum'), laps: q('lapTimes'), best: q('bestLap'), icon: q('itemIcon'), cnt: q('itemCount'), item2: q('item2'), iname: q('itemName'), itemBox: q('itemBox'), coinNum: q('coinNum'), lapLbl: el.querySelector('.lapRow .lbl'), coinRow: q('coinRow'), lines: q('speedLines'), ink: q('ink'), flash: q('flash'), warn: q('warn'), dir: q('driftDir'), center: q('center'), wrong: q('wrong'), centerT: 0, last: {} };
 }
 const huds = [makeHud($('hud0')), makeHud($('hud1'))];
 huds[1].tag.textContent = '2P';
@@ -2249,11 +2416,19 @@ function updateHud(dt) {
     const lts = p.lapTimes.map((t, i) => 'L' + (i + 1) + ' ' + fmt(t)).join('<br>'); if (L.lts !== lts) { h.laps.innerHTML = lts; L.lts = lts; }
     let icon = '', nm = '';
     if (p.roulette > 0) icon = ITEMS[ITEM_KEYS[Math.floor(game.t * 14) % ITEM_KEYS.length]].icon;
-    else if (p.item) { icon = ITEMS[p.item].icon; nm = p.trail ? '松开发射（按住刹车往后丢）' : ITEMS[p.item].name; }
+    else if (p.item) {
+      icon = ITEMS[p.item].icon; nm = p.trail ? '松开发射（按住刹车往后丢）' : ITEMS[p.item].name;
+      if (p.item === 'fire' && p.fireT > 0) nm = '连按喷火球 ' + Math.ceil(p.fireT) + 's';
+      else if (p.item === 'plant' && p.plantT > 0) nm = '食人花 ' + Math.ceil(p.plantT) + 's';
+      else if (p.item === 'eight' && p.eightQ && p.eightQ.length) nm = '下一个 ' + ITEMS[p.eightQ[0]].icon;
+    }
+    if (p.bullet > 0) { icon = ITEMS.bullet.icon; nm = '自动冲锋中'; }
+    const i2 = p.roulette2 > 0 ? ITEMS[ITEM_KEYS[Math.floor(game.t * 14 + 5) % ITEM_KEYS.length]].icon : p.item2 ? ITEMS[p.item2].icon : '';
+    if (L.i2 !== i2) { h.item2.textContent = i2; h.item2.hidden = !i2; L.i2 = i2; }
     if (L.icon !== icon) { h.icon.textContent = icon; L.icon = icon; }
     if (L.nm !== nm) { h.iname.textContent = nm; L.nm = nm; }
     h.itemBox.classList.toggle('held', !!p.trail);
-    const showCnt = p.item === 'triple' && p.roulette <= 0; h.cnt.hidden = !showCnt; if (showCnt) h.cnt.textContent = p.itemCount;
+    const showCnt = !!ITEM_CNT[p.item] && p.roulette <= 0; h.cnt.hidden = !showCnt; if (showCnt) h.cnt.textContent = p.itemCount;
     const lv = p.driftLevel(), lvCol = lv === 3 ? '#c36bff' : lv === 2 ? '#ff9a1f' : lv === 1 ? '#38c6ff' : '#ffffff';
     const dirTxt = p.drift > 0 ? '漂移 ▶' : p.drift < 0 ? '◀ 漂移' : (p.rampAir && !p.trick ? '按漂移键做特技！' : p.trick ? '特技！' : '');
     if (L.dir !== dirTxt) { h.dir.textContent = dirTxt; h.dir.hidden = !dirTxt; L.dir = dirTxt; }
