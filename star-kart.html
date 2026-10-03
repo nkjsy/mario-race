@@ -351,7 +351,9 @@ body.touch .itemName{display:none}
       <li>辅助选项（菜单里）：「智能转向」会在快冲出赛道时帮你拉回来；「自动道具」会替你找时机用道具。适合新手和小朋友。</li>
       <li>改装：比赛里吃到的金币加上名次奖励会累计起来，攒够就能在菜单「改装」里解锁新车身、轮胎和滑翔翼。每种零件都有得有失，电脑车手也从同一批零件里随机挑。进度和选择会自动存档。</li>
       <li>比赛结束后点「🎬 最快圈回放」，可以用电影镜头回看你最快的一圈。</li>
-      <li>开出路面到草地或沙地会变慢，赛道外有护栏；开反方向屏幕上会提示「逆行！」。</li>
+      <li>开出路面到草地或沙地会变慢；有些弯道外侧没有护栏，冲出去会掉下去，云朵会把你送回赛道（耽误两秒多）。开反方向屏幕上会提示「逆行！」。</li>
+      <li>蓝色跳台是滑翔跳台：飞起来会自动展开滑翔翼，在空中能飞很远，还能转向。</li>
+      <li>反重力路段（两边亮蓝色灯带）：车轮会翻成悬浮状态，这时和别的车相撞双方都会转圈加速。</li>
     </ul>
     <h3>道具</h3>
     <div class="items">
@@ -420,17 +422,17 @@ const CHARS = [
   { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
 ];
 const COURSES = [
-  { name: '阳光草原', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7,
+  { name: '阳光草原', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7, glide: true,
     pts: [[5,100,0],[0,-100,0],[20,-230,4],[110,-320,12],[250,-340,18],[350,-270,20],[360,-150,14],[280,-70,6],[200,20,2],[210,130,6],[300,210,14],[420,240,22],[500,340,28],[440,460,30],[300,480,24],[180,420,14],[60,440,8],[-60,500,10],[-200,470,16],[-300,370,20],[-330,230,12],[-270,140,6],[-180,150,4],[-110,220,2],[-45,275,0],[0,215,0]] },
-  { name: '落日海湾', en: 'SUNSET BAY', theme: 'bay', seed: 21,
+  { name: '落日海湾', en: 'SUNSET BAY', theme: 'bay', seed: 21, drops: 1,
     pts: [[0,0,0],[0,-250,0],[60,-380,6],[200,-420,10],[340,-380,8],[400,-260,4],[330,-150,10],[180,-120,18],[120,-20,22],[200,90,16],[360,100,8],[460,200,4],[420,340,6],[270,380,14],[120,330,20],[-20,380,14],[-170,430,6],[-320,380,2],[-380,240,6],[-300,120,12],[-120,160,6],[-60,110,2]] },
-  { name: '彩虹城市', en: 'RAINBOW CITY', theme: 'city', seed: 33, tunnel: [0.02, 0.075], jumps: 2,
+  { name: '彩虹城市', en: 'RAINBOW CITY', theme: 'city', seed: 33, tunnel: [0.02, 0.075], jumps: 2, antigrav: [[0.5, 0.72]],
     pts: [[0,0,0],[0,-300,0],[30,-400,4],[150,-430,10],[330,-430,18],[430,-380,22],[450,-260,16],[380,-180,8],[260,-160,4],[200,-80,2],[240,20,6],[380,40,14],[480,120,20],[480,280,14],[380,360,6],[220,360,10],[120,420,16],[-40,440,10],[-200,420,4],[-320,340,8],[-360,200,14],[-300,90,10],[-180,120,4],[-90,160,0],[-20,100,0]] },
-  { name: '雪山小镇', en: 'SNOWY PEAK', theme: 'snow', seed: 41,
+  { name: '雪山小镇', en: 'SNOWY PEAK', theme: 'snow', seed: 41, glide: true, drops: 1,
     pts: [[0,0,0],[0,-260,0],[40,-380,6],[160,-440,14],[300,-400,24],[360,-290,30],[300,-190,34],[180,-160,30],[140,-60,24],[220,40,18],[360,60,14],[460,140,12],[470,280,16],[380,380,22],[240,400,26],[120,340,20],[40,420,14],[-100,460,10],[-240,400,6],[-330,300,10],[-300,180,14],[-190,150,8],[-80,200,4],[-15,120,0]] },
-  { name: '熔岩火山', en: 'LAVA VOLCANO', theme: 'volcano', seed: 57,
+  { name: '熔岩火山', en: 'LAVA VOLCANO', theme: 'volcano', seed: 57, glide: true, drops: 2,
     pts: [[0,0,0],[0,-240,0],[-30,-360,6],[-140,-420,12],[-280,-380,18],[-340,-260,24],[-280,-150,28],[-150,-140,26],[-90,-40,20],[-160,60,14],[-300,80,10],[-400,180,8],[-360,320,14],[-220,360,20],[-100,300,24],[20,360,22],[160,420,16],[300,360,10],[340,220,8],[260,120,12],[300,0,16],[380,-120,14],[300,-260,8],[170,-250,4],[140,-110,2],[170,30,0],[110,140,0],[20,130,0],[-5,60,0]] },
-  { name: '糖果乐园', en: 'CANDY LAND', theme: 'candy', seed: 64,
+  { name: '糖果乐园', en: 'CANDY LAND', theme: 'candy', seed: 64, antigrav: [[0.28, 0.48]], drops: 1,
     pts: [[0,0,0],[0,-220,0],[50,-330,4],[170,-360,8],[260,-290,12],[230,-180,16],[120,-150,18],[90,-60,16],[170,20,12],[300,0,8],[400,-80,6],[500,-20,10],[510,120,16],[420,220,20],[300,200,22],[220,280,18],[260,400,12],[140,470,8],[0,440,6],[-120,480,10],[-260,420,14],[-330,300,12],[-260,200,8],[-140,220,6],[-60,160,2],[-10,90,0]] },
   { name: '霓虹竞技场', en: 'NEON ARENA', theme: 'city', seed: 71, battle: true, boxRows: [0.06, 0.22, 0.39, 0.56, 0.73, 0.89],
     pts: [[248,0,3],[240,101,5],[131,143,6],[37,141,4],[-45,172,2],[-164,179,0],[-229,96,1],[-189,0,3],[-153,-64,5],[-141,-154,6],[-60,-229,4],[52,-198,2],[108,-118,0],[165,-69,1]] },
@@ -871,6 +873,9 @@ function buildTrackData(course) {
   const sm = (arr, r, passes) => { for (let p = 0; p < passes; p++) { const c = arr.slice(); for (let i = 0; i < N; i++) { let s = 0; for (let k = -r; k <= r; k++) s += c[(i + k + N) % N]; arr[i] = s / (2 * r + 1); } } };
   sm(curv, 3, 1);
   for (let i = 0; i < N; i++) bank[i] = clamp(curv[i] * 5.5, -0.14, 0.14);
+  // anti-gravity: the road twists much harder through the corners
+  const ag = new Uint8Array(N);
+  for (const [a, b] of course.antigrav || []) for (let i = Math.floor(N * a); i < Math.floor(N * b); i++) { ag[i] = 1; bank[i] = clamp(curv[i] * 16, -0.34, 0.34); }
   sm(bank, 10, 2);
   const wallL = new Float32Array(N), wallR = new Float32Array(N);
   for (let i = 0; i < N; i++) {
@@ -884,10 +889,27 @@ function buildTrackData(course) {
     tunnel = [Math.floor(N * course.tunnel[0]), Math.floor(N * course.tunnel[1])];
     for (let i = tunnel[0] - 8; i <= tunnel[1] + 8; i++) { const k = (i + N) % N; wallL[k] = Math.min(wallL[k], EDGE + 1.3); wallR[k] = Math.min(wallR[k], EDGE + 1.3); }
   }
+  // drop-offs: no rail on the outside of some bends; run wide and you fall
+  const dropL = new Float32Array(N), dropR = new Float32Array(N);
+  if (course.dropAll) { dropL.fill(1); dropR.fill(1); }
+  else if (course.drops) {
+    const cand = [];
+    for (let i = 40; i < N - 70; i += 5) { let c = 0; for (let k = 0; k < 46; k++) c += curv[(i + k) % N]; cand.push([Math.abs(c), i, Math.sign(c)]); }
+    cand.sort((a, b) => b[0] - a[0]);
+    const picked = [];
+    for (const [, i, sg] of cand) {
+      if (picked.length >= course.drops) break;
+      if (picked.some(p => Math.min(Math.abs(p - i), N - Math.abs(p - i)) < N * 0.22)) continue;
+      if (tunnel && i > tunnel[0] - 60 && i < tunnel[1] + 20) continue;
+      if (course.antigrav && course.antigrav.some(([a, b]) => i > N * a - 50 && i < N * b + 10)) continue;
+      picked.push(i); for (let k = 0; k < 46; k++) (sg > 0 ? dropR : dropL)[(i + k) % N] = 1;
+    }
+  }
+  sm(dropL, 4, 1); sm(dropR, 4, 1);
   let minX = 1e9, maxX = -1e9, minZ = 1e9, maxZ = -1e9;
   for (let i = 0; i < N; i++) { minX = Math.min(minX, px[i]); maxX = Math.max(maxX, px[i]); minZ = Math.min(minZ, pz[i]); maxZ = Math.max(maxZ, pz[i]); }
   const cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2, R = Math.max(maxX - minX, maxZ - minZ) / 2 + 60;
-  return { N, L, px, py, pz, fx, fz, rx, rz, seg, dist, yaw, curv, bank, wallL, wallR, minX, maxX, minZ, maxZ, cx, cz, R, tunnel, jumps: [] };
+  return { N, L, px, py, pz, fx, fz, rx, rz, seg, dist, yaw, curv, bank, wallL, wallR, dropL, dropR, ag, minX, maxX, minZ, maxZ, cx, cz, R, tunnel, jumps: [], glides: [] };
 }
 
 function refine(x, z, hint, range, out) {
@@ -911,7 +933,8 @@ function roadY(i, t, lat) {
   const j = (i + 1) % T.N;
   return lerp(T.py[i], T.py[j], t) + lat * lerp(T.bank[i], T.bank[j], t);
 }
-function wallAt(i, lat) { return lat > 0 ? T.wallR[i] : T.wallL[i]; }
+const dropAt = (i, lat) => lat > 0 ? T.dropR[i] : T.dropL[i];
+function wallAt(i, lat) { return dropAt(i, lat) > 0.5 ? 1e4 : lat > 0 ? T.wallR[i] : T.wallL[i]; }
 
 let theme = THEMES.meadow;
 const terr = { lake: null, seaX: 1e9, waterY: -1e9 };
@@ -944,7 +967,9 @@ function groundAt(x, z, q) {
   const ye = roadY(q.i, q.t, clamp(q.lat, -EDGE, EDGE));
   if (ad <= EDGE) return ad > HW ? ye + 0.1 : ye + rampAt(q.i, q.t, q.lat);
   const b = smooth(EDGE + 8, EDGE + 55, ad);
-  return lerp(ye - 0.1, themeHeight(x, z), b);
+  const g = lerp(ye - 0.1, themeHeight(x, z), b), dw = dropAt(q.i, q.lat);
+  if (dw <= 0) return g;
+  return lerp(g, lerp(ye - 60, themeHeight(x, z), smooth(EDGE + 70, EDGE + 150, ad)), smooth(0, 0.45, dw) * smooth(EDGE, EDGE + 2, ad));
 }
 
 function disposeWorld() {
@@ -1029,12 +1054,13 @@ function buildCourse(ci) {
       const cv = dist[s] / 5;
       curbPos.push(...P(side * HW, 0.03), ...P(side * (HW + CURB * 0.5), 0.16), ...P(side * EDGE, 0.03));
       curbUV.push(0, cv, 0.5, cv, 1, cv);
-      skPos.push(...P(side * EDGE, 0.03), ...P(side * (EDGE + 0.6), -1.4));
+      const dw = side > 0 ? T.dropR[i] : T.dropL[i];
+      skPos.push(...P(side * EDGE, 0.03), ...P(side * (EDGE + 0.6), -1.4 - 9 * dw));
       const wl = side > 0 ? T.wallR[i] : T.wallL[i];
       const gx = px[i] + rx[i] * side * wl, gz = pz[i] + rz[i] * side * wl;
       qq.i = i; qq.t = 0; qq.lat = side * wl;
       const gy = groundAt(gx, gz, qq);
-      wallPos.push(gx, gy - 1.5, gz, gx, gy + 1.35, gz);
+      wallPos.push(gx, gy - 1.5, gz, gx, dw > 0.5 ? gy - 1.5 : gy + 1.35, gz);
       wallUV.push(dist[s] / 8, 0, dist[s] / 8, 1);
     }
   }
@@ -1073,6 +1099,7 @@ function buildCourse(ci) {
     if (y < terr.waterY + 2.5) tmpC.lerp(y < terr.waterY + 0.6 ? wet : sand, theme.sea ? 0.85 : 0.75);
     const hh = y - (terr.waterY > -1e8 ? terr.waterY : 0);
     if (!theme.sea && y > 40) tmpC.lerp(rock, smooth(40, 90, y) * 0.6);
+    if (ad > EDGE && dropAt(qq.i, qq.lat) > 0) { const deep = smooth(5, 40, roadY(qq.i, qq.t, 0) - y); tmpC.lerp(theme.lava ? C('#ff5a12') : theme.sea ? wet : C('#2a2440'), deep * 0.9); }
     tcol[k * 3] = tmpC.r; tcol[k * 3 + 1] = tmpC.g; tcol[k * 3 + 2] = tmpC.b;
   }
   tg.setAttribute('color', new THREE.BufferAttribute(tcol, 3));
@@ -1202,6 +1229,7 @@ function buildCourse(ci) {
     if (T.tunnel && i > T.tunnel[0] - 40 && i < T.tunnel[1] + 20) continue;
     T.jumps.push(i);
   }
+  if (course.glide && T.jumps.length) T.glides = [T.jumps[0]];
   // ---- coins: short lines of five along the road ----
   T.coins = [];
   const nearAny = (i, list, d) => list.some(c => Math.min(Math.abs(c - i), N - Math.abs(c - i)) < d);
@@ -1223,6 +1251,19 @@ function buildCourse(ci) {
   const rampTex = TEX.boost.clone(); rampTex.needsUpdate = true; rampTex._own = true; rampTex.repeat.set(3, 1); anim.pads.push(rampTex);
   const rampMat = new THREE.MeshStandardMaterial({ map: rampTex, emissiveMap: rampTex, emissive: 0xffffff, emissiveIntensity: 0.55, roughness: 0.5 });
   const sideMat = std({ color: C('#2b2a55'), roughness: 0.6 });
+  const glideMat = new THREE.MeshStandardMaterial({ map: rampTex, emissiveMap: rampTex, emissive: 0x6fd8ff, emissiveIntensity: 0.9, color: C('#7fd0ff'), roughness: 0.4 });
+  // anti-gravity: glowing blue strips along both edges
+  if (T.ag && T.ag.some(v => v)) {
+    const ap = [], ai = [];
+    for (let i = 0; i < N; i++) {
+      if (!T.ag[i] || !T.ag[(i + 1) % N]) continue;
+      for (const side of [-1, 1]) for (const ii of [i, (i + 1) % N]) for (const l of [HW - 0.2, HW + 1.6]) { const lat = side * l; ap.push(px[ii] + rx[ii] * lat, roadY(ii, 0, lat) + 0.2, pz[ii] + rz[ii] * lat); }
+      const b0 = ap.length / 3 - 8; ai.push(b0, b0 + 1, b0 + 2, b0 + 1, b0 + 3, b0 + 2, b0 + 4, b0 + 6, b0 + 5, b0 + 5, b0 + 6, b0 + 7);
+      if (i % 10 === 0) for (const side of [-1, 1]) { const lat = side * (HW + 0.7), y = roadY(i, 0, lat); const ring = new THREE.Mesh(G.box(0.5, 2.6, 0.5), std({ color: C('#bff4ff'), emissive: C('#38c6ff'), emissiveIntensity: 1.4 })); ring.position.set(px[i] + rx[i] * lat, y + 1.3, pz[i] + rz[i] * lat); world.add(ring); }
+    }
+    const ag = new THREE.BufferGeometry(); ag.setAttribute('position', new THREE.Float32BufferAttribute(ap, 3)); ag.setIndex(ai); ag.computeVertexNormals();
+    world.add(new THREE.Mesh(ag, new THREE.MeshBasicMaterial({ color: C('#5fe0ff'), side: THREE.DoubleSide })));
+  }
   for (const j of T.jumps) {
     const pos = [], uv = [], idx = [], spos = [], sidx = [];
     for (let k = 0; k <= RAMP_LEN; k++) {
@@ -1233,7 +1274,7 @@ function buildCourse(ci) {
     }
     const e = RAMP_LEN * 4; sidx.push(e, e + 2, e + 1, e + 1, e + 2, e + 3);
     const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); rg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); rg.setIndex(idx); rg.computeVertexNormals();
-    const ramp = new THREE.Mesh(rg, rampMat); ramp.castShadow = true; ramp.receiveShadow = true; world.add(ramp);
+    const ramp = new THREE.Mesh(rg, T.glides.includes(j) ? glideMat : rampMat); ramp.castShadow = true; ramp.receiveShadow = true; world.add(ramp);
     const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.Float32BufferAttribute(spos, 3)); sg.setIndex(sidx); sg.computeVertexNormals();
     const sm2 = new THREE.Mesh(sg, sideMat); sm2.material.side = THREE.DoubleSide; world.add(sm2);
   }
@@ -1399,7 +1440,7 @@ function buildCity(R, place, qq) {
     if (T.tunnel && i > T.tunnel[0] - 4 && i < T.tunnel[1] + 4) continue;
     for (const side of [-1, 1]) {
       const wl = side > 0 ? T.wallR[i] : T.wallL[i];
-      if (wl < WALL - 2) continue;
+      if (wl < WALL - 2 || (side > 0 ? T.dropR[i] : T.dropL[i]) > 0) continue;
       const lat = side * (wl + 1.5), x = px[i] + rx[i] * lat, z = pz[i] + rz[i] * lat;
       locateGlobal(x, z, qq); const y = groundAt(x, z, qq);
       const face = T.yaw[i] + (side > 0 ? -Math.PI / 2 : Math.PI / 2) + Math.PI;
@@ -1519,6 +1560,9 @@ const Snd = {
       case 'horn': this.tone(392, 0.5, 'sawtooth', 0.12); this.tone(494, 0.5, 'sawtooth', 0.1); this.tone(587, 0.5, 'square', 0.07); this.noise(0.6, 3000, 200, 0.2); break;
       case 'chomp': this.noise(0.08, 2500, 400, 0.3); this.tone(160, 0.1, 'square', 0.1, -60); break;
       case 'fire': this.noise(0.25, 3000, 500, 0.15); this.tone(520, 0.12, 'triangle', 0.06, -200); break;
+      case 'glide': this.noise(0.8, 1200, 300, 0.12); this.tone(520, 0.25, 'triangle', 0.08, 300); break;
+      case 'fall': this.tone(700, 0.9, 'triangle', 0.1, -560); break;
+      case 'ag': this.tone(330, 0.3, 'sine', 0.1, 400); this.tone(990, 0.2, 'triangle', 0.05, 0, 0.12); break;
       case 'count': this.tone(440, 0.25, 'square', 0.14); break;
       case 'go': this.tone(880, 0.6, 'square', 0.14); this.tone(1320, 0.6, 'triangle', 0.08); break;
       case 'item': this.tone(900, 0.08, 'square', 0.08); this.tone(1350, 0.12, 'square', 0.08, 0, 0.06); break;
@@ -1578,7 +1622,7 @@ class Kart {
     this.q = { i: 0, t: 0, lat: 0 }; this.prevI = 0; this.lap = 0; this.half = true; this.lapStart = 0; this.lapTimes = [];
     this.drift = 0; this.charge = 0; this.driftHeld = false; this.hopPending = false; this.itemHeld = false;
     this.boost = 0; this.spin = 0; this.star = 0; this.item = null; this.itemCount = 0; this.roulette = 0; this.rollT = 0;
-    this.item2 = null; this.itemCount2 = 0; this.roulette2 = 0; this.bullet = 0; this.fireT = 0; this.fireSide = 1; this.plantT = 0; this.plantCd = 0; this.bite = 0; this.eightQ = null;
+    this.item2 = null; this.itemCount2 = 0; this.roulette2 = 0; this.bullet = 0; this.rescueT = 0; this.glide = false; this.inAG = false; this.agSpin = 0; this.fireT = 0; this.fireSide = 1; this.plantT = 0; this.plantCd = 0; this.bite = 0; this.eightQ = null;
     this.finished = false; this.finishTime = 0; this.finishRank = 0; this.progress = 0; this.rank = 0;
     this.normal = new V3(0, 1, 0); this.visYaw = 0; this.wheelRot = 0; this.steerVis = 0; this.offroad = false; this.bumpCd = 0; this.aiMul = 1;
     this.wrongT = 0; this.air = 0; this.spinAng = 0; this.hitCd = 0;
@@ -1606,7 +1650,7 @@ class Kart {
   get inv() { return this.star > 0 || this.bullet > 0; }
   startBoost(t) { this.boost = Math.max(this.boost, t); if (this.isPlayer) Snd.sfx(t > 0.9 ? 'boost' : 'mini'); }
   hit() {
-    if (this.inv || this.hitCd > 0) return false;
+    if (this.inv || this.hitCd > 0 || this.rescueT > 0) return false;
     this.spin = 1.25; this.speed *= 0.25; this.drift = 0; this.charge = 0; this.boost = 0; this.hitCd = 1.6;
     this.wobble = 0; this.draft = 0;
     if (this.trail) dropTrail(this);
@@ -1626,6 +1670,7 @@ class Kart {
   driftLevel() { return this.charge >= 3.0 ? 3 : this.charge >= 1.9 ? 2 : this.charge >= 1.0 ? 1 : 0; }
   update(dt) {
     const inp = this.input, st = this.st;
+    if (this.rescueT > 0) { this.updateRescue(dt); return; }
     const racing = game.state === 'race' || game.state === 'finish' || game.state === 'title';
     const canCtl = racing && this.spin <= 0;
     this.bumpCd -= dt; this.hitCd -= dt;
@@ -1721,7 +1766,9 @@ class Kart {
     this.offroad = Math.abs(q.lat) > EDGE + 0.4;
     // vertical
     const gy = groundAt(this.pos.x, this.pos.z, q);
-    this.vy -= GRAV * dt; this.pos.y += this.vy * dt;
+    this.vy -= GRAV * (this.glide && this.vy < 0 ? 0.22 : 1) * dt; if (this.glide) this.vy = Math.max(this.vy, -4.5);
+    this.pos.y += this.vy * dt;
+    if (this.pos.y < roadY(q.i, q.t, clamp(q.lat, -EDGE, EDGE)) - 9) { this.startRescue(); return; }
     if (this.pos.y <= gy) {
       if (!this.grounded && this.vy < -9) {
         if (this.isPlayer) this.shake = Math.max(this.shake, 0.12);
@@ -1730,12 +1777,16 @@ class Kart {
       if (this.rampAir && this.air > 0.15) { this.rampAir = false; if (this.trick) { this.trick = false; this.startBoost(0.95); } }
       this.pos.y = gy; this.vy = clamp((gy - this.lastGy) / dt, -30, 22); this.grounded = true;
     } else this.grounded = this.pos.y - gy < 0.08;
+    if (this.grounded && this.glide) { this.glide = false; if (this.gliderM) this.gliderM.visible = false; }
+    if (this.grounded && Math.abs(q.lat) < HW - 1) { this.safeI = q.i; this.safeLat = q.lat; }
+    const agNow = !!(T.ag && T.ag[q.i]); if (agNow !== !!this.inAG) { this.inAG = agNow; if (agNow && this.isPlayer) Snd.sfx('ag'); }
     if (this.grounded && this.air > 0.12 && this.rampAir) { this.rampAir = false; if (this.trick) this.startBoost(0.95); this.trick = false; }
     if (this.grounded && !this.rampAir) this.trick = false;
     // ramp launch: leaving the top edge of a jump ramp
     if (T.jumps && this.grounded && this.speed > 18) for (const j of T.jumps) {
       if (q.i === (j + RAMP_LEN - 1) % T.N && q.t > 0.5 && Math.abs(q.lat) < HW - 1) {
         this.vy = 10 + this.speed * 0.07; this.grounded = false; this.rampAir = true; this.trick = false; this.pos.y += 0.1;
+        if (T.glides.includes(j)) { this.vy = 17 + this.speed * 0.05; this.glide = true; gliderMesh(this).visible = true; if (this.isPlayer) Snd.sfx('glide'); }
         if (this.isPlayer) Snd.sfx('hop');
       }
     }
@@ -1761,6 +1812,33 @@ class Kart {
       if (d >= -2 && d <= 2 && Math.abs(q.lat - p.lat) < 3 && this.grounded) { if (this.boost < 0.5 && this.isPlayer) Snd.sfx('boost'); this.boost = Math.max(this.boost, 1.1); }
     }
     this.fx(dt, fx, fz);
+    this.syncMesh(dt);
+  }
+  startRescue() {
+    this.rescueT = 2.6; this.rescued = false; this.drift = 0; this.charge = 0; this.boost = 0; this.glide = false; if (this.gliderM) this.gliderM.visible = false;
+    if (this.trail) dropTrail(this);
+    if (game.battle && game.battle.shine && game.battle.shine.holder === this) dropShine(this);
+    if (this.isPlayer) { showCenter(this.pIdx, '掉下去了！', 1.2, true); Snd.sfx('fall'); this.shake = 0.3; }
+  }
+  updateRescue(dt) {
+    this.rescueT -= dt;
+    const cloud = cloudMesh(this);
+    if (!this.rescued) {
+      this.vy -= GRAV * dt; this.pos.y += this.vy * dt; this.speed *= Math.pow(0.4, dt);
+      this.pos.x += Math.sin(this.yaw) * this.speed * dt; this.pos.z += Math.cos(this.yaw) * this.speed * dt;
+      if (this.rescueT < 1.5) {
+        this.rescued = true;
+        const i = this.safeI !== undefined ? this.safeI : this.q.i, lap = this.lap, half = this.half;
+        this.place(i, clamp(this.safeLat || 0, -HW + 4, HW - 4)); this.lap = lap; this.half = half;
+        if (this.ai.dir < 0) this.yaw += Math.PI;
+        this.rescueY = this.pos.y; this.pos.y += 8; cloud.visible = true;
+        for (const v of views) if (v.kart === this) v.init = true;
+      }
+    } else {
+      const u = smooth(1.5, 0.45, this.rescueT); this.pos.y = this.rescueY + 8 * (1 - u); this.vy = 0;
+      cloud.position.y = -0.4; cloud.rotation.y += dt * 1.5;
+    }
+    if (this.rescueT <= 0) { this.rescueT = 0; cloud.visible = false; this.pos.y = this.rescueY; this.grounded = true; this.hitCd = 1; this.speed = 8; }
     this.syncMesh(dt);
   }
   onLap() {
@@ -1854,7 +1932,9 @@ class Kart {
     const sc = this.shrink > 0 ? 0.55 : 1; m.tilt.scale.setScalar(lerp(m.tilt.scale.x, sc, 1 - Math.exp(-dt * 10)));
     m.tilt.position.y = (this.offroad && this.grounded ? Math.sin(game.t * 40) * 0.05 : 0) + (this.drift !== 0 && this.grounded ? Math.abs(Math.sin(game.t * 22)) * 0.05 : 0);
     this.wheelRot += this.speed * dt / 0.48;
-    for (const w of m.wheels) { w.w.rotation.x = this.wheelRot; if (w.steer) w.piv.rotation.y = -this.steerVis * 0.45; }
+    const hover = this.inAG ? 1 : 0; this.hoverV = lerp(this.hoverV || 0, hover, 1 - Math.exp(-dt * 6));
+    for (const w of m.wheels) { w.w.rotation.x = this.wheelRot; if (w.steer) w.piv.rotation.y = -this.steerVis * 0.45; w.piv.rotation.z = Math.sign(w.piv.position.x) * this.hoverV * Math.PI / 2; }
+    if (this.agSpin > 0) { this.agSpin -= dt; m.tilt.rotation.y += (1 - Math.max(0, this.agSpin) / 0.45) * TAU; }
     m.driver.rotation.z = this.steerVis * 0.14; m.driver.rotation.y = -this.steerVis * 0.12;
     if (this.star > 0) { const c = new THREE.Color().setHSL((game.t * 2.5) % 1, 1, 0.5); m.paint.emissive.copy(c); m.paint.emissiveIntensity = 0.9; m.dMat.emissive.copy(c); m.dMat.emissiveIntensity = 0.5; }
     else if (m.paint.emissiveIntensity > 0) { m.paint.emissiveIntensity = 0; m.dMat.emissiveIntensity = 0; }
@@ -2007,6 +2087,23 @@ function bulletMesh(k) {
   ]);
   k.bulletM = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.4 })); k.bulletM.castShadow = true;
   k.m.tilt.add(k.bulletM); return k.bulletM;
+}
+function gliderMesh(k) {
+  if (k.gliderM) return k.gliderM;
+  const kind = k.parts.glider, c1 = kind === 'gold' ? '#ffcc2e' : k.ch.color2, c2 = kind === 'gold' ? '#fff1a8' : k.ch.color;
+  let parts;
+  if (kind === 'chute') parts = [{ geo: G.sph(2.4, 18, 8, 0, TAU, 0, Math.PI / 2.6), m: M(0, 4.4, -0.4, 0, 0, 0, 1, 0.6, 1), c: c2 }, ...[[1, 1], [-1, 1], [1, -1], [-1, -1]].map(([x, z]) => ({ geo: G.cyl(0.03, 0.03, 2.6, 4), m: M(x * 0.9, 3.0, z * 0.9 - 0.4, z * 0.35, 0, -x * 0.35), c: '#ffffff' }))];
+  else if (kind === 'paper') parts = [{ geo: G.box(2.4, 0.06, 2.6), m: M(1.1, 3.0, -0.6, 0, 0.5, 0.25), c: '#ffffff' }, { geo: G.box(2.4, 0.06, 2.6), m: M(-1.1, 3.0, -0.6, 0, -0.5, -0.25), c: '#f2f2f2' }, { geo: G.box(0.1, 0.6, 2.8), m: M(0, 2.8, -0.6), c: '#e0e0e8' }];
+  else parts = [{ geo: G.box(5.2, 0.1, 1.4), m: M(0, 3.2, -0.5), c: c1 }, { geo: G.box(4.6, 0.12, 0.4), m: M(0, 3.25, -0.05), c: c2 }, { geo: G.cyl(0.05, 0.05, 1.6, 4), m: M(0.6, 2.5, -0.4, 0, 0, 0.3), c: '#333340' }, { geo: G.cyl(0.05, 0.05, 1.6, 4), m: M(-0.6, 2.5, -0.4, 0, 0, -0.3), c: '#333340' }];
+  k.gliderM = new THREE.Mesh(merge(parts), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.5, metalness: kind === 'gold' ? 0.7 : 0.05, side: THREE.DoubleSide }));
+  k.gliderM.castShadow = true; k.gliderM.visible = false; k.m.tilt.add(k.gliderM); return k.gliderM;
+}
+let cloudGeo = null;
+function cloudMesh(k) {
+  if (k.cloudM) return k.cloudM;
+  if (!cloudGeo) cloudGeo = merge([[0, 0, 0, 1.4], [1.3, 0.1, 0.3, 1.0], [-1.3, 0.1, -0.2, 1.1], [0.4, 0.5, -1.0, 0.9], [-0.5, 0.3, 1.0, 0.9]].map(([x, y, z, r]) => ({ geo: G.sph(r, 12, 9), m: M(x, y, z, 0, 0, 0, 1, 0.7, 1), c: '#ffffff' }))); cloudGeo.userData.shared = true;
+  k.cloudM = new THREE.Mesh(cloudGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, emissive: 0x99aacc, emissiveIntensity: 0.25 }));
+  k.cloudM.visible = false; k.m.root.add(k.cloudM); return k.cloudM;
 }
 function endBullet(k) { k.bullet = 0; if (k.bulletM) k.bulletM.visible = false; k.startBoost(0.8); for (let n = 0; n < 20; n++) SMOKE.emit(k.pos.x, k.pos.y + 1.5, k.pos.z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.85, 0.85, 0.9, 0.8, 1.2, 0.8, 0, 3); }
 function plantMesh(k) {
@@ -2189,6 +2286,7 @@ function updateProjectiles(dt) {
       const dot = vx * nx + vz * nz; if (dot < 0) p.dir = Math.atan2(vx - 2 * dot * nx, vz - 2 * dot * nz);
       p.bounces++; if (p.bounces > 7) p.life = 0;
     }
+    if (Math.abs(p.q.lat) > EDGE + 2 && dropAt(p.q.i, p.q.lat) > 0.5) p.life = 0;
     p.y = groundAt(p.x, p.z, p.q) + (p.kind === 'fire' ? 0.6 + Math.abs(Math.sin(p.age * 9)) * 1.6 : 0.35);
     p.m.position.set(p.x, p.y, p.z); p.m.rotation.y += dt * 14;
     const col = p.kind === 'red' ? [1, 0.3, 0.2] : p.kind === 'fire' ? [1, 0.55, 0.1] : [0.3, 1, 0.4];
@@ -2522,6 +2620,7 @@ function kartCollisions() {
         const closing = Math.max(0, (vax - vbx) * nx + (vaz - vbz) * nz);
         const S = game.battle && game.battle.shine;
         if (S && closing > 14 && S.noGrabT <= 0 && (S.holder === A || S.holder === B)) { const prev = S.holder, thief = prev === A ? B : A; if (thief.spin <= 0 && !thief.out) { grabShine(thief); S.noGrab = prev; S.noGrabT = 1.2; } }
+        if (A.inAG && B.inAG && (A.bumpCd <= 0 || B.bumpCd <= 0)) { for (const K of [A, B]) { K.startBoost(0.75); K.agSpin = 0.45; } }
         const imp = 7 + closing * 0.6;
         A.pvx -= nx * imp * sa * 2; A.pvz -= nz * imp * sa * 2; B.pvx += nx * imp * sb * 2; B.pvz += nz * imp * sb * 2;
         if (A.bumpCd <= 0 || B.bumpCd <= 0) {
