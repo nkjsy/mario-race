@@ -127,6 +127,14 @@ body.touch .itemName{display:none}
 .stats{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;font-size:14px;color:var(--muted);max-width:420px}
 .bar{height:10px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),var(--sun));border-radius:9px}
+.gRow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.gLbl{width:56px;color:var(--sun);font-size:15px}
+.gOpt{background:#1d1a55;border:3px solid var(--ink);border-radius:12px;color:#fff;font-family:var(--cn);font-size:15px;padding:6px 10px;cursor:pointer;box-shadow:0 3px 0 var(--ink);display:flex;flex-direction:column;align-items:flex-start}
+.gOpt small{font-size:11px;color:var(--muted)}
+.gOpt[aria-pressed="true"]{background:linear-gradient(180deg,#ffe46b,#ffb21f);color:var(--ink)}
+.gOpt:disabled{opacity:.55;cursor:not-allowed}
+.wallet{float:right;font-size:16px;color:var(--sun);letter-spacing:0}
+.gNote{font-size:13px;color:var(--muted);margin:4px 0 0}
 .row2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
 .opts{display:flex;gap:10px;flex-wrap:wrap}
 .opt{flex:1 1 140px;background:#1d1a55;border:3px solid var(--ink);border-radius:16px;color:#fff;font-family:var(--cn);font-size:18px;padding:10px 12px;cursor:pointer;box-shadow:0 4px 0 var(--ink);text-align:left;display:flex;flex-direction:column;gap:2px}
@@ -274,6 +282,11 @@ body.touch .itemName{display:none}
         </div>
       </div>
     </div>
+    <div class="sec">
+      <h2>改装 <small>GARAGE</small> <span id="wallet" class="wallet"></span></h2>
+      <div id="garage"></div>
+      <p class="gNote">比赛里吃到的金币和名次奖励会累计起来，攒够就能解锁新零件。每种零件都是有得有失，自动存档。</p>
+    </div>
     <button class="bigBtn" id="startBtn" type="button">开始比赛</button>
     <div class="duoKeys" id="keysDuo" hidden><div class="dk p1"><b>1P · 键盘左边</b><p><kbd>W</kbd> 油门 <kbd>S</kbd> 刹车 <kbd>A</kbd><kbd>D</kbd> 转向<br><kbd>左 Shift</kbd> 或 <kbd>F</kbd> 漂移<br><kbd>E</kbd> 或 <kbd>Q</kbd> 道具 <kbd>R</kbd> 后视</p></div><div class="dk p2"><b>2P · 键盘右边</b><p><kbd>↑</kbd> 油门 <kbd>↓</kbd> 刹车 <kbd>←</kbd><kbd>→</kbd> 转向<br><kbd>右 Shift</kbd> 或 <kbd>小键盘 0</kbd> 漂移<br><kbd>Enter</kbd> 道具 <kbd>右 Ctrl</kbd> 后视</p></div><p class="dkNote">第一个手柄给 1P，第二个给 2P；两人都可以改用手柄。</p></div>
     <p class="keys" id="keysSolo"><kbd>↑</kbd><kbd>W</kbd> 油门　<kbd>↓</kbd><kbd>S</kbd> 刹车/倒车　<kbd>←</kbd><kbd>→</kbd> 转向　<kbd>空格</kbd><kbd>Shift</kbd> 跳跃漂移（按住转弯蓄力，松开加速）<br><kbd>E</kbd><kbd>X</kbd> 使用道具（香蕉和弹壳可按住挂在车尾挡攻击，松开发射，同时按 <kbd>↓</kbd> 往后丢）<br><kbd>C</kbd> 后视　跳台上腾空时按漂移键可做特技　紧跟在别人车后能吸尾流加速　金币最多 10 枚，越多极速越高<br><kbd>Esc</kbd> 暂停　<kbd>M</kbd> 静音　·　倒数到“2”时按住油门可火箭起步　·　支持手柄（按马里奥赛车布局）</p>
@@ -328,6 +341,7 @@ body.touch .itemName{display:none}
       <li>道具箱：撞碎后很快会重新出现；道具转盘转动时按道具键能让它马上停下，再按一次才是使用。</li>
       <li>金币：最多 10 枚，越多极速越高，被打中会掉 3 枚。</li>
       <li>辅助选项（菜单里）：「智能转向」会在快冲出赛道时帮你拉回来；「自动道具」会替你找时机用道具。适合新手和小朋友。</li>
+      <li>改装：比赛里吃到的金币加上名次奖励会累计起来，攒够就能在菜单「改装」里解锁新车身、轮胎和滑翔翼。每种零件都有得有失，电脑车手也从同一批零件里随机挑。进度和选择会自动存档。</li>
       <li>比赛结束后点「🎬 最快圈回放」，可以用电影镜头回看你最快的一圈。</li>
       <li>开出路面到草地或沙地会变慢，赛道外有护栏；开反方向屏幕上会提示「逆行！」。</li>
     </ul>
@@ -681,16 +695,28 @@ const G = {
 
 /* ---------------- kart model ---------------- */
 const wheelGeo = { front: null, rear: null };
-function buildWheelGeo(r, w) {
+function buildWheelGeo(r, w, gold) {
   return merge([
     { geo: G.cyl(r, r, w, 20), m: M(0, 0, 0, 0, 0, Math.PI / 2), c: '#1b1b20' },
-    { geo: G.cyl(r * 0.62, r * 0.62, w + 0.04, 14), m: M(0, 0, 0, 0, 0, Math.PI / 2), c: '#c9ced8' },
+    { geo: G.cyl(r * 0.62, r * 0.62, w + 0.04, 14), m: M(0, 0, 0, 0, 0, Math.PI / 2), c: gold ? '#ffcc2e' : '#c9ced8' },
     { geo: G.cyl(r * 0.22, r * 0.22, w + 0.08, 8), m: M(0, 0, 0, 0, 0, Math.PI / 2), c: '#ffd23f' },
     { geo: G.box(w + 0.02, r * 0.18, r * 2.02), m: M(0, 0, 0), c: '#26262c' },
   ]);
 }
-function buildKartMesh(ch) {
-  if (!wheelGeo.front) { wheelGeo.front = buildWheelGeo(0.44, 0.4); wheelGeo.rear = buildWheelGeo(0.54, 0.55); }
+const TIRE_SHAPE = { std: [1, 1, 1], big: [1.3, 1.15, 0], slick: [1.02, 1.45, 0], small: [0.72, 0.9, 0], gold: [1, 1, 1] };
+function wheelFor(kind, rear) {
+  const key = kind + (rear ? 'R' : 'F');
+  if (!wheelGeo[key]) { const sh = TIRE_SHAPE[kind] || TIRE_SHAPE.std; const g = buildWheelGeo((rear ? 0.54 : 0.44) * sh[0], (rear ? 0.55 : 0.4) * sh[1], kind === 'gold'); g.userData.shared = true; wheelGeo[key] = g; }
+  return wheelGeo[key];
+}
+const BODY_EXTRA = {
+  sport: (b, t, d) => [{ geo: G.box(2.4, 0.08, 0.6), m: M(0, 1.95, -1.7, 0.15), c: t }, { geo: G.box(0.08, 0.45, 0.5), m: M(0.8, 1.72, -1.68), c: d }, { geo: G.box(0.08, 0.45, 0.5), m: M(-0.8, 1.72, -1.68), c: d }, { geo: G.box(0.3, 0.02, 2.0), m: M(0, 0.96, 0.4), c: '#ffffff' }, { geo: G.box(1.5, 0.12, 0.5), m: M(0, 0.32, 2.3), c: d }],
+  buggy: (b, t, d) => [[0.7, 1], [-0.7, 1], [0.7, -1], [-0.7, -1]].map(([x, z]) => ({ geo: G.cyl(0.06, 0.06, 1.5, 6), m: M(x, 1.55, z * 0.55 - 0.3, z * 0.25), c: '#e8e8ee' })).concat([{ geo: G.box(1.5, 0.08, 1.6), m: M(0, 2.3, -0.3), c: b }, { geo: G.cyl(0.2, 0.2, 0.3, 10), m: M(0.55, 0.98, 1.75, Math.PI / 2), c: '#fff6b0' }, { geo: G.cyl(0.2, 0.2, 0.3, 10), m: M(-0.55, 0.98, 1.75, Math.PI / 2), c: '#fff6b0' }]),
+  tank: (b, t, d) => [{ geo: G.box(0.22, 0.55, 2.6), m: M(1.25, 0.72, 0), c: d }, { geo: G.box(0.22, 0.55, 2.6), m: M(-1.25, 0.72, 0), c: d }, { geo: G.box(2.3, 0.5, 0.35), m: M(0, 0.55, 2.25), c: d }, { geo: G.cyl(0.14, 0.14, 0.4, 8), m: M(0.95, 1.05, 2.1, Math.PI / 2), c: '#ffd23f' }, { geo: G.cyl(0.14, 0.14, 0.4, 8), m: M(-0.95, 1.05, 2.1, Math.PI / 2), c: '#ffd23f' }, ...[-0.8, 0, 0.8].map(z => ({ geo: G.sph(0.08, 6, 4), m: M(1.37, 0.85, z), c: '#aab2c0' }))],
+  jelly: (b, t, d) => [{ geo: G.sph(1.15, 20, 12, 0, TAU, 0, Math.PI / 2), m: M(0, 0.75, -0.1, 0, 0, 0, 1, 0.75, 1.5), c: t }, { geo: G.sph(0.25, 10, 8), m: M(0.55, 1.45, 1.0), c: '#ffffff' }, { geo: G.sph(0.25, 10, 8), m: M(-0.55, 1.45, 1.0), c: '#ffffff' }],
+};
+function buildKartMesh(ch, parts) {
+  parts = parts || STD_PARTS;
   const body = ch.color, trim = ch.color2, dark = '#24242c', metal = '#aab2c0';
   const root = new THREE.Group();
   const tilt = new THREE.Group(); root.add(tilt);   // carries visual yaw offset / spin
@@ -769,15 +795,20 @@ function buildKartMesh(ch) {
   dMesh.castShadow = true;
   driver.add(dMesh);
 
-  const tireMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7, metalness: 0.15 });
+  if (BODY_EXTRA[parts.body]) {
+    const ex = new THREE.Mesh(merge(BODY_EXTRA[parts.body](body, trim, dark)), parts.body === 'jelly' ? new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.15, transmission: 0, transparent: true, opacity: 0.55, clearcoat: 1 }) : new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.45, metalness: 0.2 }));
+    ex.castShadow = parts.body !== 'jelly'; bodyGroup.add(ex);
+  }
+  const tireMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: parts.tire === 'gold' ? 0.3 : 0.7, metalness: parts.tire === 'gold' ? 0.75 : 0.15 });
   const wheels = [];
   const mk = (geo, x, y, z, steer) => {
     const piv = new THREE.Group(); piv.position.set(x, y, z);
     const w = new THREE.Mesh(geo, tireMat); w.castShadow = true; piv.add(w); bodyGroup.add(piv);
     wheels.push({ piv, w, steer });
   };
-  mk(wheelGeo.front, 1.02, 0.44, 1.22, true); mk(wheelGeo.front, -1.02, 0.44, 1.22, true);
-  mk(wheelGeo.rear, 1.08, 0.54, -1.12, false); mk(wheelGeo.rear, -1.08, 0.54, -1.12, false);
+  const sh = TIRE_SHAPE[parts.tire] || TIRE_SHAPE.std, wf = wheelFor(parts.tire, false), wr = wheelFor(parts.tire, true), wx = (sh[1] - 1) * 0.2;
+  mk(wf, 1.02 + wx, 0.44 * sh[0], 1.22, true); mk(wf, -1.02 - wx, 0.44 * sh[0], 1.22, true);
+  mk(wr, 1.08 + wx, 0.54 * sh[0], -1.12, false); mk(wr, -1.08 - wx, 0.54 * sh[0], -1.12, false);
   return { root, tilt, bodyGroup, driver, wheels, paint, dMat: dMesh.material };
 }
 
@@ -1507,10 +1538,11 @@ const tmpQ = { i: 0, t: 0, lat: 0 };
 const UP = new V3(0, 1, 0);
 
 class Kart {
-  constructor(ch, ci, pIdx) {
+  constructor(ch, ci, pIdx, parts) {
     this.ch = ch; this.ci = ci; this.pIdx = pIdx; this.isPlayer = pIdx >= 0;
+    this.parts = parts || STD_PARTS; this.st = kartStats(ch, this.parts);
     this.pvx = 0; this.pvz = 0; this.shake = 0; this.hitCam = 0; this.rampAir = false; this.trick = false; this.trickT = 0; this.wobble = 0; this.skid = null;
-    this.m = buildKartMesh(ch); scene.add(this.m.root);
+    this.m = buildKartMesh(ch, this.parts); scene.add(this.m.root);
     this.tag = makeNameTag(ch.name, ch.color); this.tag.position.y = 3.7; this.m.root.add(this.tag);
     this.pos = new V3(); this.yaw = 0; this.speed = 0; this.vy = 0; this.grounded = true; this.lastGy = 0;
     this.q = { i: 0, t: 0, lat: 0 }; this.prevI = 0; this.lap = 0; this.half = true; this.lapStart = 0; this.lapTimes = [];
@@ -1534,7 +1566,7 @@ class Kart {
     this.syncMesh(0);
   }
   get maxSpeed() {
-    const st = this.ch.stats; let m = BASE_MAX * st.speed * game.cc.speed * this.aiMul;
+    const st = this.st; let m = BASE_MAX * st.speed * game.cc.speed * this.aiMul;
     if (this.offroad && this.boost <= 0 && this.star <= 0) m *= 0.48 + 0.14 * (1 - st.weight); // light karts cope better off-road
     if (this.star > 0) m *= 1.16;
     if (this.shrink > 0) m *= 0.74;
@@ -1560,7 +1592,7 @@ class Kart {
   }
   driftLevel() { return this.charge >= 3.0 ? 3 : this.charge >= 1.9 ? 2 : this.charge >= 1.0 ? 1 : 0; }
   update(dt) {
-    const inp = this.input, st = this.ch.stats;
+    const inp = this.input, st = this.st;
     const racing = game.state === 'race' || game.state === 'finish' || game.state === 'title';
     const canCtl = racing && this.spin <= 0;
     this.bumpCd -= dt; this.hitCd -= dt;
@@ -1794,7 +1826,7 @@ class Kart {
     if (this.star > 0) { const c = new THREE.Color().setHSL((game.t * 2.5) % 1, 1, 0.5); m.paint.emissive.copy(c); m.paint.emissiveIntensity = 0.9; m.dMat.emissive.copy(c); m.dMat.emissiveIntensity = 0.5; }
     else if (m.paint.emissiveIntensity > 0) { m.paint.emissiveIntensity = 0; m.dMat.emissiveIntensity = 0; }
   }
-  dispose() { removeTrailMesh(this); scene.remove(this.m.root); if (this.tag) { this.tag.material.map.dispose(); } this.m.root.traverse(o => { if (o.geometry && o.geometry !== wheelGeo.front && o.geometry !== wheelGeo.rear) o.geometry.dispose(); if (o.material) o.material.dispose(); }); }
+  dispose() { removeTrailMesh(this); scene.remove(this.m.root); if (this.tag) { this.tag.material.map.dispose(); } this.m.root.traverse(o => { if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose(); if (o.material) o.material.dispose(); }); }
 }
 
 /* ---------------- AI ---------------- */
@@ -1820,7 +1852,7 @@ function aiThink(k, dt) {
   inp.accel = true; inp.brake = false;
   // corner speed control: look for the tightest curvature ahead
   let cmax = 0; for (let s = 4; s < 30; s += 3) cmax = Math.max(cmax, Math.abs(T.curv[(k.q.i + dir * s + N) % N]));
-  const need = k.speed * cmax, can = (k.drift !== 0 ? 1.8 : 1.6) * k.ch.stats.handle * (game.demo ? 1 : ai.skill * game.cc.ai); // weaker drivers brake earlier in corners
+  const need = k.speed * cmax, can = (k.drift !== 0 ? 1.8 : 1.6) * k.st.handle * (game.demo ? 1 : ai.skill * game.cc.ai); // weaker drivers brake earlier in corners
   if (need > can * 1.1) inp.brake = true, inp.accel = false; else if (need > can) inp.accel = false;
   if (Math.abs(k.q.lat) > HW + 1 && Math.abs(diff) > 0.5) inp.accel = k.speed < 20;
   // corner ahead → drift
@@ -2034,7 +2066,7 @@ function useItem(k, backward) {
     if (k.isPlayer) Snd.sfx('shoot');
     return;
   }
-  if (it === 'coin') { k.item = null; k.coins = Math.min(10, k.coins + 2); k.speed += 4; if (k.isPlayer) { Snd.sfx('coin'); Snd.sfx('coin', 0.09); } return; }
+  if (it === 'coin') { k.item = null; k.coins = Math.min(10, k.coins + 2); k.coinsGot = (k.coinsGot || 0) + 2; k.speed += 4; if (k.isPlayer) { Snd.sfx('coin'); Snd.sfx('coin', 0.09); } return; }
   if (it === 'ink') {
     k.item = null; if (k.isPlayer) Snd.sfx('ink');
     for (const o of game.karts) if (o !== k && !o.finished && o.progress > k.progress && !o.inv) {
@@ -2202,7 +2234,7 @@ function updateCoins(dt) {
       const dx = k.pos.x - c.x, dz = k.pos.z - c.z;
       if (dx * dx + dz * dz < 5.8 && Math.abs(k.pos.y + 1 - c.y) < 2.6) {
         c.on = false; c.t = 14;
-        if (k.coins < 10) k.coins++; k.speed = Math.min(k.speed + 1.6, k.maxSpeed * 1.08);
+        if (k.coins < 10) k.coins++; k.coinsGot = (k.coinsGot || 0) + 1; k.speed = Math.min(k.speed + 1.6, k.maxSpeed * 1.08);
         if (k.isPlayer) { Snd.sfx('coin'); k.coinPop = 0.3; }
         for (let e = 0; e < 6; e++) FX.emit(c.x, c.y, c.z, (Math.random() - 0.5) * 6, 3 + Math.random() * 4, (Math.random() - 0.5) * 6, 1, 0.85, 0.2, 1, 0.4, 0.45, 10);
         break;
@@ -2311,7 +2343,7 @@ function kartCollisions() {
     const A = ks[a], B = ks[b]; const dx = B.pos.x - A.pos.x, dz = B.pos.z - A.pos.z; const d2 = dx * dx + dz * dz;
     if (d2 < 2.5 * 2.5 && Math.abs(A.pos.y - B.pos.y) < 2) {
       const d = Math.sqrt(d2) || 0.01, nx = dx / d, nz = dz / d, ov = 2.5 - d;
-      const wa = A.ch.stats.weight, wb = B.ch.stats.weight, sa = wb / (wa + wb), sb = wa / (wa + wb);
+      const wa = A.st.weight, wb = B.st.weight, sa = wb / (wa + wb), sb = wa / (wa + wb);
       A.pos.x -= nx * ov * sa; A.pos.z -= nz * ov * sa; B.pos.x += nx * ov * sb; B.pos.z += nz * ov * sb;
       if (A.inv && !B.inv) B.hit(); else if (B.inv && !A.inv) A.hit();
       else {
@@ -2592,7 +2624,7 @@ function spawnKarts(humanChars) {
   game.battle = battle ? { t: BATTLE_TIME, out: [], rows: null } : null;
   if (battle) {
     slots.forEach((ci, s) => {
-      const k = new Kart(CHARS[ci], ci, humanChars.indexOf(ci));
+      const hi = humanChars.indexOf(ci), k = new Kart(CHARS[ci], ci, hi, hi >= 0 ? save.parts[hi] : randomParts());
       k.place(Math.floor(s / slots.length * T.N), s % 2 ? 5 : -5);
       k.ai.dir = k.isPlayer ? 1 : (s % 2 ? -1 : 1);
       if (k.ai.dir < 0) { k.yaw += Math.PI; k.syncMesh(0); }
@@ -2607,7 +2639,7 @@ function spawnKarts(humanChars) {
     return;
   }
   slots.forEach((ci, s) => {
-    const k = new Kart(CHARS[ci], ci, humanChars.indexOf(ci));
+    const hi = humanChars.indexOf(ci), k = new Kart(CHARS[ci], ci, hi, hi >= 0 ? save.parts[hi] : game.demo ? STD_PARTS : randomParts());
     const row = Math.floor(s / 2), col = s % 2;
     const back = 6 + row * 6.5 + col * 2.5;
     k.place(-Math.round(back / SP), slots.length === 1 ? 0 : col ? 5 : -5);
@@ -2643,7 +2675,7 @@ function startRace() {
   if (T.coins) for (const c of T.coins) { c.on = true; c.t = 0; }
   if (game.mode === 'tt') { const p = game.player; p.item = 'triple'; p.itemCount = 3; }
   setupGhost();
-  game.rec = game.mode === 'battle' ? null : { n: 0, k: [] }; game.replay = null;
+  game.rec = game.mode === 'battle' ? null : { n: 0, k: [] }; game.replay = null; game.coinsPaid = false; saveAll();
   hideOverlays();
   $('hud').hidden = false; $('topBtns').hidden = false; $('touch').hidden = !isTouch || game.humans === 2;
   setupHud();
@@ -2708,6 +2740,7 @@ function showResults() {
     if (game.humans === 2) { const p2 = rows.findIndex(r => r.k.pIdx === 1) + 1; $('resTitle').textContent = pr < p2 ? '1P 获胜！' : '2P 获胜！'; $('resSub').textContent = `1P 第 ${pr} 名 · 2P 第 ${p2} 名`; }
     else $('resTitle').textContent = pr === 1 ? '冠军！' : pr <= 3 ? '登上领奖台！' : '第 ' + pr + ' 名';
   }
+  if (!game.coinsPaid) { game.coinsPaid = true; const t = earnCoins(); $('resSub').textContent = ($('resSub').textContent ? $('resSub').textContent + '　·　' : '') + t; }
   $('replayBtn').hidden = !replayWindow();
   $('results').hidden = false; $('touch').hidden = true;
 }
@@ -2960,6 +2993,88 @@ $('quitBtn').onclick = () => { game.paused = false; if (Snd.ctx) Snd.ctx.resume(
 $('startBtn').onclick = () => { game.gp = null; startRace(); };
 
 /* ---------------- menu ---------------- */
+/* ---------------- kart parts, coins and save data ---------------- */
+// every part trades one stat for another (gold parts are just for show), so no combination is simply better
+const PARTS = {
+  body: [
+    { id: 'std', name: '标准车', need: 0, d: [0, 0, 0, 0] },
+    { id: 'sport', name: '闪电跑车', need: 40, d: [0.02, -0.05, -0.02, 0.06] },
+    { id: 'buggy', name: '沙滩车', need: 90, d: [-0.015, 0.05, 0.03, -0.06] },
+    { id: 'tank', name: '重装战车', need: 160, d: [0.025, -0.07, -0.05, 0.16] },
+    { id: 'jelly', name: '果冻泡泡车', need: 250, d: [-0.02, 0.07, 0.05, -0.1] },
+  ],
+  tire: [
+    { id: 'std', name: '标准胎', need: 0, d: [0, 0, 0, 0] },
+    { id: 'big', name: '越野大轮', need: 30, d: [-0.01, 0.03, -0.02, 0.08] },
+    { id: 'slick', name: '光头赛车胎', need: 70, d: [0.015, -0.03, -0.01, 0.02] },
+    { id: 'small', name: '迷你小轮', need: 130, d: [-0.015, 0.05, 0.03, -0.05] },
+    { id: 'gold', name: '黄金轮', need: 400, d: [0, 0, 0, 0] },
+  ],
+  glider: [
+    { id: 'std', name: '滑翔翼', need: 0, d: [0, 0, 0, 0] },
+    { id: 'chute', name: '降落伞', need: 60, d: [-0.005, 0.02, 0, 0] },
+    { id: 'paper', name: '纸飞机', need: 120, d: [-0.005, 0, 0.02, 0] },
+    { id: 'gold', name: '黄金翼', need: 500, d: [0, 0, 0, 0] },
+  ],
+};
+const PART_LBL = { body: '车身', tire: '轮胎', glider: '滑翔翼' };
+const STD_PARTS = { body: 'std', tire: 'std', glider: 'std' };
+function kartStats(ch, parts) {
+  const s = ch.stats, o = { speed: s.speed, accel: s.accel, handle: s.handle, weight: s.weight };
+  for (const kind in PARTS) { const pt = PARTS[kind].find(x => x.id === parts[kind]); if (pt) { o.speed += pt.d[0]; o.accel += pt.d[1]; o.handle += pt.d[2]; o.weight += pt.d[3]; } }
+  return o;
+}
+const randomParts = () => { const o = {}; for (const kind in PARTS) o[kind] = PARTS[kind][(Math.random() * PARTS[kind].length) | 0].id; return o; };
+const save = { coins: 0, parts: [{ ...STD_PARTS }, { ...STD_PARTS }] };
+try {
+  const d = JSON.parse(localStorage.getItem('starkart.save') || 'null');
+  if (d) {
+    save.coins = Math.max(0, +d.coins || 0);
+    if (Array.isArray(d.parts)) d.parts.forEach((pp, n) => { if (n < 2 && pp) for (const kind in PARTS) if (PARTS[kind].some(x => x.id === pp[kind])) save.parts[n][kind] = pp[kind]; });
+    const sel = d.sel || {};
+    if (CHARS[sel.c1]) game.charIdx = sel.c1; if (CHARS[sel.c2] && sel.c2 !== game.charIdx) game.charIdx2 = sel.c2;
+    if (COURSES[sel.course] && !COURSES[sel.course].battle) game.courseIdx = sel.course;
+    if (CLASSES[sel.cls]) game.classIdx = sel.cls;
+    if (MODES.some(m => m.id === sel.mode)) game.mode = sel.mode;
+    game.mirror = !!sel.mirror;
+  }
+} catch (e) { }
+function saveAll() {
+  const sel = { c1: game.charIdx, c2: game.charIdx2, course: game.courseIdx, cls: game.classIdx, mode: game.mode, mirror: !!game.mirror };
+  try { localStorage.setItem('starkart.save', JSON.stringify({ coins: save.coins, parts: save.parts, sel })); } catch (e) { }
+}
+const unlocked = pt => save.coins >= pt.need;
+// coins earned after a race: every coin picked up plus a bonus for the finishing place
+function earnCoins() {
+  const lines = [];
+  for (const h of game.humansK) {
+    if (!h) continue;
+    const place = game.battle && game.battle.rows ? game.battle.rows.indexOf(h) : h.finished ? h.finishRank - 1 : 7;
+    const bonus = game.mode === 'tt' ? 3 : [10, 7, 5, 4, 3, 2, 1, 0][clamp(place, 0, 7)];
+    const before = save.coins, got = (h.coinsGot || 0) + bonus; save.coins += got;
+    const fresh = []; for (const kind in PARTS) for (const pt of PARTS[kind]) if (pt.need > before && pt.need <= save.coins) fresh.push(pt.name);
+    lines.push((game.humans === 2 ? (h.pIdx ? '2P' : '1P') + ' ' : '') + '+' + got + ' 🪙' + (fresh.length ? '　解锁：' + fresh.join('、') + '！' : ''));
+  }
+  saveAll();
+  return lines.join('　') + '　（累计 ' + save.coins + ' 🪙）';
+}
+function buildGarage() {
+  const g = $('garage'); g.innerHTML = '';
+  for (const kind in PARTS) {
+    const row = document.createElement('div'); row.className = 'gRow';
+    const lb = document.createElement('span'); lb.className = 'gLbl'; lb.textContent = PART_LBL[kind]; row.appendChild(lb);
+    PARTS[kind].forEach(pt => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'gOpt'; const ok = unlocked(pt);
+      b.disabled = !ok; b.setAttribute('aria-pressed', save.parts[pickSlot][kind] === pt.id);
+      b.innerHTML = ok ? pt.name : '🔒 ' + pt.name + '<small>累计 ' + pt.need + ' 🪙</small>';
+      if (ok) { const dd = ['极速', '加速', '操控', '重量'].map((n, i) => pt.d[i] ? n + (pt.d[i] > 0 ? '+' : '−') : '').filter(Boolean).join(' '); if (dd) b.title = dd; }
+      b.onclick = () => { save.parts[pickSlot][kind] = pt.id; saveAll(); buildGarage(); showStats(); };
+      row.appendChild(b);
+    });
+    g.appendChild(row);
+  }
+  $('wallet').textContent = '累计金币 ' + save.coins + ' 🪙';
+}
 let pickSlot = 0; // which player the driver grid is picking for in 2P mode
 const pickedIdx = () => pickSlot === 1 ? game.charIdx2 : game.charIdx;
 function refreshChars() {
@@ -3043,7 +3158,7 @@ function saveNames() { try { const o = {}; CHARS.forEach(ch => { if (ch.name !==
 function setName(i, v) {
   const ch = CHARS[i]; ch.name = (v || '').trim().slice(0, 8) || ch.def;
   const card = $('char' + i); if (card) card.querySelector('.nm').textContent = ch.name;
-  $('charTitle').innerHTML = ''; $('charTitle').append(ch.name + ' 的性能 · ' + (ch.stats.weight < 0.85 ? '轻量级' : ch.stats.weight > 1.15 ? '重量级' : '中量级') + ' '); const sm = document.createElement('small'); sm.textContent = 'STATS'; $('charTitle').append(sm);
+  $('charTitle').innerHTML = ''; $('charTitle').append(ch.name + ' 的性能 · ' + (kartStats(ch, save.parts[pickSlot]).weight < 0.85 ? '轻量级' : kartStats(ch, save.parts[pickSlot]).weight > 1.15 ? '重量级' : '中量级') + ' '); const sm = document.createElement('small'); sm.textContent = 'STATS'; $('charTitle').append(sm);
   saveNames();
 }
 $('nameInput').addEventListener('input', e => setName(pickedIdx(), e.target.value));
@@ -3052,10 +3167,11 @@ $('nameReset').onclick = () => { setName(pickedIdx(), ''); $('nameInput').value 
 function showStats() {
   const i = pickedIdx();
   $('nameInput').value = CHARS[i].name;
-  const s = CHARS[i].stats;
+  const s = kartStats(CHARS[i], save.parts[pickSlot]);
   setName(i, CHARS[i].name);
   const bar = (label, v, lo, hi) => `<span>${label}</span><div class="bar"><i style="width:${Math.round(clamp((v - lo) / (hi - lo), 0.08, 1) * 100)}%"></i></div>`;
-  $('stats').innerHTML = bar('极速', s.speed, 0.95, 1.04) + bar('加速', s.accel, 0.84, 1.16) + bar('操控', s.handle, 0.86, 1.14) + bar('重量', s.weight, 0.7, 1.4);
+  $('stats').innerHTML = bar('极速', s.speed, 0.93, 1.07) + bar('加速', s.accel, 0.78, 1.24) + bar('操控', s.handle, 0.8, 1.2) + bar('重量', s.weight, 0.6, 1.6);
+  if ($('garage')) buildGarage();
 }
 function renderThumbs() {
   const out = [];
@@ -3066,7 +3182,7 @@ function renderThumbs() {
     const cam = new THREE.PerspectiveCamera(32, 4 / 3, 0.1, 100); cam.position.set(4.8, 3.6, 6.4); cam.lookAt(0, 1.2, 0);
     for (const ch of CHARS) {
       const m = buildKartMesh(ch); m.root.rotation.y = 0.35; s.add(m.root); r.render(s, cam); out.push(r.domElement.toDataURL('image/png')); s.remove(m.root);
-      m.root.traverse(o => { if (o.geometry && o.geometry !== wheelGeo.front && o.geometry !== wheelGeo.rear) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+      m.root.traverse(o => { if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose(); if (o.material) o.material.dispose(); });
     }
     r.dispose(); if (r.forceContextLoss) r.forceContextLoss();
   } catch (e) { }
@@ -3157,7 +3273,7 @@ function boot() {
   resize();
   const thumbs = renderThumbs();
   buildMenu(thumbs);
-  buildCourse(0);
+  buildCourse(game.courseIdx);
   startDemo();
   $('loading').hidden = true;
   requestAnimationFrame(frame);
