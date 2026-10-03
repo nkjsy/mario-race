@@ -166,6 +166,11 @@ body.touch .itemName{display:none}
 .keys kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px}
 .btnRow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 #results .panel{max-width:720px}
+#replayBar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(20,18,58,.72);border:3px solid #fff;border-radius:999px;padding:8px 10px 8px 20px;color:#fff;font-size:17px;z-index:30;white-space:nowrap}
+#replayBar .rec{color:#ff4b6e;font-family:var(--display);animation:blink 1s steps(2) infinite}
+#replayBar .bigBtn{padding:8px 18px;font-size:16px}
+@keyframes blink{50%{opacity:.25}}
+.resTable .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;border:2px solid var(--ink);vertical-align:-1px}
 .pickBar{display:flex;gap:8px;align-items:center;margin:-2px 0 10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .pickBar .opt{flex:0 0 auto;padding:4px 14px;font-size:16px}
 .badge{position:absolute;top:-8px;right:-6px;font-family:var(--display);font-size:13px;padding:1px 7px;border-radius:9px;border:2px solid var(--ink);color:#fff}
@@ -322,6 +327,8 @@ body.touch .itemName{display:none}
       <li>吸尾流：紧跟在别人车后一会儿，会有风线并自动加速。</li>
       <li>道具箱：撞碎后很快会重新出现；道具转盘转动时按道具键能让它马上停下，再按一次才是使用。</li>
       <li>金币：最多 10 枚，越多极速越高，被打中会掉 3 枚。</li>
+      <li>辅助选项（菜单里）：「智能转向」会在快冲出赛道时帮你拉回来；「自动道具」会替你找时机用道具。适合新手和小朋友。</li>
+      <li>比赛结束后点「🎬 最快圈回放」，可以用电影镜头回看你最快的一圈。</li>
       <li>开出路面到草地或沙地会变慢，赛道外有护栏；开反方向屏幕上会提示「逆行！」。</li>
     </ul>
     <h3>道具</h3>
@@ -342,7 +349,7 @@ body.touch .itemName{display:none}
       <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）或月亮杯（雪山小镇、熔岩火山、糖果乐园）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
       <tr><td>双人对战</td><td>两人上下分屏，和 6 名电脑对手一起跑</td></tr>
       <tr><td>气球大战</td><td>霓虹竞技场里每人 3 个气球，被打中少一个，掉光出局。限时 2 分 30 秒，剩下气球最多的赢</td></tr>
-      <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑</td></tr>
+      <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑；每条赛道保存前 5 名总时间排行榜</td></tr>
       <tr><td>公平规则</td><td>电脑和玩家完全同一套规则：没有偷偷追赶加速，起步、道具转盘时间都一样；拿到什么道具只看当前名次，谁落后都一样；发车位置随机，大奖赛第 2 场起积分最高的排最后。难度只影响电脑开得好不好</td></tr>
       <tr><td>引擎</td><td>50cc 最慢最简单，200cc 最快；勾选「镜像模式」赛道左右翻转</td></tr>
     </table>
@@ -355,9 +362,10 @@ body.touch .itemName{display:none}
     <h2 class="resTitle" id="resTitle">比赛结束</h2>
     <p class="resSub" id="resSub"></p>
     <table class="resTable" id="resTable"></table>
-    <div class="btnRow"><button class="bigBtn" id="againBtn" type="button">再来一局</button><button class="bigBtn alt" id="menuBtn" type="button">返回菜单</button></div>
+    <div class="btnRow"><button class="bigBtn" id="againBtn" type="button">再来一局</button><button class="bigBtn alt" id="menuBtn" type="button">返回菜单</button><button class="bigBtn alt" id="replayBtn" type="button">🎬 最快圈回放</button></div>
   </div>
 </div>
+<div id="replayBar" hidden><span class="rec">● REPLAY</span><span id="replayLbl">回放</span><button class="bigBtn alt" id="replaySkip" type="button">跳过</button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -1827,7 +1835,16 @@ function aiThink(k, dt) {
   if (k.drift === 0 && ai.driftWant) inp.steer = turn > 0 ? -1 : 1;
   // stuck recovery
   if (k.wrongT > 1.5) { inp.steer = diff > 0 ? -1 : 1; }
-  // items
+  aiItems(k, dt);
+  if (k.inkT > 0) inp.steer = clamp(inp.steer + Math.sin(game.t * 5 + k.ci) * 0.45, -1, 1);
+  // fair play: computer drivers get no speed bonus or rubber-banding; difficulty only changes how well they drive
+  k.aiMul = 1;
+}
+
+// when to use an item: shared by computer drivers and the auto-item assist
+function aiItems(k, dt) {
+  const inp = k.input, ai = k.ai, N = T.N, dir = ai.dir || 1;
+  const j2 = (k.q.i + dir * 22 + N) % N; const turn = wrapA(T.yaw[j2] - T.yaw[k.q.i]);
   inp.item = false;
   if (k.item && k.roulette <= 0) {
     ai.itemT -= dt;
@@ -1848,9 +1865,6 @@ function aiThink(k, dt) {
     }
   }
   if (k.trail) { ai.holdT = (ai.holdT || 0) - dt; if (ai.holdT > 0) inp.item = true; }
-  if (k.inkT > 0) inp.steer = clamp(inp.steer + Math.sin(game.t * 5 + k.ci) * 0.45, -1, 1);
-  // fair play: computer drivers get no speed bonus or rubber-banding; difficulty only changes how well they drive
-  k.aiMul = 1;
 }
 
 /* ---------------- items & projectiles ---------------- */
@@ -2480,6 +2494,15 @@ function updateGhost(dt) {
   g.mesh.root.rotation.set(0, f[a + 3] + wrapA(f[b + 3] - f[a + 3]) * t, 0);
   g.wheel = (g.wheel || 0) + dt * 90; for (const w of g.mesh.wheels) w.w.rotation.x = g.wheel;
 }
+const boardKey = () => 'starkart.tt.' + game.courseIdx + '.' + game.classIdx + (game.mirror ? '.m' : '');
+function loadBoard() { try { const a = JSON.parse(localStorage.getItem(boardKey()) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+function addToBoard(k) {
+  const a = loadBoard(), d = new Date();
+  const e = { t: k.finishTime, lap: Math.min(...k.lapTimes), ch: k.ci, d: (d.getMonth() + 1) + '/' + d.getDate(), id: Date.now() };
+  a.push(e); a.sort((x, y) => x.t - y.t); const top = a.slice(0, 5);
+  try { localStorage.setItem(boardKey(), JSON.stringify(top)); } catch (er) { }
+  return { top, rank: top.indexOf(e) };
+}
 function onHumanLap(k, lapTime) {
   if (game.mode !== 'tt' || !game.ghost) return;
   const g = game.ghost, prev = g.best ? g.best.t : Infinity;
@@ -2489,6 +2512,59 @@ function onHumanLap(k, lapTime) {
     huds[0].best.textContent = '最快圈 ' + fmt(lapTime);
   } else showCenter(0, '+' + (lapTime - prev).toFixed(3), 1.6, true);
   g.rec = [];
+}
+
+/* ---------------- replay (fastest lap, all karts) ---------------- */
+const REC_DT = 0.05;
+function recordFrame() {
+  const r = game.rec; if (!r || game.demo || (game.state !== 'race' && game.state !== 'finish')) return;
+  const need = Math.floor(game.raceT / REC_DT); if (r.n > need) return;
+  r.n++;
+  game.karts.forEach((k, i) => {
+    const a = r.k[i] || (r.k[i] = []);
+    const fl = (k.drift > 0 ? 1 : k.drift < 0 ? 2 : 0) | (k.star > 0 ? 4 : 0) | (k.spin > 0 ? 8 : 0) | (k.bullet > 0 ? 16 : 0) | (k.shrink > 0 ? 32 : 0) | (k.boost > 0 ? 64 : 0) | (k.plantT > 0 ? 128 : 0);
+    a.push(+k.pos.x.toFixed(2), +k.pos.y.toFixed(2), +k.pos.z.toFixed(2), +k.yaw.toFixed(3), +k.speed.toFixed(1), fl);
+  });
+}
+function replayWindow() {
+  const p = game.humansK[0]; if (!p || game.humans !== 1 || !game.rec || game.rec.n < 40) return null;
+  if (p.lapTimes.length) {
+    let bi = 0; p.lapTimes.forEach((t, i) => { if (t < p.lapTimes[bi]) bi = i; });
+    let st = 0; for (let i = 0; i < bi; i++) st += p.lapTimes[i];
+    return { a: st, b: Math.min(st + p.lapTimes[bi], (game.rec.n - 2) * REC_DT), label: '最快圈回放 · 第 ' + (bi + 1) + ' 圈 ' + fmt(p.lapTimes[bi]) };
+  }
+  const end = (game.rec.n - 2) * REC_DT; return { a: Math.max(0, end - 20), b: end, label: '精彩回放' };
+}
+function startReplay() {
+  const w = replayWindow(); if (!w) return;
+  clearProjectiles();
+  game.replay = { t: w.a, a: w.a, b: w.b, save: game.karts.map(k => ({ x: k.pos.x, y: k.pos.y, z: k.pos.z, yaw: k.yaw, speed: k.speed })), prev: game.state };
+  game.state = 'replay'; game.camT = 0; game.camMode = 2;
+  $('results').hidden = true; $('hud').hidden = true; $('topBtns').hidden = true; $('replayBar').hidden = false; $('replayLbl').textContent = w.label;
+  views[0].init = true;
+}
+function updateReplay(dt) {
+  const R = game.replay, r = game.rec; R.t += dt;
+  if (R.t >= R.b) { endReplay(); return; }
+  const u = R.t / REC_DT, i = Math.min(Math.floor(u), r.n - 2), f = u - i;
+  game.karts.forEach((k, n) => {
+    const a = r.k[n]; if (!a || a.length < (i + 2) * 6) return;
+    const o = i * 6, b = o + 6, fl = a[o + 5];
+    k.pos.set(lerp(a[o], a[b], f), lerp(a[o + 1], a[b + 1], f), lerp(a[o + 2], a[b + 2], f));
+    k.yaw = a[o + 3] + wrapA(a[b + 3] - a[o + 3]) * f; k.speed = lerp(a[o + 4], a[b + 4], f);
+    k.drift = fl & 1 ? 1 : fl & 2 ? -1 : 0; k.star = fl & 4 ? 1 : 0; k.boost = fl & 64 ? 0.5 : 0; k.shrink = fl & 32 ? 1 : 0;
+    if (fl & 8) { k.spin = 1; k.spinAng += dt * 13; } else k.spin = 0;
+    if (k.bulletM || fl & 16) bulletMesh(k).visible = !!(fl & 16);
+    if (k.plantM || fl & 128) plantMesh(k).visible = !!(fl & 128);
+    locateGlobal(k.pos.x, k.pos.z, k.q); k.grounded = true; k.charge = k.drift ? 2 : 0;
+    k.syncMesh(dt); k.fx(dt, Math.sin(k.yaw), Math.cos(k.yaw));
+  });
+  updateCoins(dt); updateWeather(dt);
+}
+function endReplay() {
+  const R = game.replay; if (!R) return;
+  game.karts.forEach((k, n) => { const s = R.save[n]; if (!s) return; k.pos.set(s.x, s.y, s.z); k.yaw = s.yaw; k.speed = s.speed; k.spin = 0; k.star = 0; k.boost = 0; k.bullet = 0; if (k.bulletM) k.bulletM.visible = false; if (k.plantM) k.plantM.visible = false; k.plantT = 0; locateGlobal(k.pos.x, k.pos.z, k.q); k.prevI = k.q.i; k.syncMesh(0); });
+  game.state = R.prev; game.replay = null; $('replayBar').hidden = true; $('results').hidden = false; views[0].init = true;
 }
 
 /* ---------------- race flow ---------------- */
@@ -2544,7 +2620,7 @@ function spawnKarts(humanChars) {
   views[0].kart = game.humansK[0] || null; views[1].kart = game.humansK[1] || null;
   game.finishOrder = 0;
 }
-function hideOverlays() { $('menu').hidden = true; $('results').hidden = true; $('pause').hidden = true; $('results').classList.remove('podium'); }
+function hideOverlays() { $('replayBar').hidden = true; $('menu').hidden = true; $('results').hidden = true; $('pause').hidden = true; $('results').classList.remove('podium'); }
 function startDemo() {
   game.demo = true; game.state = 'title'; game.raceT = 0; game.humans = 0; game.gp = null; game.paused = false;
   if (game.ghost && game.ghost.mesh) game.ghost.mesh.root.visible = false;
@@ -2567,6 +2643,7 @@ function startRace() {
   if (T.coins) for (const c of T.coins) { c.on = true; c.t = 0; }
   if (game.mode === 'tt') { const p = game.player; p.item = 'triple'; p.itemCount = 3; }
   setupGhost();
+  game.rec = game.mode === 'battle' ? null : { n: 0, k: [] }; game.replay = null;
   hideOverlays();
   $('hud').hidden = false; $('topBtns').hidden = false; $('touch').hidden = !isTouch || game.humans === 2;
   setupHud();
@@ -2611,6 +2688,10 @@ function showResults() {
     p.lapTimes.forEach((t, i) => { const tr = document.createElement('tr'); if (best && Math.abs(t - best.t) < 1e-6) tr.className = 'me'; tr.innerHTML = `<td>${i + 1}</td><td>第 ${i + 1} 圈${best && Math.abs(t - best.t) < 1e-6 ? '　最快圈纪录' : ''}</td><td>${fmt(t)}</td>`; tb.appendChild(tr); });
     const tr = document.createElement('tr'); tr.innerHTML = `<td>Σ</td><td>总时间</td><td>${fmt(p.finishTime)}</td>`; tb.appendChild(tr);
     if (best) { const tr2 = document.createElement('tr'); tr2.innerHTML = `<td>★</td><td>本赛道最快圈</td><td>${fmt(best.t)}</td>`; tb.appendChild(tr2); }
+    const bd = addToBoard(p);
+    const h = document.createElement('tr'); h.innerHTML = '<th></th><th>排行榜 TOP 5（总时间）</th><th style="text-align:right">最快圈</th>'; tb.appendChild(h);
+    bd.top.forEach((e, i) => { const tr3 = document.createElement('tr'); if (i === bd.rank) tr3.className = 'me'; const ch = CHARS[e.ch] || CHARS[0]; tr3.innerHTML = `<td>${['🥇', '🥈', '🥉', '4', '5'][i]}</td><td><span class="chip" style="background:${ch.color}"></span>${esc(ch.name)}　<b>${fmt(e.t)}</b>　<small>${e.d}${i === bd.rank ? ' · 新！' : ''}</small></td><td>${fmt(e.lap)}</td>`; tb.appendChild(tr3); });
+    if (bd.rank === 0 && bd.top.length > 1) $('resTitle').textContent = '新纪录！';
   } else if (game.mode === 'gp') {
     const gp = game.gp, rows = raceRows();
     rows.forEach((r, i) => { gp.pts[r.k.ci] = (gp.pts[r.k.ci] || 0) + POINTS[i]; r.add = POINTS[i]; });
@@ -2627,8 +2708,11 @@ function showResults() {
     if (game.humans === 2) { const p2 = rows.findIndex(r => r.k.pIdx === 1) + 1; $('resTitle').textContent = pr < p2 ? '1P 获胜！' : '2P 获胜！'; $('resSub').textContent = `1P 第 ${pr} 名 · 2P 第 ${p2} 名`; }
     else $('resTitle').textContent = pr === 1 ? '冠军！' : pr <= 3 ? '登上领奖台！' : '第 ' + pr + ' 名';
   }
+  $('replayBtn').hidden = !replayWindow();
   $('results').hidden = false; $('touch').hidden = true;
 }
+$('replayBtn').onclick = () => startReplay();
+$('replaySkip').onclick = () => endReplay();
 $('againBtn').onclick = () => {
   if (game.mode === 'gp' && game.gp) {
     if (game.state === 'podium') { game.gp = null; startRace(); return; }
@@ -2637,7 +2721,7 @@ $('againBtn').onclick = () => {
   }
   startRace();
 };
-$('menuBtn').onclick = () => { game.gp = null; startDemo(); };
+$('menuBtn').onclick = () => { game.gp = null; startDemo(); refreshMode(); };
 
 /* ---------------- podium ---------------- */
 function startPodium() {
@@ -2699,14 +2783,14 @@ function layoutViews() {
 }
 function updateCamera(v, dt) {
   const tgtPos = new V3(), tgtLook = new V3(); let fov = 68, rate = 10;
-  const cinematic = game.state === 'title' || (game.state === 'results' && game.humans === 0);
+  const cinematic = game.state === 'title' || game.state === 'replay' || (game.state === 'results' && game.humans === 0);
   if (game.state === 'podium') {
     const { g } = game.podium; const a = Math.sin(game.podiumT * 0.35) * 0.55, d = lerp(30, 17, smooth(0, 3, game.podiumT));
     tgtPos.copy(g.localToWorld(new V3(Math.sin(a) * d, 5.5 + d * 0.12, Math.cos(a) * d))); tgtLook.copy(g.localToWorld(new V3(0, $('results').hidden ? 3.2 : -2.2, 0))); fov = 52; rate = 3;
   } else if (cinematic || !v.kart) {
     game.camT -= dt;
     const leader = game.karts.slice().sort((a, b) => a.rank - b.rank);
-    if (game.camT <= 0 || !game.camTarget || !game.karts.includes(game.camTarget)) { game.camT = 6; game.camMode = (game.camMode + 1) % 3; game.camTarget = leader[(Math.random() * Math.min(4, leader.length)) | 0]; v.init = true; }
+    if (game.camT <= 0 || !game.camTarget || !game.karts.includes(game.camTarget)) { game.camT = 6; game.camMode = (game.camMode + 1) % 3; game.camTarget = game.state === 'replay' ? game.humansK[0] : leader[(Math.random() * Math.min(4, leader.length)) | 0]; if (game.state === 'replay') game.camT = 4; v.init = true; }
     const k = game.camTarget; if (!k) return;
     const fx = Math.sin(k.yaw), fz = Math.cos(k.yaw);
     if (game.camMode === 0) { const a = game.t * 0.35; tgtPos.set(k.pos.x + Math.cos(a) * 16, k.pos.y + 6, k.pos.z + Math.sin(a) * 16); tgtLook.set(k.pos.x, k.pos.y + 1.5, k.pos.z); fov = 55; }
@@ -2822,7 +2906,17 @@ function pollPads() {
     }
   }
 }
-let autoAccel = true;
+let autoAccel = true, smartSteer = false, autoItem = false;
+try { smartSteer = localStorage.getItem('starkart.smartSteer') === '1'; autoItem = localStorage.getItem('starkart.autoItem') === '1'; } catch (e) { }
+// smart steering: nudges the kart back before it runs off the road (player's choice, like the antenna assist)
+function smartSteerFix(p, steer) {
+  const q = p.q, fx = Math.sin(p.yaw), fz = Math.cos(p.yaw);
+  const vlat = (fx * T.rx[q.i] + fz * T.rz[q.i]) * p.speed, latF = q.lat + vlat * 0.5, lim = HW - 0.5;
+  if (Math.abs(latF) < lim || (Math.sign(vlat) !== Math.sign(q.lat) && Math.abs(q.lat) < lim)) return steer;
+  const fix = clamp(-autoAim(p, clamp(q.lat * 0.6, -lim + 3, lim - 3)) * 3, -1, 1);
+  if (steer * fix <= 0) return fix;
+  return Math.sign(fix) * Math.max(Math.abs(steer), Math.abs(fix));
+}
 try { autoAccel = localStorage.getItem('starkart.autoAccel') !== '0'; } catch (e) { }
 function playerInput(p) {
   if (p.finished || game.state === 'finish' || game.state === 'results') return false; // AI drives after the line
@@ -2841,10 +2935,12 @@ function playerInput(p) {
     drift = !!(k.Space || k.ShiftLeft || k.ShiftRight) || touch.drift; item = !!(k.KeyE || k.KeyX || k.ControlLeft) || touch.item; look = !!k.KeyC;
   }
   if (g.on) { gas = gas || g.gas; brake = brake || g.brake; if (g.steer) steer = g.steer; drift = drift || g.drift; item = item || g.item; look = look || g.look; back = g.back; }
+  if (smartSteer && p.bullet <= 0 && game.mode !== 'battle' && !game.demo) steer = smartSteerFix(p, clamp(steer, -1, 1));
   inp.gas = gas; // a real press: rocket starts need it even with auto-accelerate
   inp.accel = gas || ((autoAccel || (isTouch && game.humans === 1)) && !brake);
   inp.brake = brake; inp.steer = clamp(steer, -1, 1); inp.drift = drift; inp.item = item; inp.back = brake || !!back;
   v.lookBack = look;
+  if (autoItem && !item) aiItems(p, 1 / 60);
   return true;
 }
 function togglePause(force) {
@@ -2880,7 +2976,7 @@ function refreshMode() {
   const m = MODES.find(x => x.id === game.mode);
   [...$('modes').children].forEach(b => b.setAttribute('aria-pressed', b.dataset.id === game.mode));
   let hint = m.hint;
-  if (game.mode === 'tt') { const best = loadGhost(); hint += best ? '　当前赛道最快圈：' + fmt(best.t) : '　当前赛道还没有纪录。'; }
+  if (game.mode === 'tt') { const best = loadGhost(), bd = loadBoard(); hint += best ? '　当前赛道最快圈：' + fmt(best.t) + (bd.length ? '，最快总时间：' + fmt(bd[0].t) : '') : '　当前赛道还没有纪录。'; }
   if (game.mode === 'gp') { const cup = CUPS[Math.max(0, cupOf(game.courseIdx))]; hint += '　（点一条赛道选杯赛。' + cup.name + '：' + cup.courses.map(c => COURSES[c].name).join(' → ') + '）'; }
   $('modeHint').textContent = hint;
   $('startBtn').textContent = m.btn;
@@ -2934,7 +3030,10 @@ function buildMenu(thumbs) {
   const ab = document.createElement('button'); ab.type = 'button'; ab.className = 'opt'; ab.id = 'autoBtn'; ab.setAttribute('aria-pressed', autoAccel);
   ab.innerHTML = '自动加速<small>AUTO-ACCELERATE · 不用按油门</small>';
   ab.onclick = () => { autoAccel = !autoAccel; ab.setAttribute('aria-pressed', autoAccel); try { localStorage.setItem('starkart.autoAccel', autoAccel ? '1' : '0'); } catch (e) { } };
-  xw.appendChild(mb); xw.appendChild(ab); clw.insertAdjacentElement('afterend', xw);
+  const tog = (id, html, get, set, key) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.id = id; b.setAttribute('aria-pressed', get()); b.innerHTML = html; b.onclick = () => { set(!get()); b.setAttribute('aria-pressed', get()); try { localStorage.setItem(key, get() ? '1' : '0'); } catch (e) { } }; return b; };
+  const sb = tog('smartBtn', '智能转向<small>SMART STEERING · 不会冲出赛道</small>', () => smartSteer, v => smartSteer = v, 'starkart.smartSteer');
+  const ib = tog('autoItemBtn', '自动道具<small>AUTO-ITEM · 自动找时机用道具</small>', () => autoItem, v => autoItem = v, 'starkart.autoItem');
+  xw.appendChild(mb); xw.appendChild(ab); xw.appendChild(sb); xw.appendChild(ib); clw.insertAdjacentElement('afterend', xw);
   refreshMode();
 }
 // custom driver names, remembered in this browser
@@ -3003,6 +3102,8 @@ function step(dt) {
       for (const k of game.karts) k.lapStart = 0;
     }
     for (const k of game.karts) { k.syncMesh(dt); if (k.isPlayer && k.input.accel) SMOKE.emit(k.pos.x - Math.sin(k.yaw) * 2, k.pos.y + 0.9, k.pos.z - Math.cos(k.yaw) * 2, 0, 1.5, 0, 0.7, 0.7, 0.72, 0.35, 0.5, 0.6, 0, 1.4); }
+  } else if (game.state === 'replay') {
+    updateReplay(dt);
   } else if (game.state === 'podium') {
     game.raceT += dt; updatePodium(dt); updateWeather(dt);
   } else if (game.state === 'race' || game.state === 'finish' || game.state === 'title' || game.state === 'results') {
@@ -3019,6 +3120,7 @@ function step(dt) {
     if (game.mode === 'battle' && !game.demo) updateBattle(dt);
     updateProjectiles(dt);
     updateGhost(dt);
+    recordFrame();
     if (game.state === 'finish') { game.resultsT -= dt; if (game.resultsT <= 0) showResults(); }
   }
   FX.update(dt); SMOKE.update(dt);
