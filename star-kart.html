@@ -370,7 +370,7 @@ body.touch .itemName{display:none}
     <h3>模式</h3>
     <table>
       <tr><td>单场比赛</td><td>选一条赛道，和 7 名电脑对手跑 3 圈</td></tr>
-      <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）或月亮杯（雪山小镇、熔岩火山、糖果乐园）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
+      <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）、月亮杯（雪山小镇、熔岩火山、糖果乐园）或彩虹杯（沙漠神殿、海底遗迹、彩虹之路）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
       <tr><td>双人对战</td><td>两人上下分屏，和 6 名电脑对手一起跑</td></tr>
       <tr><td>对战模式</td><td>霓虹竞技场里混战，四种玩法：<b>气球大战</b>（被打中少一个气球，掉光出局）、<b>抢金币</b>（2 分钟金币最多的赢，被打中会掉金币）、<b>抢夺闪光</b>（累计拿着闪光 20 秒就赢，被打中或被撞会掉）、<b>炸弹大战</b>（道具只有炸弹）</td></tr>
       <tr><td>自定义规则</td><td>单场比赛和双人对战可以改：道具（正常 / 疯狂 / 只有弹壳 / 只有香蕉 / 只有加速 / 无道具）、电脑水平、圈数、红蓝组队。组队时队友的道具打不到自己人，按名次积分算哪队赢</td></tr>
@@ -434,10 +434,16 @@ const COURSES = [
     pts: [[0,0,0],[0,-240,0],[-30,-360,6],[-140,-420,12],[-280,-380,18],[-340,-260,24],[-280,-150,28],[-150,-140,26],[-90,-40,20],[-160,60,14],[-300,80,10],[-400,180,8],[-360,320,14],[-220,360,20],[-100,300,24],[20,360,22],[160,420,16],[300,360,10],[340,220,8],[260,120,12],[300,0,16],[380,-120,14],[300,-260,8],[170,-250,4],[140,-110,2],[170,30,0],[110,140,0],[20,130,0],[-5,60,0]] },
   { name: '糖果乐园', en: 'CANDY LAND', theme: 'candy', seed: 64, antigrav: [[0.28, 0.48]], drops: 1,
     pts: [[0,0,0],[0,-220,0],[50,-330,4],[170,-360,8],[260,-290,12],[230,-180,16],[120,-150,18],[90,-60,16],[170,20,12],[300,0,8],[400,-80,6],[500,-20,10],[510,120,16],[420,220,20],[300,200,22],[220,280,18],[260,400,12],[140,470,8],[0,440,6],[-120,480,10],[-260,420,14],[-330,300,12],[-260,200,8],[-140,220,6],[-60,160,2],[-10,90,0]] },
+  { name: '沙漠神殿', en: 'DESERT TEMPLE', theme: 'desert', seed: 83, jumps: 2, glide: true, drops: 1,
+    pts: [[0,0,0],[0,-240,0],[60,-360,4],[200,-400,8],[330,-330,10],[360,-200,8],[290,-90,6],[300,40,4],[420,90,8],[480,220,14],[400,340,18],[260,360,14],[160,280,10],[60,330,6],[-80,400,4],[-220,360,6],[-300,240,10],[-260,120,8],[-140,100,4],[-60,40,0]] },
+  { name: '海底遗迹', en: 'CORAL REEF', theme: 'reef', seed: 91, antigrav: [[0.62, 0.8]], drops: 1,
+    pts: [[0,0,0],[0,-220,-2],[-40,-340,-6],[-160,-400,-10],[-300,-360,-12],[-360,-240,-10],[-300,-130,-6],[-180,-120,-4],[-120,-30,-2],[-200,60,-4],[-320,100,-8],[-380,220,-10],[-300,340,-8],[-160,360,-4],[-60,280,0],[40,340,4],[160,400,6],[280,340,4],[300,200,2],[220,110,0],[120,140,0],[40,80,0]] },
+  { name: '彩虹之路', en: 'RAINBOW ROAD', theme: 'space', seed: 99, jumps: 2, glide: true, dropAll: 0.006, antigrav: [[0.36, 0.56]],
+    pts: [[0,0,40],[0,-260,40],[80,-420,52],[240,-480,66],[400,-420,78],[460,-260,84],[380,-120,80],[240,-100,70],[160,0,58],[220,120,50],[360,160,44],[460,280,40],[420,420,36],[260,480,30],[100,420,26],[20,300,24],[-100,360,22],[-260,420,26],[-400,340,32],[-440,180,38],[-360,60,42],[-220,80,44],[-120,180,46],[-60,100,44],[-20,40,42]] },
   { name: '霓虹竞技场', en: 'NEON ARENA', theme: 'city', seed: 71, battle: true, boxRows: [0.06, 0.22, 0.39, 0.56, 0.73, 0.89],
     pts: [[248,0,3],[240,101,5],[131,143,6],[37,141,4],[-45,172,2],[-164,179,0],[-229,96,1],[-189,0,3],[-153,-64,5],[-141,-154,6],[-60,-229,4],[52,-198,2],[108,-118,0],[165,-69,1]] },
 ];
-const CUPS = [{ name: '星星杯', en: 'STAR CUP', courses: [0, 1, 2] }, { name: '月亮杯', en: 'MOON CUP', courses: [3, 4, 5] }];
+const CUPS = [{ name: '星星杯', en: 'STAR CUP', courses: [0, 1, 2] }, { name: '月亮杯', en: 'MOON CUP', courses: [3, 4, 5] }, { name: '彩虹杯', en: 'RAINBOW CUP', courses: [6, 7, 8] }];
 const cupOf = ci => CUPS.findIndex(c => c.courses.includes(ci));
 const BATTLE_IDX = COURSES.findIndex(c => c.battle);
 const BATTLE_TIME = 150;
@@ -464,6 +470,19 @@ const THEMES = {
     grassA: '#86e3b4', grassB: '#ffb3d9', trees: ['lolly', 'lollyB', 'gumdrop'], mtn: ['#ff8fc8', '#ffc2e2', '#ffffff'], water: '#ff8ac8', exposure: 1.06,
     mow: '#a6f0cc', rock: '#8a5a3a', rockCol: '#7a4a2a', flowers: ['#ff5fa8', '#ffe94b', '#3ec8ff', '#9b6bff', '#ffffff'], cloud: '#fff4fb', cloudEm: '#ffc0e0', dust: [1, 0.8, 0.9] },
 };
+Object.assign(THEMES, {
+  desert: { skyTop: '#3d8fe0', skyHor: '#ffe6b0', skyBot: '#e8c27a', fog: '#f2d9a6', fogNear: 220, fogFar: 1500,
+    sunDir: [0.5, 0.75, 0.3], sunColor: '#fff0c8', sunI: 3.0, hemiSky: '#ffeccc', hemiGround: '#c8964e', hemiI: 0.9,
+    grassA: '#e8c27a', grassB: '#d9a75a', trees: ['cactus', 'cactus', 'palm'], mtn: ['#c9874a', '#dba86a', '#f4d49a'], water: '#36b8c8', exposure: 1.05,
+    mow: '#efd096', rock: '#b07a46', rockCol: '#c08a52', flowers: ['#ff7a5a', '#ffd23f'], cloud: '#fff6e6', cloudEm: '#ffe0b0', dust: [0.93, 0.8, 0.55], sandstorm: true, pyramids: true },
+  reef: { skyTop: '#04263f', skyHor: '#1d8aa8', skyBot: '#0b4660', fog: '#1a6f8a', fogNear: 110, fogFar: 950,
+    sunDir: [0.2, 0.9, 0.2], sunColor: '#bff4ff', sunI: 2.0, hemiSky: '#7fe0ff', hemiGround: '#1f5a5a', hemiI: 1.05,
+    grassA: '#d8c79a', grassB: '#c2b07c', trees: ['coral', 'coralB', 'kelp', 'kelp'], mtn: ['#245e70', '#2f7f84', '#4fa49a'], water: '#2ab0d0', exposure: 1.12,
+    mow: '#e6d6a8', rock: '#5a7a7a', rockCol: '#6a8a88', flowers: ['#ff6a8a', '#ffd23f', '#9b6bff', '#ff9a3a'], cloud: '#bff0ff', cloudEm: '#7fe0ff', dust: [0.85, 0.8, 0.65], bubbles: true, underwater: true, noClouds: true },
+  space: { skyTop: '#020210', skyHor: '#22104a', skyBot: '#05020f', fog: '#0b0820', fogNear: 500, fogFar: 3000,
+    sunDir: [0.3, 0.6, -0.4], sunColor: '#d8d0ff', sunI: 1.5, hemiSky: '#9a8aff', hemiGround: '#301860', hemiI: 1.0,
+    grassA: '#000000', grassB: '#000000', trees: [], mtn: ['#000000', '#000000', '#000000'], water: '#000000', exposure: 1.2, space: true, noClouds: true },
+});
 const CLASSES = [
   { name: '50cc', en: 'EASY', speed: 0.86, ai: 0.9 },
   { name: '100cc', en: 'NORMAL', speed: 1.0, ai: 0.95 },
@@ -891,7 +910,11 @@ function buildTrackData(course) {
   }
   // drop-offs: no rail on the outside of some bends; run wide and you fall
   const dropL = new Float32Array(N), dropR = new Float32Array(N);
-  if (course.dropAll) { dropL.fill(1); dropR.fill(1); }
+  if (course.dropAll) {
+    // rainbow road: rails only where the road is straight, the outside of every real bend is open
+    const c2 = curv.slice(); sm(c2, 12, 1);
+    for (let i = 0; i < N; i++) if (Math.abs(c2[i]) > course.dropAll && !ag[i]) (c2[i] > 0 ? dropR : dropL)[i] = 1;
+  }
   else if (course.drops) {
     const cand = [];
     for (let i = 40; i < N - 70; i += 5) { let c = 0; for (let k = 0; k < 46; k++) c += curv[(i + k) % N]; cand.push([Math.abs(c), i, Math.sign(c)]); }
@@ -1065,14 +1088,15 @@ function buildCourse(ci) {
     }
   }
   const mkGeo = (pos, uv, index) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); if (uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(index); g.computeVertexNormals(); return g; };
-  const road = new THREE.Mesh(mkGeo(roadPos, roadUV, idxs(5)), (theme.city ? std({ map: TEX.road, roughness: 0.42, metalness: 0.3, color: C('#b8b4d8') }) : std({ map: TEX.road, roughness: 0.78, color: 0xffffff })));
+  if (theme.space && !TEX.rainbowRoad) { TEX.rainbowRoad = canvasTex(256, 64, (g, w, h) => { ['#ff3b6b', '#ff9a1f', '#ffe23f', '#3ee37a', '#3ec8ff', '#5a6bff', '#b06bff'].forEach((c, i) => { g.fillStyle = c; g.fillRect(i * w / 7, 0, w / 7 + 1, h); }); g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(0, 0, w, 6); }, { repeat: true }); }
+  const road = new THREE.Mesh(mkGeo(roadPos, roadUV, idxs(5)), theme.space ? std({ map: TEX.rainbowRoad, emissiveMap: TEX.rainbowRoad, emissive: 0xffffff, emissiveIntensity: 0.75, roughness: 0.3, metalness: 0.2, transparent: true, opacity: 0.92 }) : (theme.city ? std({ map: TEX.road, roughness: 0.42, metalness: 0.3, color: C('#b8b4d8') }) : std({ map: TEX.road, roughness: 0.78, color: 0xffffff })));
   road.receiveShadow = true; world.add(road);
   // curbs: two strips of 3 verts each per sample, interleaved (6 per sample)
   const curbIdx = []; for (let i = 0; i < N; i++) { for (let c = 0; c < 2; c++) { const A = i * 6 + c, B = A + 1, Cc = A + 6, D = Cc + 1; curbIdx.push(A, Cc, B, B, Cc, D); } for (let c = 0; c < 2; c++) { const A = i * 6 + 3 + c, B = A + 1, Cc = A + 6, D = Cc + 1; curbIdx.push(A, B, Cc, B, D, Cc); } }
-  const curbs = new THREE.Mesh(mkGeo(curbPos, curbUV, curbIdx), (theme.city ? std({ map: TEX.rainbow, emissiveMap: TEX.rainbow, emissive: 0xffffff, emissiveIntensity: 0.9, roughness: 0.4 }) : std({ map: TEX.curb, roughness: 0.6 })));
+  const curbs = new THREE.Mesh(mkGeo(curbPos, curbUV, curbIdx), (theme.city || theme.space ? std({ map: TEX.rainbow, emissiveMap: TEX.rainbow, emissive: 0xffffff, emissiveIntensity: 0.9, roughness: 0.4 }) : std({ map: TEX.curb, roughness: 0.6 })));
   curbs.receiveShadow = true; world.add(curbs);
   const skIdx = []; for (let i = 0; i < N; i++) for (let s = 0; s < 2; s++) { const A = i * 4 + s * 2, B = A + 1, Cc = A + 4, D = Cc + 1; skIdx.push(A, B, Cc, B, D, Cc); }
-  const skirt = new THREE.Mesh(mkGeo(skPos, null, skIdx), std({ color: C('#6b5a3e'), side: THREE.DoubleSide }));
+  const skirt = new THREE.Mesh(mkGeo(skPos, null, skIdx), theme.space ? std({ color: C('#2a1a5a'), emissive: C('#6a4aff'), emissiveIntensity: 0.4, side: THREE.DoubleSide, transparent: true, opacity: 0.6 }) : std({ color: C('#6b5a3e'), side: THREE.DoubleSide }));
   world.add(skirt);
   const wIdx = []; for (let i = 0; i < N; i++) for (let s = 0; s < 2; s++) { const A = i * 4 + s * 2, B = A + 1, Cc = A + 4, D = Cc + 1; wIdx.push(A, B, Cc, B, D, Cc); }
   const walls = new THREE.Mesh(mkGeo(wallPos, wallUV, wIdx), (theme.city ? std({ map: TEX.neon, emissiveMap: TEX.neon, emissive: 0xffffff, emissiveIntensity: 1, roughness: 0.5, side: THREE.DoubleSide }) : std({ map: TEX.wall, roughness: 0.5, side: THREE.DoubleSide })));
@@ -1106,10 +1130,10 @@ function buildCourse(ci) {
   tg.computeVertexNormals();
   const gtex = theme.city ? TEX.plaza : TEX.grass; gtex.repeat.set(theme.city ? 120 : 260, theme.city ? 120 : 260);
   const terrain = new THREE.Mesh(tg, std({ vertexColors: true, map: gtex, roughness: 0.95 }));
-  terrain.receiveShadow = true; world.add(terrain);
+  terrain.receiveShadow = true; if (!theme.space) world.add(terrain);
 
   // water
-  if (terr.waterY > -1e8) {
+  if (terr.waterY > -1e8 && !theme.space) {
     const wt = TEX.water; wt.repeat.set(theme.sea ? 60 : 8, theme.sea ? 60 : 8);
     const wg = theme.sea ? new THREE.PlaneGeometry(9000, 9000) : new THREE.CircleGeometry(terr.lake.r * 1.25, 48);
     wg.rotateX(-Math.PI / 2);
@@ -1350,6 +1374,19 @@ function buildCourse(ci) {
     { geo: G.sph(1.6, 12, 8, 0, TAU, 0, Math.PI / 2), m: M(3.4, 0, 1, 0, 0, 0, 1, 1.3, 1), c: '#ffe94b' },
     { geo: G.sph(1.3, 12, 8, 0, TAU, 0, Math.PI / 2), m: M(-2.8, 0, -1.8, 0, 0, 0, 1, 1.3, 1), c: '#4be37a' },
   ]);
+  treeGeos.cactus = merge([
+    { geo: G.cyl(0.9, 1.0, 9, 8), m: M(0, 4.5, 0), c: '#3f9a4a' }, { geo: G.sph(0.9, 8, 6), m: M(0, 9, 0), c: '#47a852' },
+    { geo: G.cyl(0.55, 0.6, 3, 7), m: M(1.6, 5.2, 0), c: '#3f9a4a' }, { geo: G.cyl(0.55, 0.6, 1.6, 7), m: M(1.0, 3.9, 0, 0, 0, Math.PI / 2), c: '#3f9a4a' }, { geo: G.sph(0.55, 8, 6), m: M(1.6, 6.7, 0), c: '#47a852' },
+    { geo: G.cyl(0.5, 0.55, 2.4, 7), m: M(-1.5, 6.4, 0), c: '#3f9a4a' }, { geo: G.cyl(0.5, 0.55, 1.4, 7), m: M(-0.9, 5.3, 0, 0, 0, Math.PI / 2), c: '#3f9a4a' }, { geo: G.sph(0.5, 8, 6), m: M(-1.5, 7.6, 0), c: '#ff6aa0' },
+  ]);
+  const coral = (a, b) => merge([
+    { geo: G.cyl(0.5, 0.9, 4, 7), m: M(0, 2, 0), c: a },
+    { geo: G.cyl(0.35, 0.5, 4, 7), m: M(1.2, 4.6, 0, 0, 0, -0.5), c: a }, { geo: G.cyl(0.35, 0.5, 4, 7), m: M(-1.2, 4.4, 0.3, 0.2, 0, 0.55), c: a },
+    { geo: G.cyl(0.3, 0.4, 3, 7), m: M(0.2, 5.6, -0.9, -0.45, 0, 0), c: a },
+    { geo: G.sph(0.55, 8, 6), m: M(2.1, 6.3, 0), c: b }, { geo: G.sph(0.55, 8, 6), m: M(-2.1, 6.1, 0.6), c: b }, { geo: G.sph(0.5, 8, 6), m: M(0.2, 7, -1.6), c: b },
+  ]);
+  treeGeos.coral = coral('#ff6a8a', '#ffb3c6'); treeGeos.coralB = coral('#ff9a3a', '#ffe08a');
+  treeGeos.kelp = merge([0, 1, 2].map(k => ({ geo: G.box(0.7, 14, 0.15), m: M((k - 1) * 1.1, 7, (k % 2) * 0.6, 0, k * 0.8, (k - 1) * 0.08), c: k % 2 ? '#2f9a5a' : '#3fb06a' })));
   const rockGeo = merge([{ geo: G.ico(1, 0), m: M(0, 0.3, 0, 0, 0, 0, 1.4, 0.8, 1.1), c: theme.rockCol || (theme.sea ? '#b98a5e' : '#8e8f96') }]);
   const flowerGeo = merge([{ geo: G.ico(0.5, 0), m: M(0, 0.4, 0), c: '#ffffff' }]);
   const treeMat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.85 });
@@ -1369,20 +1406,31 @@ function buildCourse(ci) {
     list.forEach((mm, k) => im.setMatrixAt(k, mm)); im.count = list.length; im.castShadow = cast; im.receiveShadow = true; world.add(im);
   };
   if (theme.city) buildCity(R, place, qq);
+  if (theme.space) buildSpace(R);
+  if (theme.pyramids) {
+    const pp = [];
+    for (let k = 0; k < 5; k++) {
+      const a = R() * TAU, r = T.R + 120 + R() * 260, x = T.cx + Math.cos(a) * r, z = T.cz + Math.sin(a) * r, s = 60 + R() * 70;
+      locateGlobal(x, z, qq); if (Math.abs(qq.lat) < WALL + s) continue;
+      pp.push({ geo: G.cone(s, s * 0.95, 4, 1), m: M(x, themeHeight(x, z) + s * 0.45, z, 0, Math.PI / 4 + R(), 0), c: k % 2 ? '#e3b26a' : '#d9a55c' });
+      pp.push({ geo: G.cone(s * 0.16, s * 0.15, 4, 1), m: M(x, themeHeight(x, z) + s * 0.95 - s * 0.075 + 0.5, z, 0, Math.PI / 4, 0), c: '#ffd23f' });
+    }
+    if (pp.length) world.add(new THREE.Mesh(merge(pp), new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.9 })));
+  }
   const byType = {}; theme.trees.forEach(t => byType[t] = []);
   if (theme.trees.length) place(theme.sea ? 260 : 620, WALL + 7, T.R + 380, (x, y, z) => { const t = theme.trees[(R() * theme.trees.length) | 0]; const s = 0.8 + R() * 0.7; byType[t].push(M(x, y - 0.3, z, 0, R() * TAU, 0, s, s * (0.85 + R() * 0.4), s)); });
   for (const t in byType) addInst(treeGeos[t], byType[t], true);
-  const rocks = []; if (!theme.city) place(120, WALL + 4, T.R + 300, (x, y, z) => { const s = 0.8 + R() * 2.2; rocks.push(M(x, y, z, R(), R() * TAU, R() * 0.3, s, s * (0.6 + R() * 0.6), s)); });
+  const rocks = []; if (!theme.city && !theme.space) place(120, WALL + 4, T.R + 300, (x, y, z) => { const s = 0.8 + R() * 2.2; rocks.push(M(x, y, z, R(), R() * TAU, R() * 0.3, s, s * (0.6 + R() * 0.6), s)); });
   addInst(rockGeo, rocks, true);
   const flowers = []; const fc = theme.flowers || (theme.sea ? ['#ffffff', '#ffe08a'] : ['#ffffff', '#ffe14a', '#ff7aa8', '#b88bff']);
-  if (!theme.city) place(theme.sea ? 150 : 700, EDGE + 3, T.R + 60, (x, y, z) => { const s = 0.4 + R() * 0.5; flowers.push({ m: M(x, y, z, 0, 0, 0, s), c: fc[(R() * fc.length) | 0] }); });
+  if (!theme.city && !theme.space) place(theme.sea ? 150 : 700, EDGE + 3, T.R + 60, (x, y, z) => { const s = 0.4 + R() * 0.5; flowers.push({ m: M(x, y, z, 0, 0, 0, s), c: fc[(R() * fc.length) | 0] }); });
   const fim = new THREE.InstancedMesh(flowerGeo, new THREE.MeshStandardMaterial({ flatShading: true, roughness: 0.8 }), Math.max(1, flowers.length));
   flowers.forEach((f, k) => { fim.setMatrixAt(k, f.m); fim.setColorAt(k, C(f.c)); }); fim.count = flowers.length; world.add(fim);
 
   // mountains
   const mParts = [];
   const mc = theme.mtn;
-  for (let k = 0; k < (theme.city ? 0 : 34); k++) {
+  for (let k = 0; k < (theme.city || theme.space ? 0 : 34); k++) {
     const a = (k / 34) * TAU + R() * 0.12, r = T.R + 820 + R() * 380;
     if (theme.sea) { const x = T.cx + Math.cos(a) * r; if (x > terr.seaX + 100) continue; }
     const h = 180 + R() * 260, w = 150 + R() * 170;
@@ -1398,7 +1446,7 @@ function buildCourse(ci) {
   if (mParts.length) world.add(new THREE.Mesh(merge(mParts), new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1, emissive: theme.lava ? C('#ff3a0a') : 0x000000, emissiveIntensity: theme.lava ? 0.25 : 0 })));
   // clouds
   const cParts = [];
-  for (let k = 0; k < (theme.city ? 0 : 36); k++) {
+  for (let k = 0; k < (theme.city || theme.noClouds ? 0 : 36); k++) {
     const a = R() * TAU, r = 200 + R() * 1500, x = T.cx + Math.cos(a) * r, z = T.cz + Math.sin(a) * r, y = 150 + R() * 160, s = 10 + R() * 14;
     const n = 4 + ((R() * 4) | 0);
     for (let j = 0; j < n; j++) cParts.push({ geo: G.ico(s * (0.6 + R() * 0.6), 1), m: M(x + (j - n / 2) * s * 0.9, y + R() * s * 0.4, z + (R() - 0.5) * s, 0, 0, 0, 1, 0.7, 1), c: theme.cloud || (theme.sea ? '#ffe2cc' : '#ffffff') });
@@ -1410,6 +1458,25 @@ function buildCourse(ci) {
   buildMinimap();
 }
 
+// rainbow road: stars, a ringed planet and a few glowing nebulae around a road floating in space
+function buildSpace(R) {
+  const sp = [], cols = []; const r2 = rng(5);
+  for (let k = 0; k < 3000; k++) { const u = r2() * TAU, v = r2() * 2 - 1, rr = Math.sqrt(1 - v * v); sp.push(Math.cos(u) * rr * 3000, v * 3000, Math.sin(u) * rr * 3000); const c = C(['#ffffff', '#cfe0ff', '#ffe8c8', '#ffd0f0'][k % 4]); cols.push(c.r, c.g, c.b); }
+  const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3)); sg.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  T.sky.add(new THREE.Points(sg, new THREE.PointsMaterial({ vertexColors: true, size: 2.2, sizeAttenuation: false, fog: false, transparent: true, opacity: 0.95 })));
+  const pc = new V3(T.cx + T.R * 1.6, -260, T.cz - T.R * 1.3);
+  const planet = new THREE.Mesh(G.sph(340, 40, 28), new THREE.MeshStandardMaterial({ color: C('#6a4aff'), emissive: C('#3a1a9a'), emissiveIntensity: 0.6, roughness: 0.8, fog: false }));
+  planet.position.copy(pc); world.add(planet);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(560, 40, 4, 80), new THREE.MeshBasicMaterial({ color: C('#ffb0e8'), transparent: true, opacity: 0.55, fog: false }));
+  ring.position.copy(pc); ring.rotation.set(1.25, 0.3, 0); ring.scale.set(1, 1, 0.08); world.add(ring);
+  for (let k = 0; k < 7; k++) {
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: TEX.glow, color: C(['#ff5fa8', '#5a6bff', '#3ec8ff', '#b06bff'][k % 4]), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5, fog: false }));
+    const a = R() * TAU; spr.position.set(T.cx + Math.cos(a) * 1600, -200 + R() * 900, T.cz + Math.sin(a) * 1600); const s = 500 + R() * 700; spr.scale.set(s, s, 1); world.add(spr);
+  }
+  // star sparkles along the edges of the road
+  const ps = []; for (let i = 0; i < T.N; i += 6) for (const side of [-1, 1]) { const lat = side * (EDGE + 0.4); ps.push({ geo: G.ico(0.45, 0), m: M(T.px[i] + T.rx[i] * lat, roadY(i, 0, side * EDGE) + 0.3, T.pz[i] + T.rz[i] * lat), c: ['#ffffff', '#ffe23f', '#3ec8ff'][(i / 6) % 3 | 0] }); }
+  world.add(new THREE.Mesh(merge(ps), new THREE.MeshBasicMaterial({ vertexColors: true })));
+}
 function buildCity(R, place, qq) {
   const { N, px, pz, rx, rz } = T;
   const winMat = new THREE.MeshStandardMaterial({ map: TEX.windows, emissiveMap: TEX.windows, emissive: 0xffffff, emissiveIntensity: 1.1, roughness: 0.6, metalness: 0.2 });
@@ -1766,7 +1833,7 @@ class Kart {
     this.offroad = Math.abs(q.lat) > EDGE + 0.4;
     // vertical
     const gy = groundAt(this.pos.x, this.pos.z, q);
-    this.vy -= GRAV * (this.glide && this.vy < 0 ? 0.22 : 1) * dt; if (this.glide) this.vy = Math.max(this.vy, -4.5);
+    this.vy -= GRAV * (this.glide && this.vy < 0 ? 0.22 : 1) * (theme.underwater ? 0.62 : 1) * dt; if (this.glide) this.vy = Math.max(this.vy, -4.5);
     this.pos.y += this.vy * dt;
     if (this.pos.y < roadY(q.i, q.t, clamp(q.lat, -EDGE, EDGE)) - 9) { this.startRescue(); return; }
     if (this.pos.y <= gy) {
@@ -2396,6 +2463,17 @@ function updateMissile(p, dt) {
   }
 }
 function updateWeather(dt) {
+  if (theme.bubbles || theme.sandstorm) {
+    for (const v of activeViews()) {
+      const c = v.cam.position;
+      for (let k = 0; k < (theme.bubbles ? 3 : 5); k++) {
+        const x = c.x + (Math.random() - 0.5) * 90, z = c.z + (Math.random() - 0.5) * 90;
+        if (theme.bubbles) SMOKE.emit(x, c.y - 12 + Math.random() * 10, z, (Math.random() - 0.5) * 1.5, 4 + Math.random() * 3, (Math.random() - 0.5) * 1.5, 0.8, 0.97, 1, 0.55, 0.25 + Math.random() * 0.3, 4, 0, 0);
+        else SMOKE.emit(x, c.y - 6 + Math.random() * 8, z, 16 + Math.random() * 8, Math.random() * 1.5, 5, 0.95, 0.82, 0.58, 0.35, 0.9 + Math.random(), 2.2, 0, 1.5);
+      }
+    }
+    return;
+  }
   if (!theme.snowfall && !theme.embers) return;
   for (const v of activeViews()) {
     const c = v.cam.position, n = theme.snowfall ? 7 : 3;
