@@ -378,10 +378,10 @@ body.touch .itemName{display:none}
     <p>道具箱可以存两个道具：右上小圈是第二个，第一个用完自动补上。</p>
     <h3>模式</h3>
     <table>
-      <tr><td>单场比赛</td><td>选一条赛道，和 7 名电脑对手跑 3 圈</td></tr>
+      <tr><td>单场比赛</td><td>选一条赛道，和 11 名电脑对手跑 3 圈</td></tr>
       <tr><td>大奖赛</td><td>星星杯（阳光草原、落日海湾、彩虹城市）、月亮杯（雪山小镇、熔岩火山、糖果乐园）或彩虹杯（沙漠神殿、海底遗迹、彩虹之路）连跑 3 场，按名次积分，最后颁奖。选哪条赛道就跑哪个杯</td></tr>
-      <tr><td>赛季</td><td>按真实赛历跑 24 站经典赛道（墨尔本、上海、铃鹿、巴林……阿布扎比），按 F1 规则积分 25-18-15-12-10-8-6-4，有车手榜和车队榜，每站自动存档，下次接着跑</td></tr>
-      <tr><td>双人对战</td><td>两人上下分屏，和 6 名电脑对手一起跑</td></tr>
+      <tr><td>赛季</td><td>按真实赛历跑 24 站经典赛道（墨尔本、上海、铃鹿、巴林……阿布扎比），按 F1 规则积分 25-18-15-12-10-8-6-4-2-1，20 名车手 10 支车队，有车手榜和车队榜，每站自动存档，下次接着跑</td></tr>
+      <tr><td>双人对战</td><td>两人上下分屏，和 10 名电脑对手一起跑</td></tr>
       <tr><td>对战模式</td><td>霓虹竞技场里混战，四种玩法：<b>气球大战</b>（被打中少一个气球，掉光出局）、<b>抢金币</b>（2 分钟金币最多的赢，被打中会掉金币）、<b>抢夺闪光</b>（累计拿着闪光 20 秒就赢，被打中或被撞会掉）、<b>炸弹大战</b>（道具只有炸弹）</td></tr>
       <tr><td>自定义规则</td><td>单场比赛和双人对战可以改：道具（正常 / 疯狂 / 只有弹壳 / 只有香蕉 / 只有加速 / 无道具）、电脑水平、圈数、红蓝组队。组队时队友的道具打不到自己人，按名次积分算哪队赢</td></tr>
       <tr><td>计时赛</td><td>一个人跑，开局给 3 个加速火箭。会记录最快圈并生成幽灵车陪你跑；每条赛道保存前 5 名总时间排行榜</td></tr>
@@ -430,6 +430,18 @@ const CHARS = [
   { name: '小紫', en: 'NOVA', color: '#8d4bd6', color2: '#2dd4c6', skin: '#f3c7a5', hair: '#ececec', hat: 'cap', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
   { name: '橙橙', en: 'TANGO', color: '#ff8a1f', color2: '#1f2a44', skin: '#eab48c', hair: '#8a2e0f', hat: 'beanie', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
   { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
+  { name: '小樱', en: 'SAKURA', color: '#ffb3d1', color2: '#ffffff', skin: '#ffe0cc', hair: '#c2185b', hat: 'flower', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
+  { name: '豆豆', en: 'PEANUT', color: '#c8a165', color2: '#fff3d6', skin: '#f7d3b0', hair: '#6b4a2b', hat: 'bunny', stats: { speed: 0.975, accel: 1.14, handle: 1.06, weight: 0.8 } },
+  { name: '金冠', en: 'GOLDIE', color: '#d4af37', color2: '#7a1f3d', skin: '#f3c7a5', hair: '#f2d27a', hat: 'crown', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '闪闪', en: 'SPARK', color: '#00d5ff', color2: '#16123a', skin: '#f6c9a0', hair: '#ffe14d', hat: 'spiky', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
+  { name: '铁柱', en: 'TITAN', color: '#5b6470', color2: '#ff9a1f', skin: '#d99b6c', hair: '#2a1a0f', hat: 'goggles', stats: { speed: 1.03, accel: 0.9, handle: 0.9, weight: 1.35 } },
+  { name: '大熊', en: 'BRUNO', color: '#8b5a2b', color2: '#f5e6c8', skin: '#eab48c', hair: '#3b2414', hat: 'beanie', stats: { speed: 1.02, accel: 0.93, handle: 0.95, weight: 1.2 } },
+  { name: '波波', en: 'BUBBLE', color: '#2ec4b6', color2: '#ffffff', skin: '#fbe3cf', hair: '#1a7f76', hat: 'antenna', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
+  { name: '阿星', en: 'COMET', color: '#28306e', color2: '#ffd23f', skin: '#f1c29a', hair: '#111111', hat: 'bandana', stats: { speed: 1, accel: 1, handle: 1, weight: 1 } },
+  { name: '糖糖', en: 'TAFFY', color: '#ff3fb4', color2: '#fff0a8', skin: '#ffd9bf', hair: '#7b2cbf', hat: 'pigtails', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
+  { name: '小海', en: 'MARINA', color: '#0077b6', color2: '#90e0ef', skin: '#eab48c', hair: '#1c1c1c', hat: 'cap', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
+  { name: '墨墨', en: 'INKY', color: '#2b2b33', color2: '#e8322f', skin: '#f6c9a0', hair: '#111111', hat: 'tophat', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '青柠', en: 'LIME', color: '#a6e22e', color2: '#1d3b0f', skin: '#f3c7a5', hair: '#2d7a3a', hat: 'mohawk', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
 ];
 const COURSES = [
   { name: '阳光草原', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7, glide: true,
@@ -529,8 +541,8 @@ for (const c of CLASSIC) {
 const classicIdx = id => COURSES.findIndex(c => c.classic === id);
 // a season on today's calendar
 const SEASON_CAL = ['au-1953', 'cn-2004', 'jp-1962', 'bh-2002', 'sa-2021', 'us-2022', 'it-1953', 'mc-1929', 'es-1991', 'ca-1978', 'at-1969', 'gb-1948', 'be-1925', 'hu-1986', 'nl-1948', 'it-1922', 'az-2016', 'sg-2008', 'us-2012', 'mx-1962', 'br-1940', 'us-2023', 'qa-2004', 'ae-2009'];
-const SEASON_PTS = [25, 18, 15, 12, 10, 8, 6, 4];
-const SEASON_TEAMS = [{ name: '烈焰车队', cis: [0, 1] }, { name: '薄荷车队', cis: [2, 3] }, { name: '岩石车队', cis: [4, 5] }, { name: '橙雪车队', cis: [6, 7] }];
+const SEASON_PTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+const SEASON_TEAMS = [{ name: '烈焰车队', cis: [0, 1] }, { name: '薄荷车队', cis: [2, 3] }, { name: '岩石车队', cis: [4, 5] }, { name: '橙雪车队', cis: [6, 7] }, { name: '樱花车队', cis: [8, 9] }, { name: '金冠车队', cis: [10, 11] }, { name: '钢铁车队', cis: [12, 13] }, { name: '海浪车队', cis: [14, 17] }, { name: '星夜车队', cis: [15, 18] }, { name: '糖果车队', cis: [16, 19] }];
 const CUPS = [{ name: '星星杯', en: 'STAR CUP', courses: [0, 1, 2] }, { name: '月亮杯', en: 'MOON CUP', courses: [3, 4, 5] }, { name: '彩虹杯', en: 'RAINBOW CUP', courses: [6, 7, 8] }];
 const cupOf = ci => CUPS.findIndex(c => c.courses.includes(ci));
 const BATTLE_IDX = COURSES.findIndex(c => c.battle);
@@ -923,6 +935,46 @@ function buildKartMesh(ch, parts) {
     dparts.push({ geo: G.cyl(0.6, 0.6, 0.16, 20), m: M(0, 2.26, -0.08), c: trim });
     dparts.push({ geo: G.sph(0.18, 10, 8), m: M(0, 2.8, -0.12), c: trim });
     dparts.push({ geo: G.sph(0.2, 8, 6), m: M(0.3, 2.3, 0.35, 0, 0, 0, 1, 0.5, 0.6), c: hair });
+  } else if (ch.hat && ch.hat !== 'ears') {
+    const cap = () => dparts.push({ geo: G.sph(0.6, 22, 12, 0, TAU, 0, Math.PI / 2), m: M(0, 2.2, -0.08), c: hair });
+    if (ch.hat === 'flower') {
+      cap();
+      for (let k = 0; k < 5; k++) { const a = k / 5 * TAU; dparts.push({ geo: G.sph(0.13, 8, 6), m: M(0.42 + Math.cos(a) * 0.16, 2.62 + Math.sin(a) * 0.16, 0.1), c: body }); }
+      dparts.push({ geo: G.sph(0.1, 8, 6), m: M(0.42, 2.62, 0.16), c: '#ffd23f' });
+    } else if (ch.hat === 'bunny') {
+      cap();
+      dparts.push({ geo: G.sph(0.17, 10, 8), m: M(0.24, 3.0, -0.12, 0, 0, -0.18, 1, 3.2, 0.7), c: body }, { geo: G.sph(0.17, 10, 8), m: M(-0.24, 3.0, -0.12, 0, 0, 0.18, 1, 3.2, 0.7), c: body });
+      dparts.push({ geo: G.sph(0.09, 8, 6), m: M(0.24, 3.0, -0.02, 0, 0, -0.18, 1, 2.8, 0.5), c: '#ffc7dc' }, { geo: G.sph(0.09, 8, 6), m: M(-0.24, 3.0, -0.02, 0, 0, 0.18, 1, 2.8, 0.5), c: '#ffc7dc' });
+    } else if (ch.hat === 'crown') {
+      cap();
+      dparts.push({ geo: G.cyl(0.36, 0.36, 0.24, 16, 1), m: M(0, 2.78, -0.08), c: '#ffd23f' });
+      for (let k = 0; k < 5; k++) { const a = k / 5 * TAU; dparts.push({ geo: G.cone(0.08, 0.22, 6), m: M(Math.sin(a) * 0.32, 3.0, -0.08 + Math.cos(a) * 0.32), c: '#ffd23f' }); }
+      dparts.push({ geo: G.sph(0.08, 8, 6), m: M(0, 2.8, 0.28), c: '#e8322f' });
+    } else if (ch.hat === 'spiky') {
+      cap();
+      for (const [x, y, z, rx, rz] of [[0, 2.85, -0.05, -0.2, 0], [0.3, 2.75, -0.1, -0.1, -0.7], [-0.3, 2.75, -0.1, -0.1, 0.7], [0.15, 2.7, -0.42, -0.9, -0.3], [-0.15, 2.7, -0.42, -0.9, 0.3], [0, 2.55, 0.32, 0.8, 0]]) dparts.push({ geo: G.cone(0.16, 0.5, 8), m: M(x, y, z, rx, 0, rz), c: hair });
+    } else if (ch.hat === 'goggles') {
+      dparts.push({ geo: G.sph(0.66, 22, 14, 0, TAU, 0, Math.PI * 0.62), m: M(0, 2.12, -0.1), c: body });
+      dparts.push({ geo: new THREE.TorusGeometry(0.62, 0.05, 6, 24), m: M(0, 2.5, -0.08, Math.PI / 2), c: '#222222' });
+      dparts.push({ geo: G.cyl(0.15, 0.15, 0.12, 12), m: M(0.2, 2.62, 0.48, Math.PI / 2 - 0.4), c: '#7fd6ff' }, { geo: G.cyl(0.15, 0.15, 0.12, 12), m: M(-0.2, 2.62, 0.48, Math.PI / 2 - 0.4), c: '#7fd6ff' });
+    } else if (ch.hat === 'antenna') {
+      dparts.push({ geo: G.sph(0.64, 22, 14, 0, TAU, 0, Math.PI * 0.55), m: M(0, 2.14, -0.08), c: body });
+      dparts.push({ geo: G.cyl(0.03, 0.03, 0.6, 6), m: M(0, 2.95, -0.1), c: '#cccccc' }, { geo: G.sph(0.11, 10, 8), m: M(0, 3.28, -0.1), c: trim });
+    } else if (ch.hat === 'bandana') {
+      cap();
+      dparts.push({ geo: G.cyl(0.6, 0.6, 0.2, 20), m: M(0, 2.36, -0.08), c: body });
+      dparts.push({ geo: G.sph(0.12, 8, 6), m: M(0, 2.36, -0.66), c: body }, { geo: G.box(0.1, 0.3, 0.12), m: M(0.1, 2.18, -0.72, 0.3, 0, -0.3), c: body }, { geo: G.box(0.1, 0.3, 0.12), m: M(-0.1, 2.18, -0.72, 0.3, 0, 0.3), c: body });
+    } else if (ch.hat === 'pigtails') {
+      cap();
+      dparts.push({ geo: G.sph(0.22, 10, 8), m: M(0.62, 2.2, -0.2), c: hair }, { geo: G.sph(0.22, 10, 8), m: M(-0.62, 2.2, -0.2), c: hair });
+      dparts.push({ geo: G.sph(0.1, 8, 6), m: M(0.5, 2.38, -0.12), c: body }, { geo: G.sph(0.1, 8, 6), m: M(-0.5, 2.38, -0.12), c: body });
+    } else if (ch.hat === 'tophat') {
+      cap();
+      dparts.push({ geo: G.cyl(0.62, 0.62, 0.05, 20), m: M(0, 2.66, -0.08), c: body }, { geo: G.cyl(0.38, 0.38, 0.6, 18), m: M(0, 2.98, -0.08), c: body }, { geo: G.cyl(0.39, 0.39, 0.1, 18), m: M(0, 2.76, -0.08), c: trim });
+    } else if (ch.hat === 'mohawk') {
+      cap();
+      for (let k = 0; k < 5; k++) dparts.push({ geo: G.cone(0.13, 0.42, 8), m: M(0, 2.82 - Math.abs(k - 2) * 0.05, 0.3 - k * 0.2, -0.25 + k * 0.12, 0, 0), c: body });
+    }
   } else {
     dparts.push({ geo: G.sph(0.6, 22, 12, 0, TAU, 0, Math.PI / 2), m: M(0, 2.2, -0.08), c: hair });
     dparts.push({ geo: G.cone(0.2, 0.42, 10), m: M(0.36, 2.72, -0.1, 0, 0, -0.35), c: body });
@@ -3084,7 +3136,7 @@ function endReplay() {
 }
 
 /* ---------------- race flow ---------------- */
-const POINTS = [15, 12, 10, 8, 6, 4, 2, 1];
+const POINTS = [15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 function seasonLoad() { try { const v = JSON.parse(localStorage.getItem('starkart.season') || 'null'); if (v && v.round > 0 && v.round < SEASON_CAL.length) return v; } catch (e) { } return null; }
 function seasonSave(gp) { try { localStorage.setItem('starkart.season', JSON.stringify({ round: gp.round + 1, pts: gp.pts })); } catch (e) { } }
 function seasonClear() { try { localStorage.removeItem('starkart.season'); } catch (e) { } }
@@ -3095,10 +3147,10 @@ function teamRows(tb, pts, cols) {
   teamStandings(pts).forEach((t, i) => { const tr = document.createElement('tr'); if (t.cis.includes(game.charIdx)) tr.className = 'me'; tr.innerHTML = `<td>${i + 1}</td><td colspan="${cols - 2}">${t.cis.map(c => `<span class="chip" style="background:${CHARS[c].color}"></span>`).join('')}${t.name}　<small>${t.cis.map(c => esc(CHARS[c].name)).join(' · ')}</small></td><td>${t.p}</td>`; tb.appendChild(tr); });
 }
 const MODES = [
-  { id: 'single', name: '单场比赛', en: 'RACE', btn: '开始比赛', hint: '选一条赛道，和 7 名电脑对手跑 3 圈。' },
+  { id: 'single', name: '单场比赛', en: 'RACE', btn: '开始比赛', hint: '选一条赛道，和 11 名电脑对手跑 3 圈。' },
   { id: 'gp', name: '大奖赛', en: 'GRAND PRIX', btn: '开始大奖赛', hint: '连跑三条赛道，按名次积分（第 1 名 15 分），最后登上颁奖台。' },
-  { id: 'season', name: '赛季', en: 'SEASON', btn: '开始赛季', hint: '按真实赛历跑 24 站经典赛道，按 F1 规则积分（25-18-15-12-10-8-6-4），有车手积分榜和车队积分榜，每站结束自动存档，下次接着跑。' },
-  { id: 'duo', name: '双人对战', en: '2 PLAYERS', btn: '开始对战', hint: '同一台电脑上下分屏，两个人加 6 名电脑对手同场。按键见下方。' },
+  { id: 'season', name: '赛季', en: 'SEASON', btn: '开始赛季', hint: '按真实赛历跑 24 站经典赛道，按 F1 规则积分（25-18-15-12-10-8-6-4-2-1），20 名车手分 10 支车队，有车手积分榜和车队积分榜，每站结束自动存档，下次接着跑。' },
+  { id: 'duo', name: '双人对战', en: '2 PLAYERS', btn: '开始对战', hint: '同一台电脑上下分屏，两个人加 10 名电脑对手同场。按键见下方。' },
   { id: 'battle', name: '对战模式', en: 'BATTLE', btn: '开始对战', hint: '在霓虹竞技场里混战：每人 3 个气球，被道具打中就少一个，气球没了就出局。坚持到最后，或时间结束时气球最多的人获胜。' },
   { id: 'tt', name: '计时赛', en: 'TIME TRIAL', btn: '开始计时', hint: '独自跑 3 圈，开局送三连火箭。跑出最快圈后，下次会有幽灵车陪你比。' },
 ];
@@ -3109,11 +3161,15 @@ function spawnKarts(humanChars) {
   let slots;
   if (game.mode === 'tt' && humanChars.length && !game.demo) slots = [humanChars[0]];
   else if (humanChars.length) {
-    slots = [...others.slice(0, CHARS.length - humanChars.length), ...humanChars].sort(() => Math.random() - 0.5);
+    const field = game.mode === 'season' ? CHARS.length : game.mode === 'battle' ? 8 : 12;
+    if (game.gp && game.gp.field) slots = game.gp.field.filter(ci => !humanChars.includes(ci)).slice(0, field - humanChars.length).concat(humanChars);
+    else slots = [...others.slice(0, field - humanChars.length), ...humanChars];
+    if (game.gp) game.gp.field = slots.slice();
+    slots.sort(() => Math.random() - 0.5);
     const gpPts = game.gp && game.gp.pts;
     if (gpPts && Object.keys(gpPts).length) slots.sort((a, b) => (gpPts[a] || 0) - (gpPts[b] || 0));
   }
-  else slots = others;
+  else slots = others.slice(0, 8);
   const battle = game.mode === 'battle' && !game.demo;
   const bt = game.battleType, bTime = bt === 'coin' || bt === 'shine' ? 120 : BATTLE_TIME;
   game.battle = battle ? { t: bTime, total: bTime, out: [], rows: null, type: bt, coins: [], shine: null, spawnT: 0 } : null;
@@ -3232,8 +3288,8 @@ function showResults() {
     if (bd.rank === 0 && bd.top.length > 1) $('resTitle').textContent = '新纪录！';
   } else if (game.gp) {
     const gp = game.gp, rows = raceRows(), PT = gp.season ? SEASON_PTS : POINTS, nR = gp.order.length;
-    if (!gp.paid) { gp.paid = true; rows.forEach((r, i) => { gp.pts[r.k.ci] = (gp.pts[r.k.ci] || 0) + PT[i]; r.add = PT[i]; }); if (gp.season) seasonSave(gp); }
-    else rows.forEach((r, i) => r.add = PT[i]);
+    if (!gp.paid) { gp.paid = true; rows.forEach((r, i) => { gp.pts[r.k.ci] = (gp.pts[r.k.ci] || 0) + (PT[i] || 0); r.add = PT[i] || 0; }); if (gp.season) seasonSave(gp); }
+    else rows.forEach((r, i) => r.add = PT[i] || 0);
     $('resTitle').textContent = '第 ' + (gp.round + 1) + ' / ' + nR + (gp.season ? ' 站' : ' 场');
     $('resSub').textContent = (gp.season ? '赛季' : CUPS[gp.cup || 0].name) + ' · ' + COURSES[game.courseIdx].name + ' · 本场积分已加入总分' + (gp.season ? '，进度已存档' : '');
     tb.innerHTML = '<tr><th></th><th>车手</th><th>用时</th><th>本场</th><th style="text-align:right">总分</th></tr>';
@@ -3248,7 +3304,7 @@ function showResults() {
     if (game.humans === 2) { const p2 = rows.findIndex(r => r.k.pIdx === 1) + 1; $('resTitle').textContent = pr < p2 ? '1P 获胜！' : '2P 获胜！'; $('resSub').textContent = `1P 第 ${pr} 名 · 2P 第 ${p2} 名`; }
     else $('resTitle').textContent = pr === 1 ? '冠军！' : pr <= 3 ? '登上领奖台！' : '第 ' + pr + ' 名';
     if (game.teams) {
-      const pts = [0, 0]; rows.forEach((r, i) => pts[r.k.team] += POINTS[i]);
+      const pts = [0, 0]; rows.forEach((r, i) => pts[r.k.team] += POINTS[i] || 0);
       const win = pts[0] === pts[1] ? -1 : pts[0] > pts[1] ? 0 : 1;
       $('resTitle').textContent = win < 0 ? '两队打平！' : TEAM_NAME[win] + '获胜！';
       $('resSub').textContent = `红队 ${pts[0]} 分 : 蓝队 ${pts[1]} 分` + ($('resSub').textContent ? '　·　' + $('resSub').textContent : '');
