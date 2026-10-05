@@ -422,26 +422,26 @@ let LAPS = 3; const BASE_MAX = 58, GRAV = 34;
 
 /* ---------------- content ---------------- */
 const CHARS = [
-  { name: '阿烈', en: 'BLAZE', color: '#e8322f', color2: '#2f5bd3', skin: '#f6c9a0', hair: '#5a3217', hat: 'cap', stats: { speed: 1, accel: 1, handle: 1, weight: 1 } },
-  { name: '蓝波', en: 'BOLT', color: '#2f7cf6', color2: '#ffd23f', skin: '#f1c29a', hair: '#1c1c1c', hat: 'helmet', stats: { speed: 1.02, accel: 0.93, handle: 0.95, weight: 1.2 } },
-  { name: '小翠', en: 'MINT', color: '#23c267', color2: '#ffffff', skin: '#f7d3b0', hair: '#2d7a3a', hat: 'beanie', stats: { speed: 0.975, accel: 1.14, handle: 1.06, weight: 0.8 } },
-  { name: '莓莓', en: 'BERRY', color: '#ff5fa8', color2: '#ffe3f0', skin: '#ffd9bf', hair: '#ff9f2e', hat: 'ears', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
-  { name: '石头', en: 'ROCKY', color: '#f5b700', color2: '#6b3f1e', skin: '#d99b6c', hair: '#2a1a0f', hat: 'helmet', stats: { speed: 1.03, accel: 0.9, handle: 0.9, weight: 1.35 } },
-  { name: '小紫', en: 'NOVA', color: '#8d4bd6', color2: '#2dd4c6', skin: '#f3c7a5', hair: '#ececec', hat: 'cap', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
-  { name: '橙橙', en: 'TANGO', color: '#ff8a1f', color2: '#1f2a44', skin: '#eab48c', hair: '#8a2e0f', hat: 'beanie', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
-  { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
-  { name: '小樱', en: 'SAKURA', color: '#ffb3d1', color2: '#ffffff', skin: '#ffe0cc', hair: '#c2185b', hat: 'flower', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
-  { name: '豆豆', en: 'PEANUT', color: '#c8a165', color2: '#fff3d6', skin: '#f7d3b0', hair: '#6b4a2b', hat: 'bunny', stats: { speed: 0.975, accel: 1.14, handle: 1.06, weight: 0.8 } },
-  { name: '金冠', en: 'GOLDIE', color: '#d4af37', color2: '#7a1f3d', skin: '#f3c7a5', hair: '#f2d27a', hat: 'crown', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
-  { name: '闪闪', en: 'SPARK', color: '#00d5ff', color2: '#16123a', skin: '#f6c9a0', hair: '#ffe14d', hat: 'spiky', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
-  { name: '铁柱', en: 'TITAN', color: '#5b6470', color2: '#ff9a1f', skin: '#d99b6c', hair: '#2a1a0f', hat: 'goggles', stats: { speed: 1.03, accel: 0.9, handle: 0.9, weight: 1.35 } },
-  { name: '大熊', en: 'BRUNO', color: '#8b5a2b', color2: '#f5e6c8', skin: '#eab48c', hair: '#3b2414', hat: 'beanie', stats: { speed: 1.02, accel: 0.93, handle: 0.95, weight: 1.2 } },
-  { name: '波波', en: 'BUBBLE', color: '#2ec4b6', color2: '#ffffff', skin: '#fbe3cf', hair: '#1a7f76', hat: 'antenna', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
-  { name: '阿星', en: 'COMET', color: '#28306e', color2: '#ffd23f', skin: '#f1c29a', hair: '#111111', hat: 'bandana', stats: { speed: 1, accel: 1, handle: 1, weight: 1 } },
-  { name: '糖糖', en: 'TAFFY', color: '#ff3fb4', color2: '#fff0a8', skin: '#ffd9bf', hair: '#7b2cbf', hat: 'pigtails', stats: { speed: 0.98, accel: 1.08, handle: 1.12, weight: 0.78 } },
-  { name: '小海', en: 'MARINA', color: '#0077b6', color2: '#90e0ef', skin: '#eab48c', hair: '#1c1c1c', hat: 'cap', stats: { speed: 1.0, accel: 1.0, handle: 1.08, weight: 0.95 } },
-  { name: '墨墨', en: 'INKY', color: '#2b2b33', color2: '#e8322f', skin: '#f6c9a0', hair: '#111111', hat: 'tophat', stats: { speed: 1.012, accel: 0.96, handle: 0.98, weight: 1.08 } },
-  { name: '青柠', en: 'LIME', color: '#a6e22e', color2: '#1d3b0f', skin: '#f3c7a5', hair: '#2d7a3a', hat: 'mohawk', stats: { speed: 0.99, accel: 1.08, handle: 1.04, weight: 0.9 } },
+  { name: '阿烈', en: 'BLAZE', color: '#e8322f', color2: '#2f5bd3', skin: '#f6c9a0', hair: '#5a3217', hat: 'cap', stats: { speed: 1.0, accel: 1, handle: 1, weight: 1 } },
+  { name: '蓝波', en: 'BOLT', color: '#2f7cf6', color2: '#ffd23f', skin: '#f1c29a', hair: '#1c1c1c', hat: 'helmet', stats: { speed: 1.011, accel: 0.93, handle: 0.95, weight: 1.2 } },
+  { name: '小翠', en: 'MINT', color: '#23c267', color2: '#ffffff', skin: '#f7d3b0', hair: '#2d7a3a', hat: 'beanie', stats: { speed: 0.9825, accel: 1.14, handle: 1.06, weight: 0.8 } },
+  { name: '莓莓', en: 'BERRY', color: '#ff5fa8', color2: '#ffe3f0', skin: '#ffd9bf', hair: '#ff9f2e', hat: 'ears', stats: { speed: 0.99, accel: 1.1, handle: 1.18, weight: 0.78 } },
+  { name: '石头', en: 'ROCKY', color: '#f5b700', color2: '#6b3f1e', skin: '#d99b6c', hair: '#2a1a0f', hat: 'helmet', stats: { speed: 1.021, accel: 0.9, handle: 0.9, weight: 1.35 } },
+  { name: '小紫', en: 'NOVA', color: '#8d4bd6', color2: '#2dd4c6', skin: '#f3c7a5', hair: '#ececec', hat: 'cap', stats: { speed: 1.0084, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '橙橙', en: 'TANGO', color: '#ff8a1f', color2: '#1f2a44', skin: '#eab48c', hair: '#8a2e0f', hat: 'beanie', stats: { speed: 0.993, accel: 1.08, handle: 1.04, weight: 0.9 } },
+  { name: '雪球', en: 'FROST', color: '#dff4ff', color2: '#38a3e8', skin: '#fbe3cf', hair: '#9fd8ff', hat: 'ears', stats: { speed: 1.003, accel: 1, handle: 1.11, weight: 0.95 } },
+  { name: '小樱', en: 'SAKURA', color: '#ffb3d1', color2: '#ffffff', skin: '#ffe0cc', hair: '#c2185b', hat: 'flower', stats: { speed: 0.99, accel: 1.1, handle: 1.18, weight: 0.78 } },
+  { name: '豆豆', en: 'PEANUT', color: '#c8a165', color2: '#fff3d6', skin: '#f7d3b0', hair: '#6b4a2b', hat: 'bunny', stats: { speed: 0.9825, accel: 1.14, handle: 1.06, weight: 0.8 } },
+  { name: '金冠', en: 'GOLDIE', color: '#d4af37', color2: '#7a1f3d', skin: '#f3c7a5', hair: '#f2d27a', hat: 'crown', stats: { speed: 1.0084, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '闪闪', en: 'SPARK', color: '#00d5ff', color2: '#16123a', skin: '#f6c9a0', hair: '#ffe14d', hat: 'spiky', stats: { speed: 0.993, accel: 1.08, handle: 1.04, weight: 0.9 } },
+  { name: '铁柱', en: 'TITAN', color: '#5b6470', color2: '#ff9a1f', skin: '#d99b6c', hair: '#2a1a0f', hat: 'goggles', stats: { speed: 1.021, accel: 0.9, handle: 0.9, weight: 1.35 } },
+  { name: '大熊', en: 'BRUNO', color: '#8b5a2b', color2: '#f5e6c8', skin: '#eab48c', hair: '#3b2414', hat: 'beanie', stats: { speed: 1.011, accel: 0.93, handle: 0.95, weight: 1.2 } },
+  { name: '波波', en: 'BUBBLE', color: '#2ec4b6', color2: '#ffffff', skin: '#fbe3cf', hair: '#1a7f76', hat: 'antenna', stats: { speed: 1.003, accel: 1, handle: 1.11, weight: 0.95 } },
+  { name: '阿星', en: 'COMET', color: '#28306e', color2: '#ffd23f', skin: '#f1c29a', hair: '#111111', hat: 'bandana', stats: { speed: 1.0, accel: 1, handle: 1, weight: 1 } },
+  { name: '糖糖', en: 'TAFFY', color: '#ff3fb4', color2: '#fff0a8', skin: '#ffd9bf', hair: '#7b2cbf', hat: 'pigtails', stats: { speed: 0.99, accel: 1.1, handle: 1.18, weight: 0.78 } },
+  { name: '小海', en: 'MARINA', color: '#0077b6', color2: '#90e0ef', skin: '#eab48c', hair: '#1c1c1c', hat: 'cap', stats: { speed: 1.003, accel: 1, handle: 1.11, weight: 0.95 } },
+  { name: '墨墨', en: 'INKY', color: '#2b2b33', color2: '#e8322f', skin: '#f6c9a0', hair: '#111111', hat: 'tophat', stats: { speed: 1.0084, accel: 0.96, handle: 0.98, weight: 1.08 } },
+  { name: '青柠', en: 'LIME', color: '#a6e22e', color2: '#1d3b0f', skin: '#f3c7a5', hair: '#2d7a3a', hat: 'mohawk', stats: { speed: 0.993, accel: 1.08, handle: 1.04, weight: 0.9 } },
 ];
 const COURSES = [
   { name: '阳光草原', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7, glide: true,
@@ -1948,7 +1948,7 @@ class Kart {
     else if (this.bullet > 0) { const bm = BASE_MAX * 1.5 * game.cc.speed; this.speed = Math.min(bm, this.speed + 120 * dt); }
     else if (this.boost > 0 && canCtl) { const bm = BASE_MAX * 1.42 * game.cc.speed * this.aiMul; this.speed = Math.min(bm, this.speed + 110 * dt); }
     else if (canCtl && inp.accel && this.grounded) {
-      if (this.speed < maxS) this.speed = Math.min(maxS, this.speed + 34 * st.accel * st.accel * st.accel * (this.speed < maxS * 0.55 ? 1.25 : 0.62) * dt);
+      if (this.speed < maxS) this.speed = Math.min(maxS, this.speed + 34 * st.accel * st.accel * (this.speed < maxS * 0.55 ? 1.25 : 0.62) * dt);
       else this.speed = Math.max(maxS, this.speed - 42 * dt);
     } else if (canCtl && inp.brake && this.grounded) {
       this.speed = this.speed > 0 ? Math.max(0, this.speed - 70 * dt) : Math.max(-16, this.speed - 22 * dt);
@@ -3570,16 +3570,16 @@ $('startBtn').onclick = () => { game.gp = null; startRace(); };
 const PARTS = {
   body: [
     { id: 'std', name: '标准车', need: 0, d: [0, 0, 0, 0] },
-    { id: 'sport', name: '闪电跑车', need: 40, d: [0.02, -0.05, -0.02, 0.06] },
-    { id: 'buggy', name: '沙滩车', need: 90, d: [-0.015, 0.05, 0.03, -0.06] },
-    { id: 'tank', name: '重装战车', need: 160, d: [0.025, -0.07, -0.05, 0.16] },
-    { id: 'jelly', name: '果冻泡泡车', need: 250, d: [-0.02, 0.07, 0.05, -0.1] },
+    { id: 'sport', name: '闪电跑车', need: 40, d: [0.014, -0.05, -0.02, 0.06] },
+    { id: 'buggy', name: '沙滩车', need: 90, d: [-0.0105, 0.05, 0.03, -0.06] },
+    { id: 'tank', name: '重装战车', need: 160, d: [0.0175, -0.07, -0.05, 0.16] },
+    { id: 'jelly', name: '果冻泡泡车', need: 250, d: [-0.014, 0.07, 0.05, -0.1] },
   ],
   tire: [
     { id: 'std', name: '标准胎', need: 0, d: [0, 0, 0, 0] },
-    { id: 'big', name: '越野大轮', need: 30, d: [-0.01, 0.03, -0.02, 0.08] },
-    { id: 'slick', name: '光头赛车胎', need: 70, d: [0.015, -0.03, -0.01, 0.02] },
-    { id: 'small', name: '迷你小轮', need: 130, d: [-0.015, 0.05, 0.03, -0.05] },
+    { id: 'big', name: '越野大轮', need: 30, d: [-0.007, 0.03, -0.02, 0.08] },
+    { id: 'slick', name: '光头赛车胎', need: 70, d: [0.0105, -0.03, -0.01, 0.02] },
+    { id: 'small', name: '迷你小轮', need: 130, d: [-0.0105, 0.05, 0.03, -0.05] },
     { id: 'gold', name: '黄金轮', need: 400, d: [0, 0, 0, 0] },
   ],
   glider: [
@@ -3770,7 +3770,7 @@ function showStats() {
   const s = kartStats(CHARS[i], save.parts[pickSlot]);
   setName(i, CHARS[i].name);
   const bar = (label, v, lo, hi) => `<span>${label}</span><div class="bar"><i style="width:${Math.round(clamp((v - lo) / (hi - lo), 0.08, 1) * 100)}%"></i></div>`;
-  $('stats').innerHTML = bar('极速', s.speed, 0.93, 1.07) + bar('加速', s.accel, 0.78, 1.24) + bar('操控', s.handle, 0.8, 1.2) + bar('重量', s.weight, 0.6, 1.6);
+  $('stats').innerHTML = bar('极速', s.speed, 0.96, 1.04) + bar('加速', s.accel, 0.78, 1.24) + bar('操控', s.handle, 0.8, 1.2) + bar('重量', s.weight, 0.6, 1.6);
   if ($('garage')) buildGarage();
 }
 function renderThumbs() {
