@@ -1,0 +1,18 @@
+<script>
+// Initialise the CrazyGames SDK (it preloads the player's save), then load the game.
+// Without the SDK (ad blocker, local file, other sites) the game still loads and saves to localStorage.
+(async () => {
+  let sdk = null;
+  try {
+    const s = window.CrazyGames && window.CrazyGames.SDK;
+    if (s) {
+      await Promise.race([s.init(), new Promise((_, rej) => setTimeout(() => rej(new Error('sdk init timeout')), 6000))]);
+      if (s.environment !== 'disabled') { sdk = s; try { s.game.loadingStart(); } catch (e) { } }
+    }
+  } catch (e) { console.warn('CrazyGames SDK unavailable', e); }
+  window.__cgSdk = sdk;
+  for (const src of ['three.min.js', 'cg.js', 'game.js']) {
+    await new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = rej; document.body.appendChild(el); });
+  }
+})();
+</script>
