@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.nkjsy.starkart'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.nkjsy.starkart'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    // the game itself is built by taptap/build.py into taptap/www
+    sourceSets {
+        main.assets.srcDirs = ['src/main/assets', '../../www-root']
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.11.0'
+}

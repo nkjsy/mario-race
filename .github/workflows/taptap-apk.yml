@@ -1,0 +1,39 @@
+name: TapTap APK
+
+# Builds the offline Android version on every push to the taptap branch and
+# publishes the unsigned APK as the "taptap-build" pre-release. Signing happens
+# locally with the release keystore, which is not stored in this repository.
+on:
+  push:
+    branches: [taptap]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Build game files
+        run: python3 taptap/build.py
+      - name: Build APK
+        run: gradle -p taptap/android assembleRelease --no-daemon --stacktrace
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp taptap/android/app/build/outputs/apk/release/app-release-unsigned.apk star-kart-taptap-unsigned.apk
+          gh release delete taptap-build --yes --cleanup-tag || true
+          gh release create taptap-build star-kart-taptap-unsigned.apk \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "TapTap APK (unsigned) ${GITHUB_SHA::7}" \
+            --notes "Unsigned build of the taptap branch at ${GITHUB_SHA}. Sign it with the release keystore before uploading to TapTap."
