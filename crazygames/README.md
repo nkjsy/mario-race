@@ -52,14 +52,24 @@ git add -A && git commit -m "Rebuild CrazyGames version" && git push
 
 ### 英文简介（Description）
 
-> Race 20 original drivers across 9 kart courses and dozens of classic circuit layouts. Drift through corners to charge mini-turbos, pick up items like homing shells, bananas and rockets, and fly off glide ramps. Play a single race, a 3-race Grand Prix, a full 24-round Season, Time Trial against your own ghost, four Battle games, or split-screen 2-player on one keyboard. Unlock new bodies, tires and gliders in the Garage with the coins you earn.
+> Star Kart is a colorful 3D kart racer with 20 original drivers, 9 themed kart courses and 40 classic circuits based on real-world track layouts. Hop and drift through corners to charge blue, orange and purple mini-turbos, fly off glide ramps, flip into anti-gravity, and use banana peels, homing shells, rockets and the Super Star to fight for first place.
+>
+> Play a single race, a 3-race Grand Prix, a full 24-round Season with driver and team standings, Time Trial against your own ghost, or four Battle games in the Neon Arena: Balloon Battle, Coin Rush, Gem Keeper and Bomb Blast. Two players can race split screen on one keyboard. Earn coins to unlock new bodies, tires and gliders in the Garage. CPU drivers follow exactly the same rules as you, with no hidden catch-up speed.
 
 ### 英文操作说明（Controls）
 
-> Arrow keys / WASD: drive and steer
-> Space / Shift: hop and drift (release for a boost)
-> E / X: use item
-> C: look back
-> P: pause, M: mute
-> 2 players: 1P uses WASD + Left Shift / E, 2P uses arrow keys + Right Shift / Enter
-> Gamepads and touch controls are supported.
+> **Keyboard**
+> Arrow keys or WASD: gas, brake, steer (auto-accelerate is on by default)
+> Space or Shift: hop and drift, release for a boost
+> E or X: use item (hold to trail it as a shield, hold Down to throw backward)
+> C: look back · P: pause · M: mute
+>
+> **2 players (split screen)**
+> 1P: WASD, Left Shift or F to drift, E or Q for items, R to look back
+> 2P: Arrow keys, Right Shift or Numpad 0 to drift, Enter or Numpad . for items, Right Ctrl or Numpad 1 to look back
+>
+> **Gamepad**
+> Right button: gas · Bottom button: brake · Stick: steer · RB/RT: drift · LB/LT: item · Top button: look back · Start: pause
+>
+> **Mobile**
+> Gas is automatic. Use the arrows to steer and the DRIFT, BRAKE and ITEM buttons on screen.
