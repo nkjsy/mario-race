@@ -67,6 +67,11 @@ HOOKS = [
     # midgame ad at the natural break between races
     ("$('againBtn').onclick = () => {\n  if (game.gp) {", "$('againBtn').onclick = () => CG.midgame(() => {\n  if (game.gp) {"),
     ("  startRace();\n};\n$('menuBtn').onclick", "  startRace();\n});\n$('menuBtn').onclick"),
+    # privacy note in the help screen (CrazyGames launch requirement)
+    ('    <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">Got it</button></div>',
+     '    <h3>Privacy</h3>\n    <p>Star Kart does not collect any personal data and has no accounts, chat or external links. '
+     'Your progress is saved through CrazyGames, whose Privacy Policy and Terms &amp; Conditions apply while you play here.</p>\n'
+     '    <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">Got it</button></div>'),
     # comments that name another company's game
     ("// and the Mario Kart touches (jumps, glide ramps, tunnels, anti-gravity)", "// and the arcade touches (jumps, glide ramps, tunnels, anti-gravity)"),
     ("// Mario Kart boxes come back almost at once, so the back of the pack still gets items", "// boxes come back almost at once, so the back of the pack still gets items"),
