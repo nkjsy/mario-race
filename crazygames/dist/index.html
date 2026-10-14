@@ -182,6 +182,15 @@ body.touch .itemName{display:none}
 .keys kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px}
 .btnRow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 #results .panel{max-width:720px}
+#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#results:not(.podium) .btnRow{position:sticky;bottom:-26px;z-index:5;background:var(--panel);padding:10px 0 14px;border-radius:16px}#help p{margin:2px 0}#results.podium #retBox{display:none}
+.retRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 12px}.retDone{background:rgba(67,209,122,.25)}
+.retBar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.retBar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff9f1c)}
+#retMenu{margin:-4px 0 0;text-align:center;font-size:16px;color:#ffd23f}
+#daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}
+.dStrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dCell{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}
+.dCell small{font-size:11px;opacity:.75}.dCell b{font:22px var(--display)}.dCell.past{opacity:.5}.dCell.now{background:#ffd23f;color:var(--ink);transform:scale(1.08)}
+.dGot{font:30px var(--display);color:#ffd23f;margin:0}.dCh,.dTip{margin:0;font-size:16px}.dTip{opacity:.75}
+@media (max-height:500px){#results .btnRow .bigBtn,#daily .bigBtn{font-size:18px;padding:6px 16px}#daily .panel{gap:6px;padding-top:12px}#daily .resTitle{font-size:30px}.dGot{font-size:22px}}
 #replayBar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(20,18,58,.72);border:3px solid #fff;border-radius:999px;padding:8px 10px 8px 20px;color:#fff;font-size:17px;z-index:30;white-space:nowrap}
 #replayBar .rec{color:#ff4b6e;font-family:var(--display);animation:blink 1s steps(2) infinite}
 #replayBar .bigBtn{padding:8px 18px;font-size:16px}
@@ -326,74 +335,20 @@ body.touch .itemName{display:none}
 <div id="help" class="overlay" hidden>
   <div class="panel" role="dialog" aria-labelledby="helpTitle">
     <h2 class="resTitle" id="helpTitle">How to play</h2>
-    <h3>Keyboard (1 player)</h3>
+    <h3>Keyboard</h3>
     <table>
-      <tr><td><kbd>↑</kbd> or <kbd>W</kbd></td><td>Gas. “Auto-accelerate” in the menu is on by default, so the kart drives forward without it. Turn it off to hold gas yourself</td></tr>
-      <tr><td><kbd>↓</kbd> or <kbd>S</kbd></td><td>Brake. Keep holding after stopping to reverse</td></tr>
-      <tr><td><kbd>←</kbd><kbd>→</kbd> or <kbd>A</kbd><kbd>D</kbd></td><td>Steer</td></tr>
-      <tr><td><kbd>Space</kbd> or <kbd>Shift</kbd></td><td>Hop &amp; drift: hold it through a turn. Release after the sparks turn blue, orange or purple for a boost</td></tr>
-      <tr><td><kbd>E</kbd> or <kbd>X</kbd></td><td>Use item. Hold to trail a banana or shell behind you as a shield, release to fire. Hold <kbd>↓</kbd> to throw it backward</td></tr>
-      <tr><td><kbd>C</kbd></td><td>Hold to look back</td></tr>
-      <tr><td><kbd>P</kbd></td><td>Pause</td></tr>
-      <tr><td><kbd>M</kbd></td><td>Mute</td></tr>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd> <kbd>D</kbd></td><td>Steer (gas is automatic)</td></tr>
+      <tr><td><kbd>↓</kbd> or <kbd>S</kbd></td><td>Brake / reverse</td></tr>
+      <tr><td><kbd>Space</kbd> or <kbd>Shift</kbd></td><td>Hold in a turn to drift, release for a boost</td></tr>
+      <tr><td><kbd>E</kbd> or <kbd>X</kbd></td><td>Use item</td></tr>
+      <tr><td><kbd>P</kbd> / <kbd>M</kbd></td><td>Pause / mute</td></tr>
     </table>
-    <h3>2 players (one computer, split screen, each player uses one side of the keyboard)</h3>
-    <table>
-      <tr><td>1P (top half)<br>left side</td><td><kbd>W</kbd> gas, <kbd>S</kbd> brake, <kbd>A</kbd><kbd>D</kbd> steer, <kbd>Left Shift</kbd> or <kbd>F</kbd> drift, <kbd>E</kbd> or <kbd>Q</kbd> item, <kbd>R</kbd> look back</td></tr>
-      <tr><td>2P (bottom half)<br>right side</td><td><kbd>↑</kbd> gas, <kbd>↓</kbd> brake, <kbd>←</kbd><kbd>→</kbd> steer, <kbd>Right Shift</kbd> or <kbd>Numpad 0</kbd> drift, <kbd>Enter</kbd> or <kbd>Numpad .</kbd> item, <kbd>Right Ctrl</kbd> or <kbd>Numpad 1</kbd> look back</td></tr>
-    </table>
+    <h3>Phone and tablet</h3>
+    <p>Gas is automatic. Steer with ◀ ▶, hold DRIFT in turns, tap ITEM to use your item.</p>
     <h3>Gamepad</h3>
-    <table>
-      <tr><td>Right face button</td><td>Gas</td></tr>
-      <tr><td>Bottom face button</td><td>Brake. Keep holding after stopping to reverse</td></tr>
-      <tr><td>Left stick / D-pad</td><td>Steer. Hold back while releasing the item button to throw a banana or shell backward</td></tr>
-      <tr><td>RB or RT</td><td>Hop &amp; drift</td></tr>
-      <tr><td>LB or LT</td><td>Use item (hold to trail it)</td></tr>
-      <tr><td>Top face button</td><td>Look back</td></tr>
-      <tr><td>Start</td><td>Pause. In the menu it starts the race</td></tr>
-    </table>
-    <ul><li>In 2-player mode the first gamepad is 1P and the second is 2P, and the keyboard still works. Buttons go by position: on an Xbox pad, B (right) is gas and A (bottom) is brake.</li></ul>
-    <h3>Phones and tablets</h3>
-    <ul><li>Gas is automatic. Use ◀ ▶ at the bottom to steer, hold DRIFT to charge a boost, BRAKE to brake or reverse, and ITEM to use your item.</li><li>2-player mode needs a keyboard, so it is not available on phones.</li></ul>
-    <h3>Tips</h3>
-    <ul>
-      <li>Rocket start: hold gas right after “2” appears in the countdown and you will shoot off at GO. Press too early (while “3” is showing) and you stall. You need to press it even with auto-accelerate on.</li>
-      <li>Boost pads: drive over the arrows for a burst of speed. Press drift in the air off a ramp to do a trick and boost on landing.</li>
-      <li>Slipstream: stay right behind another kart for a moment and you get a speed boost.</li>
-      <li>Item boxes come back quickly after you break them. Press item while the roulette spins to stop it, then press again to use it.</li>
-      <li>Coins: hold up to 10. More coins = higher top speed. You drop 3 when hit.</li>
-      <li>Assists (in the menu): “Smart steering” keeps you from driving off the track, and “Auto-item” uses items for you at a good moment. Great for beginners and kids.</li>
-      <li>Garage: coins from races plus finishing bonuses add up and unlock new bodies, tires and gliders in the Garage. Every part has trade-offs, and CPU drivers pick from the same parts. Progress is saved automatically.</li>
-      <li>After a race, press “🎬 Best lap replay” to watch your fastest lap with cinematic cameras.</li>
-      <li>Grass and sand slow you down. Some corners have no barrier, and if you fall off a cloud carries you back (it costs about two seconds). Drive the wrong way and you will see “WRONG WAY!”.</li>
-      <li>Blue ramps are glide ramps: your glider opens automatically and you can fly far and steer in the air.</li>
-      <li>Anti-gravity sections (glowing blue edges): your wheels flip to hover mode, and bumping another kart spins you both up for a boost.</li>
-      <li>Classic circuits follow real-world layouts with scenery inspired by each venue: a harbour and tunnel, city skylines, rain and steep climbs. Some add glide ramps and anti-gravity sections.</li>
-    </ul>
-    <h3>Items</h3>
-    <div class="items">
-      <div>🍌 Banana Peel: drop it to make karts spin out</div><div>🟢 Bounce Shell: fires straight and bounces off walls</div>
-      <div>🔴 Homing Shell: chases the kart ahead</div><div>🚀 Rocket / Triple Rocket: instant speed boost</div>
-      <div>⭐ Super Star: invincible and faster, knocks others away</div><div>🪙 Coins: gives you 2 coins</div>
-      <div>🦑 Squid Ink: splats the screens of karts ahead</div><div>⚡ Shrink Bolt: shrinks and slows everyone else</div>
-      <div>🎯 Leader Missile: drops from the sky onto 1st place</div><div>📯 Shock Horn: blasts nearby karts and items away, even the Leader Missile</div>
-      <div>🚅 Bullet Dash: auto-drive at top speed and plow through karts (lasts longer the further back you are)</div><div>🪃 Boomerang: flies out and back, hits on both ways, 3 throws</div>
-      <div>🔥 Fire Bloom: tap rapidly to shoot bouncing fireballs for a few seconds</div><div>🌱 Chomper: a plant on your hood bites karts and items ahead for a boost; press item to lunge</div>
-      <div>🎱 Lucky 8: 8 items at once, one per press</div><div>💣 Bomb: explodes when someone comes close after it lands, with a huge blast</div>
-    </div>
-    <p>You can hold two items: the small circle top right is the second one and moves up when the first is used.</p>
-    <h3>Modes</h3>
-    <table>
-      <tr><td>Race</td><td>Pick a course and race 3 laps against 11 CPU drivers</td></tr>
-      <tr><td>Grand Prix</td><td>Race 3 courses in a row in the Star Cup, Moon Cup or Rainbow Cup, score points by position and finish on the podium. The course you pick decides the cup</td></tr>
-      <tr><td>Season</td><td>A 24-round championship on classic circuits, scored 25-18-15-12-10-8-6-4-2-1, with 20 drivers in 10 teams, driver and team standings, and autosave after every round</td></tr>
-      <tr><td>2 Players</td><td>Split screen for two players plus 10 CPU drivers</td></tr>
-      <tr><td>Battle</td><td>A free-for-all in the Neon Arena with four games: <b>Balloon Battle</b> (lose a balloon when hit, out when they are gone), <b>Coin Rush</b> (most coins after 2 minutes wins, you drop coins when hit), <b>Gem Keeper</b> (hold the Gem for 20 seconds in total, you drop it when hit or bumped) and <b>Bomb Blast</b> (bombs only)</td></tr>
-      <tr><td>Rules</td><td>For Race and 2 Players you can change items (normal / frantic / shells only / bananas only / boosts only / none), CPU level, laps and red vs. blue teams. Teammates cannot hit each other and the team with more points wins</td></tr>
-      <tr><td>Time Trial</td><td>Race alone with 3 rockets. Your best lap is saved as a ghost to race against, and each course keeps a top-5 leaderboard</td></tr>
-      <tr><td>Fair play</td><td>CPU drivers follow exactly the same rules as you: no hidden catch-up speed, the same start and item roulette, items depend only on position, random grid (from race 2 of a Grand Prix the points leader starts last). Difficulty only changes how well the CPU drives</td></tr>
-      <tr><td>Class</td><td>50cc is the slowest and easiest, 200cc the fastest. “Mirror” flips the course left to right</td></tr>
-    </table>
+    <p>Stick to steer, right button for gas, RB to drift, LB for items.</p>
+    <h3>2 players</h3>
+    <p>1P: WASD, Left Shift to drift, E for items. 2P: arrow keys, Right Shift to drift, Enter for items.</p>
     <h3>Privacy</h3>
     <p>Star Kart does not collect any personal data and has no accounts, chat or external links. Your progress is saved through CrazyGames, whose Privacy Policy and Terms &amp; Conditions apply while you play here.</p>
     <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">Got it</button></div>

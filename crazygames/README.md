@@ -21,6 +21,7 @@
 - `cg.js`：CrazyGames SDK 适配层。
 - `loader.html`：先初始化 SDK（预载存档），再加载游戏。
 - `assets/`：Three.js r128 和两个字体（Lilita One、Fredoka，都是 SIL Open Font License）。
+- `daily.js`：只在 CrazyGames 版里的每日签到（连续天数越多奖励越高：10/15/20/25/30/40/50 金币，断签从第 1 天重来）、每日小任务（奖励 30 金币）、结算页的解锁进度和「下一条赛道」按钮。
 - `dist/`：生成好的上传文件夹。
 - `star-kart-crazygames.zip`：直接上传的 zip。
 - `store/`：封面图和预览视频。

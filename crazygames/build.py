@@ -60,7 +60,10 @@ html = html.replace('"ZCOOL KuaiLe","Lilita One"', '"Lilita One"').replace('docu
 HOOKS = [
     # gameplay start/stop follows the game state every frame
     ("function frame(now) {\n  requestAnimationFrame(frame);", "function frame(now) {\n  requestAnimationFrame(frame); CG.tick();"),
-    ("$('loading').hidden = true;\n  requestAnimationFrame(frame);", "$('loading').hidden = true; CG.loaded();\n  requestAnimationFrame(frame);"),
+    ("$('loading').hidden = true;\n  requestAnimationFrame(frame);", "$('loading').hidden = true; CG.loaded(); RET.init();\n  requestAnimationFrame(frame);"),
+    # daily challenge, unlock progress and the next-course button on the results screen (daily.js)
+    ("  $('results').hidden = false; $('touch').hidden = true;\n}", "  RET.results();\n  $('results').hidden = false; $('touch').hidden = true;\n}"),
+    ("game.coinsPaid = false; saveAll();", "game.coinsPaid = false; game.retCounted = false; saveAll();"),
     # mute: player toggle, ads and the platform setting are combined in CG.applyMute
     ("function toggleMute() { Snd.setMuted(!Snd.muted); $('muteBtn').textContent = Snd.muted ? '×' : '♪'; }",
      "function toggleMute() { CG.userMute = !CG.userMute; CG.applyMute(); }"),
@@ -84,12 +87,42 @@ for old, new in HOOKS:
 i0 = html.index('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>')
 j0 = html.index('<script>', i0)
 j1 = html.index('</script>', j0)
-game_js = html[j0 + len('<script>'):j1].strip('\n') + '\n'
+game_js = html[j0 + len('<script>'):j1].strip('\n') + '\n' + open(os.path.join(HERE, 'daily.js'), encoding='utf-8').read()
 shell = html[:i0] + open(os.path.join(HERE, 'loader.html'), encoding='utf-8').read() + html[j1 + len('</script>'):]
 shell = sub(shell, '<title>Star Kart</title>\n', '<title>Star Kart</title>\n<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>\n', 'sdk')
 shell = sub(shell, '<div id="loading">', '<div id="adBlock" hidden></div>\n<div id="loading">', 'adblock-div')
 shell = sub(shell, '[hidden]{display:none!important}', '[hidden]{display:none!important}\n#adBlock{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.35)}\n'
            '#menu #startBtn{position:sticky;bottom:12px;z-index:5;box-shadow:0 6px 0 var(--ink),0 10px 30px rgba(0,0,0,.6)}', 'adblock-css')
+
+shell = sub(shell, '#results .panel{max-width:720px}', '#results .panel{max-width:720px}\n'
+           '#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#results:not(.podium) .btnRow{position:sticky;bottom:-26px;z-index:5;background:var(--panel);padding:10px 0 14px;border-radius:16px}#help p{margin:2px 0}#results.podium #retBox{display:none}\n'
+           '.retRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 12px}.retDone{background:rgba(67,209,122,.25)}\n'
+           '.retBar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.retBar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff9f1c)}\n'
+           '#retMenu{margin:-4px 0 0;text-align:center;font-size:16px;color:#ffd23f}\n'
+           '#daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}\n'
+           '.dStrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dCell{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}\n'
+           '.dCell small{font-size:11px;opacity:.75}.dCell b{font:22px var(--display)}.dCell.past{opacity:.5}.dCell.now{background:#ffd23f;color:var(--ink);transform:scale(1.08)}\n'
+           '.dGot{font:30px var(--display);color:#ffd23f;margin:0}.dCh,.dTip{margin:0;font-size:16px}.dTip{opacity:.75}\n'
+           '@media (max-height:500px){#results .btnRow .bigBtn,#daily .bigBtn{font-size:18px;padding:6px 16px}#daily .panel{gap:6px;padding-top:12px}#daily .resTitle{font-size:30px}.dGot{font-size:22px}}', 'daily-css')
+
+# Short help: only the controls a new player needs
+i_help = shell.index('<h3>Keyboard (1 player)</h3>')
+j_help = shell.index('<h3>Privacy</h3>')
+shell = shell[:i_help] + '''<h3>Keyboard</h3>
+    <table>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd> <kbd>D</kbd></td><td>Steer (gas is automatic)</td></tr>
+      <tr><td><kbd>↓</kbd> or <kbd>S</kbd></td><td>Brake / reverse</td></tr>
+      <tr><td><kbd>Space</kbd> or <kbd>Shift</kbd></td><td>Hold in a turn to drift, release for a boost</td></tr>
+      <tr><td><kbd>E</kbd> or <kbd>X</kbd></td><td>Use item</td></tr>
+      <tr><td><kbd>P</kbd> / <kbd>M</kbd></td><td>Pause / mute</td></tr>
+    </table>
+    <h3>Phone and tablet</h3>
+    <p>Gas is automatic. Steer with ◀ ▶, hold DRIFT in turns, tap ITEM to use your item.</p>
+    <h3>Gamepad</h3>
+    <p>Stick to steer, right button for gas, RB to drift, LB for items.</p>
+    <h3>2 players</h3>
+    <p>1P: WASD, Left Shift to drift, E for items. 2P: arrow keys, Right Shift to drift, Enter for items.</p>
+    ''' + shell[j_help:]
 
 # Progress goes to the SDK data module; ghosts and leaderboards stay in localStorage
 # (they can exceed the 1 MB account save limit).
