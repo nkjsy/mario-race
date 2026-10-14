@@ -37,6 +37,7 @@ const CHARS = [
   { name: 'Inky', en: 'INKY', color: '#2b2b33', color2: '#e8322f', skin: '#f6c9a0', hair: '#111111', hat: 'tophat', stats: { speed: 1.0095, accel: 0.96, handle: 0.98, weight: 1.08 } },
   { name: 'Lime', en: 'LIME', color: '#a6e22e', color2: '#1d3b0f', skin: '#f3c7a5', hair: '#2d7a3a', hat: 'mohawk', stats: { speed: 0.993, accel: 1.06, handle: 1.04, weight: 0.9 } },
 ];
+CHARS.length = 8;
 const COURSES = [
   { name: 'Sunny Meadow', en: 'SUNNY MEADOW', theme: 'meadow', seed: 7, glide: true,
     pts: [[0,0,0],[0,-400,0],[73,-583,2],[255,-664,4],[473,-646,6],[619,-528,8],[637,-346,8],[519,-209,6],[601,-55,4],[655,109,4],[601,273,6],[419,346,6],[182,346,4],[36,237,2]] },
@@ -3224,13 +3225,14 @@ function teamRows(tb, pts, cols) {
   teamStandings(pts).forEach((t, i) => { const tr = document.createElement('tr'); if (t.cis.includes(game.charIdx)) tr.className = 'me'; tr.innerHTML = `<td>${i + 1}</td><td colspan="${cols - 2}">${t.cis.map(c => `<span class="chip" style="background:${CHARS[c].color}"></span>`).join('')}${t.name} <small>${t.cis.map(c => esc(CHARS[c].name)).join(' · ')}</small></td><td>${t.p}</td>`; tb.appendChild(tr); });
 }
 const MODES = [
-  { id: 'single', name: 'Race', en: 'RACE', btn: 'Start race', hint: 'Pick a course and race 3 laps against 11 CPU drivers.' },
+  { id: 'single', name: 'Race', en: 'RACE', btn: 'Start race', hint: 'Pick a course and race 3 laps against 7 CPU drivers.' },
   { id: 'gp', name: 'Grand Prix', en: 'GRAND PRIX', btn: 'Start Grand Prix', hint: 'Race three courses in a row, score points by position (15 for a win) and finish on the podium.' },
   { id: 'season', name: 'Season', en: 'SEASON', btn: 'Start season', hint: 'A 24-round championship on classic circuits, scored 25-18-15-12-10-8-6-4-2-1. 20 drivers in 10 teams, driver and team standings, autosave after every round.' },
-  { id: 'duo', name: '2 Players', en: '2 PLAYERS', btn: 'Start 2P race', hint: 'Split screen on one computer: two players plus 10 CPU drivers. Controls are below.' },
+  { id: 'duo', name: '2 Players', en: '2 PLAYERS', btn: 'Start 2P race', hint: 'Split screen on one computer: two players plus 6 CPU drivers. Controls are below.' },
   { id: 'battle', name: 'Battle', en: 'BATTLE', btn: 'Start battle', hint: 'A free-for-all in the Neon Arena: everyone has 3 balloons, loses one when hit and is out when they are gone. Last kart standing, or most balloons at the end, wins.' },
   { id: 'tt', name: 'Time Trial', en: 'TIME TRIAL', btn: 'Start time trial', hint: 'Race 3 laps alone with a Triple Rocket. Set a best lap and next time a ghost races you.' },
 ];
+MODES.splice(MODES.findIndex(m => m.id === 'season'), 1);
 function clearKarts() { for (const k of game.karts) k.dispose(); game.karts = []; game.player = null; game.humansK = []; clearProjectiles(); FX.clear(); SMOKE.clear(); Skid.clear(); }
 function spawnKarts(humanChars) {
   clearKarts(); clearBattleProps();
@@ -3640,7 +3642,7 @@ function closeHelp() { $('help').hidden = true; }
 $('helpBtn').onclick = openHelp; $('pauseHelp').onclick = openHelp; $('helpClose').onclick = closeHelp;
 $('help').addEventListener('click', e => { if (e.target === $('help')) closeHelp(); });
 $('quitBtn').onclick = () => { game.paused = false; if (Snd.ctx) Snd.ctx.resume(); game.gp = null; startDemo(); };
-$('startBtn').onclick = () => { game.gp = null; startRace(); };
+$('startBtn').onclick = () => { game.gp = null; if (!RET.canStart()) return; startRace(); };
 
 /* ---------------- menu ---------------- */
 /* ---------------- kart parts, coins and save data ---------------- */
@@ -3727,7 +3729,7 @@ function buildGarage() {
     });
     g.appendChild(row);
   }
-  $('wallet').textContent = 'Coins ' + save.coins + ' 🪙';
+  $('wallet').textContent = 'Earned ' + save.coins + ' 🪙 · to spend ' + RET.wallet() + ' 🪙';
 }
 let pickSlot = 0; // which player the driver grid is picking for in 2P mode
 const pickedIdx = () => pickSlot === 1 ? game.charIdx2 : game.charIdx;
@@ -3764,7 +3766,7 @@ function refreshMode() {
   if (game.mode !== 'duo') pickSlot = 0;
   $('pick1').setAttribute('aria-pressed', pickSlot === 0); $('pick2').setAttribute('aria-pressed', pickSlot === 1);
   [...$('courses').children].forEach(b => b.disabled = game.mode === 'battle' || game.mode === 'season');
-  refreshChars(); showStats();
+  refreshChars(); showStats(); RET.locks();
 }
 function buildMenu(thumbs) {
   const mw = $('modes');
@@ -4001,7 +4003,7 @@ const RET = {
   give(n) {
     const before = save.coins; save.coins += n; saveAll();
     const fresh = []; for (const kind in PARTS) for (const pt of PARTS[kind]) if (pt.need > before && pt.need <= save.coins) fresh.push(pt.name);
-    try { buildGarage(); showStats(); } catch (e) { }
+    try { buildGarage(); showStats(); if (document.getElementById('cardBar')) this.cardBar(); } catch (e) { }
     return fresh;
   },
   nextUnlock() {
@@ -4092,13 +4094,78 @@ const RET = {
       $('againBtn').before(nb);
       nb.onclick = () => CG.midgame(() => { game.courseIdx = this.nextCourse(); saveAll(); startRace(); });
     }
-    const show = game.mode === 'single';
+    const show = game.mode === 'single' && this.nextCourse() !== game.courseIdx;
     nb.hidden = !show; $('againBtn').classList.toggle('alt', show);
     if (show) nb.textContent = 'Next: ' + COURSES[this.nextCourse()].name + ' ▶';
   },
+  // next course in the same group (kart or classic) that the player can race today
   nextCourse() {
-    const i = game.courseIdx, k = COURSES.findIndex(c => c.battle);   // kart courses come before the arena, classic ones after it
-    if (i < k) return (i + 1) % k;
-    return k + 1 + (i - k) % (COURSES.length - k - 1);
+    const k = COURSES.findIndex(c => c.battle);   // kart courses come before the arena, classic ones after it
+    const step = i => i < k ? (i + 1) % k : k + 1 + (i - k) % (COURSES.length - k - 1);
+    let i = step(game.courseIdx);
+    for (let n = 0; n < COURSES.length && !this.avail(i); n++) i = step(i);
+    return i;
+  },
+
+  /* ---- daily free tracks and Star Passes (a pass opens every track for 24 h) ---- */
+  CARD_PRICE: 120,
+  CARD_HOURS: 24,
+  FREE_CLASSIC: 5,
+  dayNo() { const t = new Date(); return Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 864e5); },
+  // one whole kart cup (so Grand Prix always works) plus a few classic circuits, the same for everyone each day
+  freeToday() {
+    const day = this.dayNo();
+    if (this._free && this._free.day === day) return this._free.set;
+    const set = new Set(CUPS[day % CUPS.length].courses);
+    const classic = COURSES.map((c, i) => c.classic ? i : -1).filter(i => i >= 0);
+    let h = day * 2654435761 >>> 0;
+    for (let n = 0; n < this.FREE_CLASSIC && classic.length; n++) { h = (h * 1103515245 + 12345) >>> 0; set.add(classic.splice(h % classic.length, 1)[0]); }
+    this._free = { day, set };
+    return set;
+  },
+  cards() { if (!this.d) this.load(); if (this.d.cards === undefined) { this.d.cards = 1; this.store(); } return this.d.cards; },   // the first pass is free
+  allOpen() { if (!this.d) this.load(); return (this.d.cardUntil || 0) > Date.now(); },
+  avail(i) { return !!COURSES[i].battle || this.allOpen() || this.freeToday().has(i); },
+  cupOpen(i) { const c = cupOf(i); return c >= 0 && CUPS[c].courses.every(x => this.avail(x)); },
+  // coins to spend: parts unlock by total coins earned, so buying a pass never locks a part again
+  wallet() { if (!this.d) this.load(); return Math.max(0, save.coins - (this.d.spent || 0)); },
+  canStart() {
+    if (game.mode === 'battle') return true;
+    return game.mode === 'gp' ? this.cupOpen(game.courseIdx) : this.avail(game.courseIdx);
+  },
+  locks() {
+    if (!this.d) this.load();
+    const gp = game.mode === 'gp', free = this.freeToday(), open = this.allOpen();
+    for (const b of $('courses').children) {
+      const i = +b.dataset.ci;
+      if (!b.dataset.html) b.dataset.html = b.innerHTML;
+      const ok = gp ? this.cupOpen(i) : this.avail(i);
+      b.disabled = game.mode === 'battle' || !ok;
+      b.innerHTML = (ok ? (open ? '' : '<span class="tag">FREE TODAY</span>') : '<span class="tag lock">🔒 LOCKED</span>') + b.dataset.html;
+      if (!free.has(i) && open) b.innerHTML = b.dataset.html;
+    }
+    // a course picked on an earlier day may be locked now: move to today's free cup
+    if (game.mode !== 'battle' && !this.canStart()) {
+      const i = CUPS[this.dayNo() % CUPS.length].courses[0];
+      game.courseIdx = i; saveAll();
+      for (const b of $('courses').children) b.setAttribute('aria-pressed', +b.dataset.ci === i);
+      buildCourse(i); startDemo();
+    }
+    this.cardBar();
+  },
+  cardBar() {
+    let bar = document.getElementById('cardBar');
+    if (!bar) { bar = document.createElement('div'); bar.id = 'cardBar'; $('ctabs').before(bar); }
+    const n = this.cards(), w = this.wallet();
+    if (this.allOpen()) {
+      const left = this.d.cardUntil - Date.now(), h = Math.floor(left / 36e5), m = Math.floor(left / 6e4) % 60;
+      bar.innerHTML = `🎫 <b>Star Pass active: every track open</b> · ${h}h ${m}m left · passes: ${n} · ${w} 🪙 to spend`;
+      return;
+    }
+    bar.innerHTML = `🎫 Free today: <b>${esc(CUPS[this.dayNo() % CUPS.length].name)}</b> + ${this.FREE_CLASSIC} classic tracks · Star Passes: <b>${n}</b> · ${w} 🪙 to spend `
+      + `<button class="opt" type="button" id="cardUse"${n ? '' : ' disabled'}>Use a Star Pass: every track for ${this.CARD_HOURS}h</button>`
+      + `<button class="opt" type="button" id="cardBuy"${w >= this.CARD_PRICE ? '' : ' disabled'}>Buy Star Pass · ${this.CARD_PRICE} 🪙</button>`;
+    bar.querySelector('#cardUse').onclick = () => { if (!this.d.cards) return; this.d.cards--; this.d.cardUntil = Date.now() + this.CARD_HOURS * 36e5; this.store(); refreshMode(); };
+    bar.querySelector('#cardBuy').onclick = () => { if (this.wallet() < this.CARD_PRICE) return; this.d.spent = (this.d.spent || 0) + this.CARD_PRICE; this.d.cards = this.cards() + 1; this.store(); this.cardBar(); try { buildGarage(); } catch (e) { } };
   },
 };

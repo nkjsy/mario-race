@@ -75,6 +75,15 @@ HOOKS = [
      '    <h3>Privacy</h3>\n    <p>Star Kart does not collect any personal data and has no accounts, chat or external links. '
      'Your progress is saved through CrazyGames, whose Privacy Policy and Terms &amp; Conditions apply while you play here.</p>\n'
      '    <div class="btnRow"><button class="bigBtn" id="helpClose" type="button">Got it</button></div>'),
+    # one driver per stat style (8), so races have 8 karts; no season mode
+    ("];\nconst COURSES = [", "];\nCHARS.length = 8;\nconst COURSES = ["),
+    ("];\nfunction clearKarts()", "];\nMODES.splice(MODES.findIndex(m => m.id === 'season'), 1);\nfunction clearKarts()"),
+    ("race 3 laps against 11 CPU drivers.", "race 3 laps against 7 CPU drivers."),
+    ("two players plus 10 CPU drivers.", "two players plus 6 CPU drivers."),
+    # daily free tracks and unlock cards (daily.js)
+    ("  refreshChars(); showStats();\n}\nfunction buildMenu", "  refreshChars(); showStats(); RET.locks();\n}\nfunction buildMenu"),
+    ("$('startBtn').onclick = () => { game.gp = null; startRace(); };", "$('startBtn').onclick = () => { game.gp = null; if (!RET.canStart()) return; startRace(); };"),
+    ("$('wallet').textContent = 'Coins ' + save.coins + ' 🪙';", "$('wallet').textContent = 'Earned ' + save.coins + ' 🪙 · to spend ' + RET.wallet() + ' 🪙';"),
     # comments that name another company's game
     ("// and the Mario Kart touches (jumps, glide ramps, tunnels, anti-gravity)", "// and the arcade touches (jumps, glide ramps, tunnels, anti-gravity)"),
     ("// Mario Kart boxes come back almost at once, so the back of the pack still gets items", "// boxes come back almost at once, so the back of the pack still gets items"),
@@ -107,6 +116,8 @@ shell = sub(shell, '#results .panel{max-width:720px}', '#results .panel{max-widt
            '.retRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 12px}.retDone{background:rgba(67,209,122,.25)}\n'
            '.retBar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.retBar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff9f1c)}\n'
            '#retMenu{margin:-4px 0 0;text-align:center;font-size:16px;color:#ffd23f}\n'
+           '#cardBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;background:rgba(255,210,63,.12);border-radius:14px;padding:8px 12px;font-size:15px}#cardBar .opt{flex:0 0 auto;padding:5px 12px;font-size:15px}\n'
+           '.tag{display:inline-block;font:12px var(--display);letter-spacing:.05em;border-radius:6px;padding:0 5px;margin-right:4px;background:#43d17a;color:#0b1a10}.tag.lock{background:rgba(255,255,255,.2);color:#fff}\n'
            '#daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}\n'
            '.dStrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dCell{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}\n'
            '.dCell small{font-size:11px;opacity:.75}.dCell b{font:22px var(--display)}.dCell.past{opacity:.5}.dCell.now{background:#ffd23f;color:var(--ink);transform:scale(1.08)}\n'
