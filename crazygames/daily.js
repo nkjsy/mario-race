@@ -2,8 +2,8 @@
 /* ---------------- daily bonus, daily challenge, next race and unlock progress (CrazyGames build) ---------------- */
 const RET = {
   KEY: 'starkart.daily',
-  BONUS: [10, 15, 20, 25, 30, 40, 50],   // day 1..7 of a streak; day 8 and later keep the last value
-  CH_REWARD: 30,
+  BONUS: [5, 8, 10, 12, 15, 20, 30],   // day 1..7 of a streak; day 8 and later keep the last value
+  CH_REWARD: 25,   // a bit more than one average race
   // easy one-race-or-two tasks; picked by date so everyone gets the same one each day
   CHALLENGES: [
     { id: 'finish1', text: 'Finish 1 race', goal: 1 },

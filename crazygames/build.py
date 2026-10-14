@@ -83,6 +83,14 @@ HOOKS = [
 for old, new in HOOKS:
     html = sub(html, old, new, 'hook')
 
+# Slower unlocks: a race pays about 10-40 coins, so the full garage now takes
+# around 80-100 races plus daily rewards instead of about 25 races
+PRICES = {40: 60, 90: 200, 160: 450, 250: 800, 30: 40, 70: 150, 130: 350, 400: 1500, 60: 100, 120: 300, 500: 2000}
+found = set(int(m) for m in re.findall(r'need: (\d+), d:', html))
+if not set(PRICES) <= found:
+    errors.append(f'prices: missing {sorted(set(PRICES) - found)}')
+html = re.sub(r'need: (\d+), d:', lambda m: f'need: {PRICES.get(int(m.group(1)), int(m.group(1)))}, d:', html)
+
 # 4. Split: page shell (index.html) + game.js, loaded after the SDK has initialised
 i0 = html.index('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>')
 j0 = html.index('<script>', i0)

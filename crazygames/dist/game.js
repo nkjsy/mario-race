@@ -3648,23 +3648,23 @@ $('startBtn').onclick = () => { game.gp = null; startRace(); };
 const PARTS = {
   body: [
     { id: 'std', name: 'Standard', need: 0, d: [0, 0, 0, 0] },
-    { id: 'sport', name: 'Bolt Racer', need: 40, d: [0.014, -0.05, -0.02, 0.06] },
-    { id: 'buggy', name: 'Beach Buggy', need: 90, d: [-0.0105, 0.05, 0.03, -0.06] },
-    { id: 'tank', name: 'Tank', need: 160, d: [0.0175, -0.07, -0.05, 0.16] },
-    { id: 'jelly', name: 'Jelly Bubble', need: 250, d: [-0.014, 0.07, 0.05, -0.1] },
+    { id: 'sport', name: 'Bolt Racer', need: 60, d: [0.014, -0.05, -0.02, 0.06] },
+    { id: 'buggy', name: 'Beach Buggy', need: 200, d: [-0.0105, 0.05, 0.03, -0.06] },
+    { id: 'tank', name: 'Tank', need: 450, d: [0.0175, -0.07, -0.05, 0.16] },
+    { id: 'jelly', name: 'Jelly Bubble', need: 800, d: [-0.014, 0.07, 0.05, -0.1] },
   ],
   tire: [
     { id: 'std', name: 'Standard', need: 0, d: [0, 0, 0, 0] },
-    { id: 'big', name: 'Monster', need: 30, d: [-0.007, 0.03, -0.02, 0.08] },
-    { id: 'slick', name: 'Slick', need: 70, d: [0.0105, -0.03, -0.01, 0.02] },
-    { id: 'small', name: 'Mini', need: 130, d: [-0.0105, 0.05, 0.03, -0.05] },
-    { id: 'gold', name: 'Gold', need: 400, d: [0, 0, 0, 0] },
+    { id: 'big', name: 'Monster', need: 40, d: [-0.007, 0.03, -0.02, 0.08] },
+    { id: 'slick', name: 'Slick', need: 150, d: [0.0105, -0.03, -0.01, 0.02] },
+    { id: 'small', name: 'Mini', need: 350, d: [-0.0105, 0.05, 0.03, -0.05] },
+    { id: 'gold', name: 'Gold', need: 1500, d: [0, 0, 0, 0] },
   ],
   glider: [
     { id: 'std', name: 'Glider', need: 0, d: [0, 0, 0, 0] },
-    { id: 'chute', name: 'Parachute', need: 60, d: [-0.005, 0.02, 0, 0] },
-    { id: 'paper', name: 'Paper Plane', need: 120, d: [-0.005, 0, 0.02, 0] },
-    { id: 'gold', name: 'Gold Glider', need: 500, d: [0, 0, 0, 0] },
+    { id: 'chute', name: 'Parachute', need: 100, d: [-0.005, 0.02, 0, 0] },
+    { id: 'paper', name: 'Paper Plane', need: 300, d: [-0.005, 0, 0.02, 0] },
+    { id: 'gold', name: 'Gold Glider', need: 2000, d: [0, 0, 0, 0] },
   ],
 };
 const PART_LBL = { body: 'Body', tire: 'Tires', glider: 'Glider' };
@@ -3967,8 +3967,8 @@ window.__game = game;
 /* ---------------- daily bonus, daily challenge, next race and unlock progress (CrazyGames build) ---------------- */
 const RET = {
   KEY: 'starkart.daily',
-  BONUS: [10, 15, 20, 25, 30, 40, 50],   // day 1..7 of a streak; day 8 and later keep the last value
-  CH_REWARD: 30,
+  BONUS: [5, 8, 10, 12, 15, 20, 30],   // day 1..7 of a streak; day 8 and later keep the last value
+  CH_REWARD: 25,   // a bit more than one average race
   // easy one-race-or-two tasks; picked by date so everyone gets the same one each day
   CHALLENGES: [
     { id: 'finish1', text: 'Finish 1 race', goal: 1 },
