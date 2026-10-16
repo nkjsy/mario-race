@@ -78,12 +78,16 @@ HOOKS = [
     # one driver per stat style (8), so races have 8 karts; no season mode
     ("];\nconst COURSES = [", "];\nCHARS.length = 8;\nconst COURSES = ["),
     ("];\nfunction clearKarts()", "];\nMODES.splice(MODES.findIndex(m => m.id === 'season'), 1);\nfunction clearKarts()"),
-    ("race 3 laps against 11 CPU drivers.", "race 3 laps against 7 CPU drivers."),
+    ("race 2 laps against 11 CPU drivers.", "race 2 laps against 7 CPU drivers."),
     ("two players plus 10 CPU drivers.", "two players plus 6 CPU drivers."),
     # daily free tracks and unlock cards (daily.js)
     ("  refreshChars(); showStats();\n}\nfunction buildMenu", "  refreshChars(); showStats(); RET.locks();\n}\nfunction buildMenu"),
     ("$('startBtn').onclick = () => { game.gp = null; startRace(); };", "$('startBtn').onclick = () => { game.gp = null; if (!RET.canStart()) return; startRace(); };"),
     ("$('wallet').textContent = 'Coins ' + save.coins + ' 🪙';", "$('wallet').textContent = 'Earned ' + save.coins + ' 🪙 · to spend ' + RET.wallet() + ' 🪙';"),
+    # playtest fixes: first race is one lap, default races are 2 laps, battle spectating (fixes.js)
+    ("game.demo = false; LAPS = rules().laps;", "game.demo = false; LAPS = RET.lapsFor(rules().laps);"),
+    ("const DEF_RULES = { items: 'normal', cpu: 'normal', laps: 3, teams: false };", "const DEF_RULES = { items: 'normal', cpu: 'normal', laps: 2, teams: false };"),
+    ("(alive.length <= 1 || game.humansK.every(h => h.out));", "(alive.length <= 1 || (game.humansK.every(h => h.out) && game.raceT - Math.max(...game.humansK.map(h => h.outT || 0)) > 7));"),
     # comments that name another company's game
     ("// and the Mario Kart touches (jumps, glide ramps, tunnels, anti-gravity)", "// and the arcade touches (jumps, glide ramps, tunnels, anti-gravity)"),
     ("// Mario Kart boxes come back almost at once, so the back of the pack still gets items", "// boxes come back almost at once, so the back of the pack still gets items"),
@@ -104,7 +108,7 @@ html = re.sub(r'need: (\d+), d:', lambda m: f'need: {PRICES.get(int(m.group(1)),
 i0 = html.index('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>')
 j0 = html.index('<script>', i0)
 j1 = html.index('</script>', j0)
-game_js = html[j0 + len('<script>'):j1].strip('\n') + '\n' + open(os.path.join(HERE, 'daily.js'), encoding='utf-8').read()
+game_js = html[j0 + len('<script>'):j1].strip('\n') + '\n' + ''.join(open(os.path.join(HERE, f), encoding='utf-8').read() + '\n' for f in ('daily.js', 'fixes.js'))
 shell = html[:i0] + open(os.path.join(HERE, 'loader.html'), encoding='utf-8').read() + html[j1 + len('</script>'):]
 shell = sub(shell, '<title>Star Kart</title>\n', '<title>Star Kart</title>\n<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>\n', 'sdk')
 shell = sub(shell, '<div id="loading">', '<div id="adBlock" hidden></div>\n<div id="loading">', 'adblock-div')
@@ -112,7 +116,7 @@ shell = sub(shell, '[hidden]{display:none!important}', '[hidden]{display:none!im
            '#menu #startBtn{position:sticky;bottom:12px;z-index:5;box-shadow:0 6px 0 var(--ink),0 10px 30px rgba(0,0,0,.6)}', 'adblock-css')
 
 shell = sub(shell, '#results .panel{max-width:720px}', '#results .panel{max-width:720px}\n'
-           '#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#results:not(.podium) .btnRow{position:sticky;bottom:-26px;z-index:5;background:var(--panel);padding:10px 0 14px;border-radius:16px}#help p{margin:2px 0}#results.podium #retBox{display:none}\n'
+           '#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#results:not(.podium) .btnRow{flex:0 0 auto}#resScroll{overflow-y:auto;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;gap:6px}#results.podium #resScroll{overflow:visible;flex:none}#help p{margin:2px 0}#results.podium #retBox{display:none}\n'
            '.retRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 12px}.retDone{background:rgba(67,209,122,.25)}\n'
            '.retBar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.retBar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff9f1c)}\n'
            '#retMenu{margin:-4px 0 0;text-align:center;font-size:16px;color:#ffd23f}\n'
@@ -123,6 +127,15 @@ shell = sub(shell, '#results .panel{max-width:720px}', '#results .panel{max-widt
            '.dCell small{font-size:11px;opacity:.75}.dCell b{font:22px var(--display)}.dCell.past{opacity:.5}.dCell.now{background:#ffd23f;color:var(--ink);transform:scale(1.08)}\n'
            '.dGot{font:30px var(--display);color:#ffd23f;margin:0}.dCh,.dTip{margin:0;font-size:16px}.dTip{opacity:.75}\n'
            '@media (max-height:500px){#results .btnRow .bigBtn,#daily .bigBtn{font-size:18px;padding:6px 16px}#daily .panel{gap:6px;padding-top:12px}#daily .resTitle{font-size:30px}.dGot{font-size:22px}}', 'daily-css')
+
+shell = sub(shell, '#daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}\n', '#daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}\n'
+           '#results:not(.podium) .panel{box-sizing:border-box;max-height:100%;overflow:hidden;gap:10px}#results .btnRow{gap:8px}#results .btnRow .bigBtn{font-size:clamp(18px,2.4vw,24px);padding:8px 22px}\n'
+           '#retBox{flex-direction:row;flex-wrap:wrap;gap:6px;font-size:13px}.retRow{padding:5px 10px;flex:1 1 auto}.retWide{flex-basis:100%}#results:not(.podium) .resTable td{padding-top:5px;padding-bottom:5px}#replayBtn{font-size:16px!important;padding:6px 16px!important}\n'
+           '#retMenu small{display:block;font-size:13px;color:#cfd3ff;opacity:.9}\n'
+           '.opt.dim{opacity:.55}#trophyBar{margin:-4px 0 10px;font-size:15px;background:rgba(255,255,255,.07);border-radius:14px;padding:6px 12px}#trophyBar .tCup{display:inline-block;margin:0 12px 0 6px;white-space:nowrap}#trophyBar i{font-style:normal;margin:0 3px}\n'
+           '.char{position:relative}.char:disabled{opacity:.5;filter:grayscale(.75);cursor:not-allowed}.lockTag{display:block;font:13px var(--display);color:#ffd23f;margin-top:2px}.char:disabled .en{display:none}\n'
+           '@media (max-height:520px){#retBox .retRow:not(.retWide){display:none}}\n'
+           '@media (max-height:520px){body.touch #minimap{left:50%;right:auto;top:8px;bottom:auto;transform:translateX(-50%);width:88px;height:88px}}', 'results-css')
 
 # Short help: only the controls a new player needs
 i_help = shell.index('<h3>Keyboard (1 player)</h3>')
