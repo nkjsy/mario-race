@@ -102,6 +102,7 @@ body.touch .posNum{font-size:84px}
 body.touch .driftDir{bottom:calc(env(safe-area-inset-bottom,0px) + 250px)}
 body.touch #topBtns{top:calc(env(safe-area-inset-top,0px) + 130px);right:auto;left:16px;flex-direction:row}
 body.touch .itemName{display:none}
+@media (max-height:520px){body.touch #minimap{left:50%;right:auto;top:8px;bottom:auto;transform:translateX(-50%);width:88px;height:88px}}
 
 /* ---------- menus ---------- */
 .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);overflow-y:auto;background:linear-gradient(180deg,rgba(11,10,36,.15),rgba(11,10,36,.55))}
@@ -181,21 +182,27 @@ body.touch .itemName{display:none}
 @media (max-width:560px){#menu .panel{padding-top:54px}#help td:first-child{white-space:normal;width:34%}.helpBtn{top:10px;right:10px;font-size:15px;padding:5px 10px}}
 .keys kbd{font-family:var(--display);background:#fff;color:var(--ink);border-radius:6px;padding:0 7px;border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);font-size:13px;margin:0 2px}
 .btnRow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+/* results: the table scrolls in its own area, so the title and the buttons stay on screen */
+#results:not(.podium) .panel{box-sizing:border-box;max-height:100%;overflow:hidden;gap:10px}
+#resScroll{overflow-y:auto;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;gap:6px}
+#results.podium #resScroll{overflow:visible;flex:none}
+#results .btnRow{gap:8px;flex:0 0 auto}#results .btnRow .bigBtn{font-size:clamp(18px,2.4vw,24px);padding:8px 22px}
+#results:not(.podium) .resTable td{padding-top:5px;padding-bottom:5px}
+#replayBtn{font-size:16px!important;padding:6px 16px!important}
 #results .panel{max-width:720px}
-#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#results:not(.podium) .btnRow{flex:0 0 auto}#resScroll{overflow-y:auto;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;gap:6px}#results.podium #resScroll{overflow:visible;flex:none}#help p{margin:2px 0}#results.podium #retBox{display:none}
+#retBox{display:flex;flex-direction:column;gap:8px;font-size:16px}#help p{margin:2px 0}#results.podium #retBox{display:none}
 .retRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 12px}.retDone{background:rgba(67,209,122,.25)}
 .retBar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.retBar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#ff9f1c)}
 #retMenu{margin:-4px 0 0;text-align:center;font-size:16px;color:#ffd23f}
 #cardBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;background:rgba(255,210,63,.12);border-radius:14px;padding:8px 12px;font-size:15px}#cardBar .opt{flex:0 0 auto;padding:5px 12px;font-size:15px}
 .tag{display:inline-block;font:12px var(--display);letter-spacing:.05em;border-radius:6px;padding:0 5px;margin-right:4px;background:#43d17a;color:#0b1a10}.tag.lock{background:rgba(255,255,255,.2);color:#fff}
 #daily{z-index:50}#daily .panel{max-width:640px;text-align:center;gap:12px}
-#results:not(.podium) .panel{box-sizing:border-box;max-height:100%;overflow:hidden;gap:10px}#results .btnRow{gap:8px}#results .btnRow .bigBtn{font-size:clamp(18px,2.4vw,24px);padding:8px 22px}
-#retBox{flex-direction:row;flex-wrap:wrap;gap:6px;font-size:13px}.retRow{padding:5px 10px;flex:1 1 auto}.retWide{flex-basis:100%}#results:not(.podium) .resTable td{padding-top:5px;padding-bottom:5px}#replayBtn{font-size:16px!important;padding:6px 16px!important}
+#retBox{flex-direction:row;flex-wrap:wrap;gap:6px;font-size:13px}.retRow{padding:5px 10px;flex:1 1 auto}.retWide{flex-basis:100%}
 #retMenu small{display:block;font-size:13px;color:#cfd3ff;opacity:.9}
 .opt.dim{opacity:.55}#trophyBar{margin:-4px 0 10px;font-size:15px;background:rgba(255,255,255,.07);border-radius:14px;padding:6px 12px}#trophyBar .tCup{display:inline-block;margin:0 12px 0 6px;white-space:nowrap}#trophyBar i{font-style:normal;margin:0 3px}
 .char{position:relative}.char:disabled{opacity:.5;filter:grayscale(.75);cursor:not-allowed}.lockTag{display:block;font:13px var(--display);color:#ffd23f;margin-top:2px}.char:disabled .en{display:none}
 @media (max-height:520px){#retBox .retRow:not(.retWide){display:none}}
-@media (max-height:520px){body.touch #minimap{left:50%;right:auto;top:8px;bottom:auto;transform:translateX(-50%);width:88px;height:88px}}.dStrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dCell{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}
+.dStrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dCell{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}
 .dCell small{font-size:11px;opacity:.75}.dCell b{font:22px var(--display)}.dCell.past{opacity:.5}.dCell.now{background:#ffd23f;color:var(--ink);transform:scale(1.08)}
 .dGot{font:30px var(--display);color:#ffd23f;margin:0}.dCh,.dTip{margin:0;font-size:16px}.dTip{opacity:.75}
 @media (max-height:500px){#results .btnRow .bigBtn,#daily .bigBtn{font-size:18px;padding:6px 16px}#daily .panel{gap:6px;padding-top:12px}#daily .resTitle{font-size:30px}.dGot{font-size:22px}}
@@ -337,6 +344,7 @@ body.touch .itemName{display:none}
     <h2 class="resTitle">Paused</h2>
     <div class="btnRow"><button class="bigBtn" id="resumeBtn" type="button">Resume</button><button class="bigBtn alt" id="quitBtn" type="button">Quit</button></div>
     <button class="bigBtn alt" id="pauseHelp" type="button" style="font-size:22px;padding:8px 24px;align-self:center">How to play</button>
+    <button class="bigBtn alt" id="gfxBtn" type="button" style="font-size:22px;padding:8px 24px;align-self:center">Graphics: Auto</button>
   </div>
 </div>
 

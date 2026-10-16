@@ -288,6 +288,12 @@ TR = [
     ("b.innerHTML = `${c.name}<small>${c.en}</small>`;", "b.innerHTML = `${c.name}<small>${c.en}</small>`;"),  # class buttons: 50cc / EASY stays
     ("b.innerHTML = `${bt.name}<small>${bt.en}</small>`;", "b.innerHTML = bt.name;"),
     ("${esc(k.ch.name)} <small style=\"opacity:.7;font-family:var(--display);letter-spacing:.1em\">${k.ch.en}</small>`", "${esc(k.ch.name)}`"),
+    # ---------- graphics quality (auto) ----------
+    ('align-self:center">画质：自动</button>', 'align-self:center">Graphics: Auto</button>'),
+    ("label() { return this.manual ? ['高', '中', '低', '最低'][this.level] : '自动' + (this.level ? '（' + ['', '中', '低', '最低'][this.level] + '）' : ''); },",
+     "label() { return this.manual ? ['High', 'Medium', 'Low', 'Lowest'][this.level] : 'Auto' + (this.level ? ' (' + ['', 'medium', 'low', 'lowest'][this.level] + ')' : ''); },"),
+    ("showCenter('all', '画质已调整：' + this.label(), 1.6, true);", "showCenter('all', 'Graphics: ' + this.label(), 1.6, true);"),
+    ("b.textContent = '画质：' + this.label();", "b.textContent = 'Graphics: ' + this.label();"),
 ]
 
 # Names that read better than a plain title-cased `en`.

@@ -194,9 +194,7 @@ const RET = {
       this.store();
       this.lastJust = just; this.lastChars = chars;
     } else { just = this.lastJust || []; chars = this.lastChars || []; }
-    // the table and the quest boxes scroll in their own area, so the title and the buttons are always on screen
-    let sc = document.getElementById('resScroll');
-    if (!sc) { sc = document.createElement('div'); sc.id = 'resScroll'; $('resTable').before(sc); sc.appendChild($('resTable')); }
+    const sc = document.getElementById('resScroll');   // the scrolling results area is created by showResults
     let box = document.getElementById('retBox');
     if (!box) { box = document.createElement('div'); box.id = 'retBox'; sc.prepend(box); }
     const extra = (this.fresh && this.fresh.length ? `<div class="retRow retDone retWide">🔓 Unlocked: ${esc(this.fresh.join(', '))}!</div>` : '') + (chars.length ? `<div class="retRow retDone retWide">🔓 New driver: ${esc(chars.join(', '))}!</div>` : '');
@@ -213,12 +211,6 @@ const RET = {
     const show = game.mode === 'single' && this.nextCourse() !== game.courseIdx;
     nb.hidden = !show; $('againBtn').classList.toggle('alt', show);
     if (show) nb.textContent = 'Next: ' + COURSES[this.nextCourse()].name + ' ▶';
-    // keep the player's own row visible above the sticky buttons
-    setTimeout(() => this.showMe(), 30);
-  },
-  showMe() {
-    const me = document.querySelector('#resTable tr.me, #resTable tr.me2');
-    if (me && !$('results').hidden) me.scrollIntoView({ block: 'nearest' });
   },
   // the number of laps for the race that is about to start: the very first race is one quick lap
   lapsFor(n) {

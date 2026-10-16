@@ -2800,6 +2800,7 @@ function makeBalloons(k) {
   });
 }
 function popBalloon(k) {
+  if (game.state !== 'race') return; // once the match is decided nobody loses another balloon
   k.balloons--;
   const b = k.bMeshes && k.bMeshes[k.balloons]; const p = new V3(); if (b) b.getWorldPosition(p); else p.copy(k.pos);
   const c = C(k.ch.color);
@@ -2896,11 +2897,20 @@ function updateBattle(dt) {
       shineMesh.rotation.y += dt * 2.2;
     }
   }
+  // a human who is out stops driving and the camera follows whoever is still in
+  for (const h of game.humansK) if (h && h.out && !h.gone && game.state === 'race') {
+    h.gone = true; for (let n = 0; n < 30; n++) SMOKE.emit(h.pos.x, h.pos.y + 1, h.pos.z, (Math.random() - 0.5) * 8, Math.random() * 5, (Math.random() - 0.5) * 8, 0.8, 0.8, 0.9, 0.8, 1.6, 1, 0, 3);
+    removeTrailMesh(h); scene.remove(h.m.root); const hi = game.karts.indexOf(h); if (hi >= 0) game.karts.splice(hi, 1);
+  }
   const alive = game.karts.filter(k => !k.out);
+  if (game.state === 'race' && alive.length) game.humansK.forEach((h, n) => {
+    const v = views[n]; if (!v || !h || !h.out) return;
+    if (!v.kart || v.kart.out || !game.karts.includes(v.kart)) { v.kart = alive.slice().sort((a, b) => (b.balloons || 0) - (a.balloons || 0))[0]; v.init = true; }
+  });
   const score = B.type === 'coin' ? k => k.bcoins : B.type === 'shine' ? k => -k.shineLeft : k => k.balloons;
   alive.slice().sort((a, b) => score(b) - score(a)).forEach((k, i) => k.rank = i);
   const shineWin = B.type === 'shine' && alive.some(k => k.shineLeft <= 0);
-  const elim = (B.type === 'balloon' || B.type === 'bomb') && (alive.length <= 1 || (game.humansK.every(h => h.out) && game.raceT - Math.max(...game.humansK.map(h => h.outT || 0)) > 7));
+  const elim = (B.type === 'balloon' || B.type === 'bomb') && (alive.length <= 1 || (game.humansK.every(h => h.out) && game.raceT - Math.max(...game.humansK.map(h => h.outT || 0)) > 7)); // a human who is out gets a short look at the rest
   if (game.state === 'race' && (B.t <= 0 || elim || shineWin)) {
     game.state = 'finish'; game.resultsT = 2.6; Snd.stopMusic(); Snd.sfx('finish');
     B.rows = [...alive.sort((a, b) => score(b) - score(a)), ...B.out.slice().reverse()];
@@ -3392,6 +3402,9 @@ function showResults() {
   }
   if (!game.coinsPaid) { game.coinsPaid = true; const t = earnCoins(); $('resSub').textContent = ($('resSub').textContent ? $('resSub').textContent + ' · ' : '') + t; }
   $('replayBtn').hidden = !replayWindow();
+  // the table scrolls in its own area so the title and buttons stay on screen; the player's own row is scrolled into view
+  let rs = $('resScroll'); if (!rs) { rs = document.createElement('div'); rs.id = 'resScroll'; tb.before(rs); rs.appendChild(tb); }
+  setTimeout(() => { const me = tb.querySelector('tr.me, tr.me2'); if (me && !$('results').hidden) me.scrollIntoView({ block: 'nearest' }); }, 30);
   RET.results();
   $('results').hidden = false; $('touch').hidden = true;
 }
@@ -3964,6 +3977,66 @@ function boot() {
 }
 // wait for fonts so canvas text (banners, item boxes, name tags) uses them
 (document.fonts && document.fonts.ready ? Promise.race([Promise.all([document.fonts.load('600 40px "Fredoka"'), document.fonts.load('40px "Lilita One"')]).catch(() => { }), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).then(() => setTimeout(boot, 30));
+
+/* ---------------- graphics quality: starts high, steps down on its own when the frame rate is low ---------------- */
+const Quality = {
+  KEY: 'starkart.gfx',
+  level: 0,        // 0 full, 1 smaller shadows and 1.25x pixels, 2 no glow and 1x pixels, 3 no shadows and 0.75x pixels
+  manual: false,   // the player picked a level by hand: the automatic steps stop
+  last: 0, n: 0, sum: 0, slow: 0, settle: 90, duo: false,
+  basePR() { return Math.min(window.devicePixelRatio || 1, isTouchDevice() ? 1.25 : 1.75); },
+  apply(l, force) {
+    if (l === this.level && !force) return;
+    this.level = l;
+    let pr = this.basePR();
+    if (l >= 1) {
+      if (sun.shadow.mapSize.x !== 1024) { sun.shadow.mapSize.set(1024, 1024); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+      pr = Math.min(pr, 1.25);
+    } else if (sun.shadow.mapSize.x !== 2048) { sun.shadow.mapSize.set(2048, 2048); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+    Post.on = l < 2 && !this.duo;
+    if (l >= 2) pr = Math.min(pr, 1);
+    if (l >= 3) { sun.castShadow = false; pr = Math.min(pr, 0.75); }
+    else if (!sun.castShadow) sun.castShadow = true;
+    renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight); layoutViews();
+  },
+  save() { try { CGStore.setItem(this.KEY, JSON.stringify({ level: this.level, manual: this.manual })); } catch (e) { } },
+  load() { try { const s = JSON.parse(CGStore.getItem(this.KEY) || 'null'); if (s) { this.manual = !!s.manual; return Math.max(0, Math.min(3, s.level | 0)); } } catch (e) { } return 0; },
+  label() { return this.manual ? ['High', 'Medium', 'Low', 'Lowest'][this.level] : 'Auto' + (this.level ? ' (' + ['', 'medium', 'low', 'lowest'][this.level] + ')' : ''); },
+  // measures how long frames really take and steps the quality down when it stays slow
+  tick(now) {
+    requestAnimationFrame(t => this.tick(t));
+    const dt = now - this.last; this.last = now;
+    if (document.hidden || game.paused || dt > 400 || dt <= 0) { this.n = 0; this.sum = 0; return; }
+    // split screen is twice the work: no glow while two players share the screen
+    const duo = game.humans === 2 && !game.demo;
+    if (duo !== this.duo) { this.duo = duo; this.apply(this.level, true); }
+    if (this.manual) return;
+    if (this.settle > 0) { this.settle--; return; }
+    this.n++; this.sum += dt;
+    if (this.n < 60) return;
+    const avg = this.sum / this.n; this.n = 0; this.sum = 0;
+    this.slow = avg > 27 ? this.slow + 1 : 0;   // under about 37 fps
+    if (this.slow >= 2 && this.level < 3) {
+      this.slow = 0; this.settle = 120;
+      this.apply(this.level + 1); this.save(); this.button();
+      try { showCenter('all', 'Graphics: ' + this.label(), 1.6, true); } catch (e) { }
+    }
+  },
+  cycle() {   // pause menu button: auto -> low -> lowest -> high -> auto
+    if (!this.manual) { this.manual = true; this.apply(2); }
+    else if (this.level === 2) this.apply(3);
+    else if (this.level === 3) this.apply(0);
+    else { this.manual = false; this.settle = 90; }
+    this.save(); this.button();
+  },
+  button() { const b = $('gfxBtn'); if (b) b.textContent = 'Graphics: ' + this.label(); },
+  init() {
+    this.apply(this.load(), true); this.last = performance.now();
+    $('gfxBtn').onclick = () => this.cycle(); this.button();
+    requestAnimationFrame(t => this.tick(t));
+  },
+};
+Quality.init();
 window.__game = game;
 /* ---------------- daily bonus, quests, trophies, unlocks, next race (CrazyGames build) ---------------- */
 const RET = {
@@ -4161,9 +4234,7 @@ const RET = {
       this.store();
       this.lastJust = just; this.lastChars = chars;
     } else { just = this.lastJust || []; chars = this.lastChars || []; }
-    // the table and the quest boxes scroll in their own area, so the title and the buttons are always on screen
-    let sc = document.getElementById('resScroll');
-    if (!sc) { sc = document.createElement('div'); sc.id = 'resScroll'; $('resTable').before(sc); sc.appendChild($('resTable')); }
+    const sc = document.getElementById('resScroll');   // the scrolling results area is created by showResults
     let box = document.getElementById('retBox');
     if (!box) { box = document.createElement('div'); box.id = 'retBox'; sc.prepend(box); }
     const extra = (this.fresh && this.fresh.length ? `<div class="retRow retDone retWide">🔓 Unlocked: ${esc(this.fresh.join(', '))}!</div>` : '') + (chars.length ? `<div class="retRow retDone retWide">🔓 New driver: ${esc(chars.join(', '))}!</div>` : '');
@@ -4180,12 +4251,6 @@ const RET = {
     const show = game.mode === 'single' && this.nextCourse() !== game.courseIdx;
     nb.hidden = !show; $('againBtn').classList.toggle('alt', show);
     if (show) nb.textContent = 'Next: ' + COURSES[this.nextCourse()].name + ' ▶';
-    // keep the player's own row visible above the sticky buttons
-    setTimeout(() => this.showMe(), 30);
-  },
-  showMe() {
-    const me = document.querySelector('#resTable tr.me, #resTable tr.me2');
-    if (me && !$('results').hidden) me.scrollIntoView({ block: 'nearest' });
   },
   // the number of laps for the race that is about to start: the very first race is one quick lap
   lapsFor(n) {
@@ -4341,32 +4406,7 @@ const RET = {
   },
 };
 
-/* ---------------- playtest fixes: battle results, Grand Prix trophies, automatic graphics quality (CrazyGames build) ---------------- */
-
-// Battle: once the match is decided nobody can lose another balloon, so the results table always matches what the players saw
-const _popBalloon = popBalloon;
-popBalloon = function (k) { if (game.state !== 'race') return; _popBalloon(k); };
-
-// Battle: a player who is out stops driving and the camera follows whoever is still in, until the match ends
-const _updateBattle = updateBattle;
-updateBattle = function (dt) {
-  _updateBattle(dt);
-  const B = game.battle; if (!B || game.demo || game.state !== 'race') return;
-  for (const h of game.humansK) {
-    if (!h || !h.out || h.gone) continue;
-    h.gone = true;
-    for (let n = 0; n < 30; n++) SMOKE.emit(h.pos.x, h.pos.y + 1, h.pos.z, (Math.random() - 0.5) * 8, Math.random() * 5, (Math.random() - 0.5) * 8, 0.8, 0.8, 0.9, 0.8, 1.6, 1, 0, 3);
-    removeTrailMesh(h); scene.remove(h.m.root);
-    const i = game.karts.indexOf(h); if (i >= 0) game.karts.splice(i, 1);
-  }
-  const alive = game.karts.filter(k => !k.out);
-  if (!alive.length) return;
-  game.humansK.forEach((h, n) => {
-    const v = views[n]; if (!v || !h || !h.out) return;
-    if (!v.kart || v.kart.out || !game.karts.includes(v.kart)) { v.kart = alive.slice().sort((a, b) => (b.balloons || 0) - (a.balloons || 0))[0]; v.init = true; }
-  });
-};
-
+/* ---------------- Grand Prix trophies (CrazyGames build) ---------------- */
 // Grand Prix: a trophy for the final standing, with the unlocks it opens (daily.js)
 const _showPodiumPanel = showPodiumPanel;
 showPodiumPanel = function () {
@@ -4377,70 +4417,4 @@ showPodiumPanel = function () {
     if (rank > 0) RET.gpDone(rank);
   } catch (e) { }
 };
-
-/* ---- graphics quality: starts high, steps down on its own when the frame rate is low ---- */
-const Quality = {
-  KEY: 'starkart.gfx',
-  level: 0,        // 0 full, 1 smaller shadows and 1.25x pixels, 2 no glow and 1x pixels, 3 no shadows and 0.75x pixels
-  manual: false,   // the player picked a level by hand: the automatic steps stop
-  last: 0, n: 0, sum: 0, slow: 0, settle: 90, duo: false,
-  basePR() { return Math.min(window.devicePixelRatio || 1, isTouch ? 1.25 : 1.75); },
-  apply(l, force) {
-    if (l === this.level && !force) return;
-    this.level = l;
-    let pr = this.basePR();
-    if (l >= 1) {
-      if (sun.shadow.mapSize.x !== 1024) { sun.shadow.mapSize.set(1024, 1024); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
-      pr = Math.min(pr, 1.25);
-    } else if (sun.shadow.mapSize.x !== 2048) { sun.shadow.mapSize.set(2048, 2048); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
-    Post.on = l < 2 && !this.duo;
-    if (l >= 2) pr = Math.min(pr, 1);
-    if (l >= 3) { sun.castShadow = false; pr = Math.min(pr, 0.75); }
-    else if (!sun.castShadow) sun.castShadow = true;
-    renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight); layoutViews();
-  },
-  save() { try { CGStore.setItem(this.KEY, JSON.stringify({ level: this.level, manual: this.manual })); } catch (e) { } },
-  load() { try { const s = JSON.parse(CGStore.getItem(this.KEY) || 'null'); if (s) { this.manual = !!s.manual; return Math.max(0, Math.min(3, s.level | 0)); } } catch (e) { } return 0; },
-  label() { return this.manual ? ['High', 'Medium', 'Low', 'Lowest'][this.level] : 'Auto' + (this.level ? ' (' + ['', 'medium', 'low', 'lowest'][this.level] + ')' : ''); },
-  // measures how long frames really take (only while a race or the menu is running) and steps the quality down when it is slow
-  tick(now) {
-    requestAnimationFrame(t => this.tick(t));
-    const dt = now - this.last; this.last = now;
-    if (document.hidden || game.paused || dt > 400 || dt <= 0) { this.n = 0; this.sum = 0; return; }
-    // split screen is twice the work: no glow while two players share the screen
-    const duo = game.humans === 2 && !game.demo;
-    if (duo !== this.duo) { this.duo = duo; this.apply(this.level, true); }
-    if (this.manual) return;
-    if (this.settle > 0) { this.settle--; return; }
-    this.n++; this.sum += dt;
-    if (this.n < 60) return;
-    const avg = this.sum / this.n; this.n = 0; this.sum = 0;
-    this.slow = avg > 27 ? this.slow + 1 : 0;   // under about 37 fps
-    if (this.slow >= 2 && this.level < 3) {
-      this.slow = 0; this.settle = 120;
-      this.apply(this.level + 1); this.save();
-      try { showCenter('all', 'Graphics: ' + this.label(), 1.6, false); } catch (e) { }
-    }
-  },
-  cycle() {   // pause menu button: Auto -> Low -> Lowest -> High -> Auto
-    if (!this.manual) { this.manual = true; this.apply(2); }
-    else if (this.level === 2) this.apply(3);
-    else if (this.level === 3) this.apply(0);
-    else this.manual = false, this.settle = 90;
-    this.save(); this.button();
-  },
-  button() { const b = document.getElementById('gfxBtn'); if (b) b.textContent = 'Graphics: ' + this.label(); },
-  init() {
-    const l = this.load(); this.last = performance.now();
-    this.apply(l, true);
-    const box = document.querySelector('#pause .btnRow');
-    if (box && !document.getElementById('gfxBtn')) {
-      const b = document.createElement('button'); b.id = 'gfxBtn'; b.type = 'button'; b.className = 'bigBtn alt'; b.style.cssText = 'font-size:22px;padding:8px 24px;align-self:center';
-      b.onclick = () => this.cycle(); box.after(b);
-    }
-    this.button();
-    requestAnimationFrame(t => this.tick(t));
-  },
-};
-Quality.init();
 
